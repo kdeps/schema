@@ -20,7 +20,7 @@ pkl {
     pkldocGenerators {
       register("pkldoc") {
         sourceModules =
-          listOf(uri("package://schema.kdeps.com/schema/$maybeVersion"))
+          listOf(uri("package://schema.kdeps.com/core@$maybeVersion"))
       }
     }
   }
