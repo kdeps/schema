@@ -9,7 +9,7 @@ package {
   baseUri = "package://schema.kdeps.com/core"
   packageZipUrl = "https://github.com/kdeps/schema/releases/download/\(version)/\(name)@\(version).zip"
   sourceCode = "https://github.com/kdeps/schema"
-  sourceCodeUrlScheme = "\(sourceCode)/blob/\(name)@\(version)%{path}#L%{line}-L%{endLine}"
+  sourceCodeUrlScheme = "\(sourceCode)/blob/\(version)/schema/%{path}#L%{line}-L%{endLine}"
   documentation = "https://schema.kdeps.com"
   license = "Apache-2.0"
   description = """
