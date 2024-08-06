@@ -1,4 +1,4 @@
-@go.Package { name = "github.com/kdeps/schema/build/core/settings" }
+@go.Package { name = "github.com/kdeps/schema/pkg/core/settings" }
 
 module org.kdeps.pkl.Settings
 

@@ -1,4 +1,4 @@
-@go.Package { name = "github.com/kdeps/schema/build/core/api" }
+@go.Package { name = "github.com/kdeps/schema/pkg/core/api" }
 
 module org.kdeps.pkl.API
 

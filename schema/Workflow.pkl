@@ -1,4 +1,4 @@
-@go.Package { name = "github.com/kdeps/schema/build/core/workflow" }
+@go.Package { name = "github.com/kdeps/schema/pkg/core/workflow" }
 
 module org.kdeps.pkl.Workflow
 

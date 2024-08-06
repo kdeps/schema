@@ -7,7 +7,7 @@ package {
   }
   version = read?("env:VERSION")?.replaceFirst("\(name)@", "") ?? "0.0.1-SNAPSHOT"
   baseUri = "package://schema.kdeps.com/core"
-  packageZipUrl = "https://github.com/kdeps/schema/releases/download/\(name)@\(version)/\(name)@\(version).zip"
+  packageZipUrl = "https://github.com/kdeps/schema/releases/download/\(version)/\(name)@\(version).zip"
   sourceCode = "https://github.com/kdeps/schema"
   sourceCodeUrlScheme = "\(sourceCode)/blob/\(name)@\(version)%{path}#L%{line}-L%{endLine}"
   documentation = "https://schema.kdeps.com"
