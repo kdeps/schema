@@ -4,10 +4,10 @@ module org.kdeps.pkl.Resource
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-import "@Settings/Settings.pkl"
-import "@API/API.pkl"
-import "@LLM/LLM.pkl"
-import "@ENV/ENV.pkl"
+import "Settings.pkl"
+import "API.pkl"
+import "LLM.pkl"
+import "ENV.pkl"
 
 class AppResource {
         hidden idStringRegex = Regex(#"(^\w+$)"#)

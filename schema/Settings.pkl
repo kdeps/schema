@@ -4,7 +4,7 @@ module org.kdeps.pkl.Settings
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-import "@LLM/LLM.pkl"
+import "LLM.pkl"
 
 class AppSettings {
     runTimeout: Duration = 15.min
