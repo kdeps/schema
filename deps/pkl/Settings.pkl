@@ -7,7 +7,7 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 import "LLM.pkl"
 
 class AppSettings {
-    runTimeout: Duration = 15.min
-    interactiveOnMissingValues: Boolean = false
-    llmSettings: LLM.LLMSettings
+  runTimeout: Duration = 15.min
+  interactiveOnMissingValues: Boolean = false
+  llmSettings: LLM.LLMSettings
 }
