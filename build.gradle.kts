@@ -11,7 +11,7 @@ pkl {
         if (maybeVersion != null) {
           environmentVariables.put("VERSION", maybeVersion)
         }
-        projectDirectories.from(file("schema/"))
+        projectDirectories.from(file("deps/pkl/"))
       }
     }
   }

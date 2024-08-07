@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/pkg/core/parameters"
 	"github.com/kdeps/schema/pkg/core/settings"
 )
 
@@ -12,6 +13,8 @@ type Workflow struct {
 	Settings *settings.AppSettings `pkl:"settings"`
 
 	Workflows []string `pkl:"workflows"`
+
+	Args *[]*parameters.Args `pkl:"args"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Workflow

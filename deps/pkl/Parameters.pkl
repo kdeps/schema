@@ -1,0 +1,19 @@
+@go.Package { name = "github.com/kdeps/schema/pkg/core/parameters" }
+
+module org.kdeps.pkl.Parameters
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+
+class Args {
+        hidden idStringRegex = Regex(#"(^\w+$)"#)
+
+        hidden isValidARG = (str) ->
+        if (str.matches(idStringRegex))
+        true
+        else
+        throw("Error: Invalid Argument: The argument contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+
+        name: String(isValidARG)
+        required: Boolean = true
+        description: String
+}
