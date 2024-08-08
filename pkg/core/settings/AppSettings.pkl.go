@@ -3,6 +3,7 @@ package settings
 
 import (
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/pkg/core/api"
 	"github.com/kdeps/schema/pkg/core/llm"
 )
 
@@ -12,4 +13,8 @@ type AppSettings struct {
 	InteractiveOnMissingValues bool `pkl:"interactiveOnMissingValues"`
 
 	LlmSettings *llm.LLMSettings `pkl:"llmSettings"`
+
+	ApiServerMode bool `pkl:"apiServerMode"`
+
+	ApiServerSettings *api.APIServerSettings `pkl:"apiServerSettings"`
 }

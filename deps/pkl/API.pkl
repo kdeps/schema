@@ -4,6 +4,11 @@ module org.kdeps.pkl.API
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
+class APIServerSettings {
+  serverPort: Int(isBetween(1024, 65535)) = 3000
+  routes: Listing<APIServerRoutes>
+}
+
 class ResourceAPI {
   hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
   hidden apiOutputPrefixRegex = Regex(#"^(?i:(ENV|FILE):)(.+$)"#)
@@ -30,4 +35,29 @@ class ResourceAPI {
 class ResourceAPIHeaders {
   name: String
   value: String
+}
+
+class APIServerRoutes {
+  hidden apiServerMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
+  hidden apiServerIOPrefixRegex = Regex(#"^(?i:(ENV|FILE):)(.+$)"#)
+
+  hidden isValidHTTPMethod = (str) ->
+  if (str.matches(apiServerMethodRegex))
+    true
+  else
+    throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
+
+  hidden isValidAPIServerIOPrefix = (str) ->
+  if (str.matches(apiServerIOPrefixRegex))
+    true
+  else
+    throw("Error: Invalid configuration string: The API output string does not match any of the expected formats: ENV:, FILE:. Please ensure that the string starts with one of these prefixes.")
+
+  path: String = "/api"
+  methods: Listing<String(isValidHTTPMethod)> = new {
+    "POST"
+  }
+  requestParams: String(isValidAPIServerIOPrefix)? = "ENV:API_SERVER_REQUEST_PARAMS"
+  request: String(isValidAPIServerIOPrefix)? = "ENV:API_SERVER_REQUEST"
+  response: String(isValidAPIServerIOPrefix)? = "ENV:API_SERVER_RESPONSE"
 }

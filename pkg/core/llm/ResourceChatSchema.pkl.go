@@ -4,7 +4,7 @@ package llm
 type ResourceChatSchema struct {
 	Prompt string `pkl:"prompt"`
 
-	XmlSchema string `pkl:"xml_schema"`
+	Schema string `pkl:"schema"`
 
 	Input *string `pkl:"input"`
 
