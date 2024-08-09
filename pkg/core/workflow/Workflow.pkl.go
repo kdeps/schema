@@ -6,11 +6,11 @@ import (
 
 	"github.com/apple/pkl-go/pkl"
 	"github.com/kdeps/schema/pkg/core/parameters"
-	"github.com/kdeps/schema/pkg/core/settings"
+	"github.com/kdeps/schema/pkg/core/project"
 )
 
 type Workflow struct {
-	Settings *settings.AppSettings `pkl:"settings"`
+	Settings *project.Settings `pkl:"settings"`
 
 	Workflows []string `pkl:"workflows"`
 

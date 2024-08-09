@@ -5,7 +5,7 @@ import (
 	"github.com/kdeps/schema/pkg/core/api"
 	"github.com/kdeps/schema/pkg/core/env"
 	"github.com/kdeps/schema/pkg/core/llm"
-	"github.com/kdeps/schema/pkg/core/settings"
+	"github.com/kdeps/schema/pkg/core/project"
 )
 
 type ResourceAction struct {
@@ -13,7 +13,7 @@ type ResourceAction struct {
 
 	Exec string `pkl:"exec"`
 
-	Settings *settings.AppSettings `pkl:"settings"`
+	Settings *project.Settings `pkl:"settings"`
 
 	Skip *[]string `pkl:"skip"`
 

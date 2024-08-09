@@ -1,5 +1,5 @@
-// Code generated from Pkl module `org.kdeps.pkl.Settings`. DO NOT EDIT.
-package settings
+// Code generated from Pkl module `org.kdeps.pkl.Project`. DO NOT EDIT.
+package project
 
 import (
 	"github.com/apple/pkl-go/pkl"
@@ -7,7 +7,7 @@ import (
 	"github.com/kdeps/schema/pkg/core/llm"
 )
 
-type AppSettings struct {
+type Settings struct {
 	RunTimeout *pkl.Duration `pkl:"runTimeout"`
 
 	InteractiveOnMissingValues bool `pkl:"interactiveOnMissingValues"`

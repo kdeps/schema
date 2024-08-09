@@ -4,9 +4,9 @@ module org.kdeps.pkl.Workflow
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-import "Settings.pkl"
+import "Project.pkl"
 import "Parameters.pkl"
 
-settings: Settings.AppSettings
+settings: Project.Settings
 workflows: Listing<Uri>
 args: Listing<Parameters.Args>?

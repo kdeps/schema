@@ -1,13 +1,13 @@
-@go.Package { name = "github.com/kdeps/schema/pkg/core/settings" }
+@go.Package { name = "github.com/kdeps/schema/pkg/core/project" }
 
-module org.kdeps.pkl.Settings
+module org.kdeps.pkl.Project
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 import "LLM.pkl"
 import "API.pkl"
 
-class AppSettings {
+class Settings {
   runTimeout: Duration = 15.min
   interactiveOnMissingValues: Boolean = false
   llmSettings: LLM.LLMSettings

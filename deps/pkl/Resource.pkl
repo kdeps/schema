@@ -4,7 +4,7 @@ module org.kdeps.pkl.Resource
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-import "Settings.pkl"
+import "Project.pkl"
 import "API.pkl"
 import "LLM.pkl"
 import "ENV.pkl"
@@ -37,7 +37,7 @@ class ResourceAction {
 
   name: String
   exec: String
-  settings: Settings.AppSettings?
+  settings: Project.Settings?
   skip: Listing<String(isValidPrefix)>?
   check: Listing<String(isValidPrefix)>?
   expect: Listing<String(isValidPrefix)>?
