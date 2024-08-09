@@ -6,7 +6,7 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 class APIServerSettings {
   serverPort: Int(isBetween(1024, 65535)) = 3000
-  routes: Listing<APIServerRoutes>
+  routes: Listing<APIServerRoutes> = new { new {} }
 }
 
 class ResourceAPI {
