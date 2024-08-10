@@ -38,6 +38,16 @@ jobs:
       uses: actions/upload-pages-artifact@v3
       with:
         path: build/pkldoc/pkldoc
+    - name: Upload files to Firebase Storage
+      run: |
+        # Install the Firebase CLI
+        npm install -g firebase-tools
+
+        # Authenticate with Firebase
+        firebase login:ci --no-localhost
+
+        # Upload all files in the kdeps/schema/deps directory
+        firebase deploy --only storage:kdeps-schema/kdeps/schema/deps --token ${{ secrets.FIREBASE_TOKEN }}
     permissions:
       contents: write
   deploy-pages:
