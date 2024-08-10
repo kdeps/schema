@@ -27,12 +27,11 @@ jobs:
       shell: bash
     - name: create docs
       env:
-        VERSION: ${{ github.ref_name }}
+        VERSION_NUM: ${{ github.ref_name }}
       run: |
         # Extract version number without the leading 'v'
-        VERSION_NUM=$(echo "${VERSION}" | sed -E 's/^v(.*)/\1/')
-        echo "Extracted version: ${VERSION_NUM}"
-        ./gradlew pkldoc -Pversion=${VERSION_NUM}
+        export VERSION=$(echo "${VERSION_NUM}" | sed -E 's/^v(.*)/\1/')
+        ./gradlew pkldoc
     - name: setup pages
       uses: actions/configure-pages@v4
     - name: upload artifact
