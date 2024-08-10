@@ -1,0 +1,81 @@
+amends "package://schema.kdeps.com/core@VERSION_TAG#/Resource.pkl"
+
+resources {
+  new {
+    id = "water"
+    name = "Water needed for coffee"
+    category = "ingredients"
+  }
+  new {
+    id = "coffee"
+    name = "Roasted coffee beans"
+    category = "ingredients"
+    requires {
+      "water"
+      "hotwater"
+    }
+  }
+  new {
+    id = "hotwater"
+    name = "I prefer my coffee hot"
+    category = "ingredients"
+    check {
+      "ENV:HOT"
+    }
+    requires {
+      "water"
+      "heat"
+    }
+  }
+  new {
+    id ="heat"
+    name = "The hot temperature to heat-up the coffee"
+    category = "temperature"
+    check {
+      "ENV:BURNER"
+    }
+    run {
+      env {
+        new {
+          name = "HOT"
+          value = "true"
+        }
+      }
+    }
+    requires {
+      "burner"
+    }
+  }
+  new {
+    id = "burner"
+    name = "I can be a stove, cooktop or coffee machine!"
+    category = "appliance"
+    check {
+      "ENV:POWER"
+    }
+    run {
+      env {
+        new {
+          name = "BURNER"
+          value = "true"
+        }
+      }
+    }
+    requires {
+      "electricity"
+    }
+  }
+  new {
+    id = "electricity"
+    name = "I power up your electronics"
+    category = "utility"
+    run {
+      env {
+        new {
+          name = "POWER"
+          value = "true"
+        }
+      }
+    }
+  }
+}
