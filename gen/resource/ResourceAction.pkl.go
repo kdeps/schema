@@ -2,10 +2,10 @@
 package resource
 
 import (
-	"github.com/kdeps/schema/pkg/core/api"
-	"github.com/kdeps/schema/pkg/core/env"
-	"github.com/kdeps/schema/pkg/core/llm"
-	"github.com/kdeps/schema/pkg/core/project"
+	"github.com/kdeps/schema/gen/api"
+	"github.com/kdeps/schema/gen/env"
+	"github.com/kdeps/schema/gen/llm"
+	"github.com/kdeps/schema/gen/project"
 )
 
 type ResourceAction struct {

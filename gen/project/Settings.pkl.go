@@ -3,8 +3,8 @@ package project
 
 import (
 	"github.com/apple/pkl-go/pkl"
-	"github.com/kdeps/schema/pkg/core/api"
-	"github.com/kdeps/schema/pkg/core/llm"
+	"github.com/kdeps/schema/gen/api"
+	"github.com/kdeps/schema/gen/llm"
 )
 
 type Settings struct {

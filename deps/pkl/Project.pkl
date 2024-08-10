@@ -1,4 +1,4 @@
-@go.Package { name = "github.com/kdeps/schema/pkg/core/project" }
+@go.Package { name = "github.com/kdeps/schema/gen/project" }
 
 module org.kdeps.pkl.Project
 

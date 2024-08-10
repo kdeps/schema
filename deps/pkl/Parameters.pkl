@@ -1,4 +1,4 @@
-@go.Package { name = "github.com/kdeps/schema/pkg/core/parameters" }
+@go.Package { name = "github.com/kdeps/schema/gen/parameters" }
 
 module org.kdeps.pkl.Parameters
 

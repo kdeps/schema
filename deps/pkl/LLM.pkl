@@ -1,4 +1,4 @@
-@go.Package { name = "github.com/kdeps/schema/pkg/core/llm" }
+@go.Package { name = "github.com/kdeps/schema/gen/llm" }
 
 module org.kdeps.pkl.LLM
 

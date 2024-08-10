@@ -5,8 +5,8 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
-	"github.com/kdeps/schema/pkg/core/parameters"
-	"github.com/kdeps/schema/pkg/core/project"
+	"github.com/kdeps/schema/gen/parameters"
+	"github.com/kdeps/schema/gen/project"
 )
 
 type Workflow struct {
