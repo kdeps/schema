@@ -5,7 +5,7 @@ package {
   authors {
     "Joel Bryan Juliano <joelbryan.juliano@gmail.com>"
   }
-  version = read?("env:VERSION")?.replaceFirst("\(name)@v", "") ?? "0.0.1-SNAPSHOT"
+  version = read?("env:VERSION")?.replaceFirst(Regex("^v(\\d+\\.\\d+\\.\\d+)(-[\\w\\.]+)?(\\+[\\w\\.]+)?$"), "$1").replaceFirst("\(name)@v", "") ?? "0.0.1-SNAPSHOT"
   baseUri = "package://schema.kdeps.com/core"
   packageZipUrl = "https://github.com/kdeps/schema/releases/download/\(version)/\(name)@\(version).zip"
   sourceCode = "https://github.com/kdeps/schema"
