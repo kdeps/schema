@@ -1,3 +1,15 @@
 amends "package://schema.kdeps.com/core@VERSION_TAG#/Kdeps.pkl"
 
 dockerImage = "alpine:3.14"
+
+llmSettings {
+  llmAPIKeys {
+    openai_api_key = null
+    mistral_api_key = null
+    huggingface_api_token = null
+    groq_api_key = null
+  }
+  llmBackend = "ollama"
+  llmModel = "llama3.1"
+  modelFile = null
+}
