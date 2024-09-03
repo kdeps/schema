@@ -30,10 +30,10 @@ class Parameter {
 }
 
 class LLMAPIKeys {
-  openai_api_key: String?
-  mistral_api_key: String?
-  huggingface_api_token: String?
-  groq_api_key: String?
+  openai_api_key: String? = read?("env:OPENAI_API_KEY")
+  mistral_api_key: String? = read?("env:MISTRAL_API_KEY")
+  huggingface_api_token: String? = read?("env:HUGGINGFACE_API_TOKEN")
+  groq_api_key: String? = read?("env:GROQ_API_KEY")
 }
 
 class ModelFile {
