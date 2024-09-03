@@ -4,10 +4,10 @@ module org.kdeps.pkl.LLM
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-typealias LLMBackend = "ollama"|"api"
+typealias LLMBackend = "ollama"|"openai"|"mistral"|"huggingface"|"groq"
 
 class LLMSettings {
-  llmAPIKeys: LLMAPIKeys?
+  llmAPIKeys: LLMAPIKeys
   llmBackend: LLMBackend = "ollama"
   llmModel: String = "llama3.1"
   modelFile: ModelFile?
@@ -30,10 +30,10 @@ class Parameter {
 }
 
 class LLMAPIKeys {
-  openai_api_key: String?
-  mistral_api_key: String?
-  huggingface_api_token: String?
-  groq_api_key: String?
+  openai_api_key: String? = read("env:OPENAI_API_KEY")
+  mistral_api_key: String? = read("env:MISTRAL_API_KEY")
+  huggingface_api_token: String? = read("env:HUGGINGFACE_API_TOKEN")
+  groq_api_key: String? = read("env:GROQ_API_KEY")
 }
 
 class ModelFile {
