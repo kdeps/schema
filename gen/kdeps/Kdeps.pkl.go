@@ -5,10 +5,13 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/llm"
 )
 
 type Kdeps struct {
-	Kdeps string `pkl:"kdeps"`
+	DockerImage string `pkl:"dockerImage"`
+
+	LlmSettings *llm.LLMSettings `pkl:"llmSettings"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Kdeps

@@ -4,10 +4,13 @@ module org.kdeps.pkl.LLM
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
+typealias LLMBackend = "ollama"|"api"
+
 class LLMSettings {
-  ollamaBinPath: String? = "ollama"
-  llmModel: String? = "llama3.1"
-  modelFile: ModelFile
+  llmAPIKeys: LLMAPIKeys?
+  llmBackend: LLMBackend = "ollama"
+  llmModel: String = "llama3.1"
+  modelFile: ModelFile?
 }
 
 class Parameter {
@@ -24,6 +27,13 @@ class Parameter {
   top_k: Int = 40
   top_p: Float = 0.9
   min_p: Float = 0.0
+}
+
+class LLMAPIKeys {
+  openai_api_key: String?
+  mistral_api_key: String?
+  huggingface_api_token: String?
+  groq_api_key: String?
 }
 
 class ModelFile {

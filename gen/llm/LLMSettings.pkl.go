@@ -1,10 +1,14 @@
 // Code generated from Pkl module `org.kdeps.pkl.LLM`. DO NOT EDIT.
 package llm
 
-type LLMSettings struct {
-	OllamaBinPath *string `pkl:"ollamaBinPath"`
+import "github.com/kdeps/schema/gen/llm/llmbackend"
 
-	LlmModel *string `pkl:"llmModel"`
+type LLMSettings struct {
+	LlmAPIKeys *LLMAPIKeys `pkl:"llmAPIKeys"`
+
+	LlmBackend llmbackend.LLMBackend `pkl:"llmBackend"`
+
+	LlmModel string `pkl:"llmModel"`
 
 	ModelFile *ModelFile `pkl:"modelFile"`
 }
