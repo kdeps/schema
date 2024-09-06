@@ -5,11 +5,15 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/kdeps/gpu"
+	"github.com/kdeps/schema/gen/kdeps/runmode"
 	"github.com/kdeps/schema/gen/llm"
 )
 
 type Kdeps struct {
-	DockerImage string `pkl:"dockerImage"`
+	RunMode runmode.RunMode `pkl:"runMode"`
+
+	DockerGPU gpu.GPU `pkl:"dockerGPU"`
 
 	LlmSettings *llm.LLMSettings `pkl:"llmSettings"`
 }

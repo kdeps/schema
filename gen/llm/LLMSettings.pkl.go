@@ -6,9 +6,9 @@ import "github.com/kdeps/schema/gen/llm/llmbackend"
 type LLMSettings struct {
 	LlmAPIKeys *LLMAPIKeys `pkl:"llmAPIKeys"`
 
-	LlmBackend llmbackend.LLMBackend `pkl:"llmBackend"`
+	LlmFallbackBackend llmbackend.LLMBackend `pkl:"llmFallbackBackend"`
 
-	LlmModel string `pkl:"llmModel"`
+	LlmFallbackModel string `pkl:"llmFallbackModel"`
 
 	ModelFile *ModelFile `pkl:"modelFile"`
 }
