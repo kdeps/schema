@@ -1,7 +1,7 @@
 amends "package://schema.kdeps.com/core@VERSION_TAG#/Kdeps.pkl"
 
-dockerImage = "alpine:3.14"
-
+runMode = "docker"
+dockerGPU = "cpu"
 llmSettings {
   llmAPIKeys {
     openai_api_key = null
@@ -9,7 +9,7 @@ llmSettings {
     huggingface_api_token = null
     groq_api_key = null
   }
-  llmBackend = "ollama"
-  llmModel = "llama3.1"
+  llmFallbackBackend = "ollama"
+  llmFallbackModel = "llama3.1"
   modelFile = null
 }

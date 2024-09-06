@@ -8,8 +8,8 @@ typealias LLMBackend = "ollama"|"openai"|"mistral"|"huggingface"|"groq"
 
 class LLMSettings {
   llmAPIKeys: LLMAPIKeys = new {}
-  llmBackend: LLMBackend = "ollama"
-  llmModel: String = "llama3.1"
+  llmFallbackBackend: LLMBackend = "ollama"
+  llmFallbackModel: String = "llama3.1"
   modelFile: ModelFile?
 }
 
@@ -76,6 +76,8 @@ class ResourceChat {
   else
     throw("Error: Invalid configuration string: The LLM output string does not match any of the expected formats: ENV:, FILE:. Please ensure that the string starts with one of these prefixes.")
 
+  backend: LLMBackend = "ollama"
+  model: String = "llama3.1"
   prompt: String
   input: String(isValidLLMIOPrefix)?
   output: String(isValidLLMIOPrefix)
@@ -90,6 +92,8 @@ class ResourceChatSchema {
   else
     throw("Error: Invalid configuration string: The LLM output string does not match any of the expected formats: ENV:, FILE:. Please ensure that the string starts with one of these prefixes.")
 
+  backend: LLMBackend = "ollama"
+  model: String = "llama3.1"
   prompt: String
   schema: String
   input: String(isValidLLMIOPrefix)?
