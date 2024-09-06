@@ -6,6 +6,7 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 import "LLM.pkl"
 import "API.pkl"
+import "Docker.pkl"
 
 class Settings {
   runTimeout: Duration = 15.min
@@ -13,4 +14,5 @@ class Settings {
   llmSettings: LLM.LLMSettings
   apiServerMode: Boolean = false
   apiServerSettings: API.APIServerSettings
+  dockerSettings: Docker.DockerSettings?
 }

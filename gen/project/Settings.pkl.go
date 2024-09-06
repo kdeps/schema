@@ -4,6 +4,7 @@ package project
 import (
 	"github.com/apple/pkl-go/pkl"
 	"github.com/kdeps/schema/gen/api"
+	"github.com/kdeps/schema/gen/docker"
 	"github.com/kdeps/schema/gen/llm"
 )
 
@@ -17,4 +18,6 @@ type Settings struct {
 	ApiServerMode bool `pkl:"apiServerMode"`
 
 	ApiServerSettings *api.APIServerSettings `pkl:"apiServerSettings"`
+
+	DockerSettings *docker.DockerSettings `pkl:"dockerSettings"`
 }

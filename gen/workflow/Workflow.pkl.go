@@ -10,6 +10,12 @@ import (
 )
 
 type Workflow struct {
+	Name string `pkl:"name"`
+
+	Version string `pkl:"version"`
+
+	Action string `pkl:"action"`
+
 	Settings *project.Settings `pkl:"settings"`
 
 	Workflows []string `pkl:"workflows"`

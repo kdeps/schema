@@ -1,0 +1,10 @@
+@go.Package { name = "github.com/kdeps/schema/gen/docker" }
+
+module org.kdeps.pkl.Docker
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+
+class DockerSettings {
+  packages: Listing<String>?
+  localModels: Listing<String>?
+}
