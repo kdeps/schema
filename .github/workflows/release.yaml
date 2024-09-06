@@ -18,14 +18,6 @@ jobs:
       env:
         VERSION: ${{ github.ref_name }}
       run: ./gradlew makePackages
-    - name: generate templates
-      env:
-        VERSION_NUM: ${{ github.ref_name }}
-      run: |
-        export VERSION=$(echo "${VERSION_NUM}" | sed -E 's/^v(.*)/\1/')
-        cat templates/kdeps.pkl | sed "s/VERSION_TAG/${VERSION}/g" > build/generated/pkl/packages/kdeps.pkl
-        cat templates/workflows.pkl | sed "s/VERSION_TAG/${VERSION}/g" > build/generated/pkl/packages/workflows.pkl
-        cat templates/resources.pkl | sed "s/VERSION_TAG/${VERSION}/g" > build/generated/pkl/packages/resources.pkl
     - name: release
       uses: softprops/action-gh-release@v1
       with:

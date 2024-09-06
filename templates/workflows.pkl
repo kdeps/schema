@@ -1,5 +1,0 @@
-amends "package://schema.kdeps.com/core@VERSION_TAG#/Workflow.pkl"
-
-workflows {
-  "resources.pkl"
-}
