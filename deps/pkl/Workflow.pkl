@@ -28,9 +28,9 @@ if (str.matches(versionStringRegex))
 else
   throw("Error: Invalid version format. Expected format: major.minor.patch or major.minor.")
 
-name: String(isValidName)
-version: String(versionRegex) = "1.0.0"
-action: String(isValidAction)
+name: String(isValidName) = "myAgent"
+version: String(isValidVersion) = "1.0.0"
+action: String(isValidAction) = "helloWorld"
 
 settings: Project.Settings?
 workflows: Listing<Uri>
