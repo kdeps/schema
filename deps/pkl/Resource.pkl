@@ -26,28 +26,6 @@ class AppResource {
   run: Listing<ResourceAction>?
 }
 
-class RAGResource {
-  hidden idStringRegex = Regex(#"(^\w+$)"#)
-
-  hidden isValidId = (str) ->
-  if (str.matches(idStringRegex))
-    true
-  else
-    throw("Error: Invalid RAG name: The RAG name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
-
-  id: String(isValidId)
-  name: String
-  description: String
-  category: String(isValidId)
-  requires: Listing<String(isValidId)>?
-  action: Listing<RAGAction>?
-}
-
-class RAGAction {
-  hidden ragActionPrefixRegex = Regex(#"^(?i:(PROMPT|NOTIFY|OUTPUT):)(.+$)"#)
-  hidden ragEventPrefixRegex = Regex(#"^(?i:(BEFORE|DURING|AFTER):)(.+$)"#)
-}
-
 class ResourceAction {
   hidden actionPrefixRegex = Regex(#"^(?i:(!?(ENV|FILE|DIR|CMD|URL|EXEC):))(.+)$"#)
 
@@ -61,13 +39,10 @@ class ResourceAction {
   exec: String
   settings: Project.Settings?
   skip: Listing<String(isValidPrefix)>?
-  check: Listing<String(isValidPrefix)>?
-  expect: Listing<String(isValidPrefix)>?
+  preflight: Listing<String(isValidPrefix)>?
   env: Listing<ENV.ResourceEnv>?
   chat: Listing<LLM.ResourceChat>?
-  schat: Listing<LLM.ResourceChatSchema>?
-  api: Listing<API.ResourceAPI>?
+  httpClient: Listing<API.ResourceHTTPClient>?
 }
 
 resources: Listing<AppResource>
-rag: Listing<RAGResource>
