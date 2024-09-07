@@ -9,7 +9,7 @@ class APIServerSettings {
   routes: Listing<APIServerRoutes> = new { new {} }
 }
 
-class ResourceAPI {
+class ResourceHTTPClient {
   hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
   hidden apiOutputPrefixRegex = Regex(#"^(?i:(ENV|FILE):)(.+$)"#)
 
@@ -29,10 +29,10 @@ class ResourceAPI {
   url: Uri
   data: String
   output: String(isValidAPIOutputPrefix)? = "ENV:API_RESPONSE"
-  headers: Listing<ResourceAPIHeaders>
+  headers: Listing<ResourceHTTPClientHeaders>
 }
 
-class ResourceAPIHeaders {
+class ResourceHTTPClientHeaders {
   name: String
   value: String
 }
