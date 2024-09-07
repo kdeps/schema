@@ -9,6 +9,4 @@ type LLMSettings struct {
 	LlmFallbackBackend llmbackend.LLMBackend `pkl:"llmFallbackBackend"`
 
 	LlmFallbackModel string `pkl:"llmFallbackModel"`
-
-	ModelFile *ModelFile `pkl:"modelFile"`
 }

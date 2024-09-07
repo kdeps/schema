@@ -7,6 +7,4 @@ type ResourceEnv struct {
 	Exec *string `pkl:"exec"`
 
 	Value *string `pkl:"value"`
-
-	Input *string `pkl:"input"`
 }

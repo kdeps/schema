@@ -1,7 +1,7 @@
 // Code generated from Pkl module `org.kdeps.pkl.API`. DO NOT EDIT.
 package api
 
-type ResourceAPI struct {
+type ResourceHTTPClient struct {
 	Method string `pkl:"method"`
 
 	Url string `pkl:"url"`
@@ -10,5 +10,5 @@ type ResourceAPI struct {
 
 	Output *string `pkl:"output"`
 
-	Headers []*ResourceAPIHeaders `pkl:"headers"`
+	Headers []*ResourceHTTPClientHeaders `pkl:"headers"`
 }

@@ -7,6 +7,6 @@ func init() {
 	pkl.RegisterMapping("org.kdeps.pkl.API#APIServerSettings", APIServerSettings{})
 	pkl.RegisterMapping("org.kdeps.pkl.API#APIServerRoutes", APIServerRoutes{})
 	pkl.RegisterMapping("org.kdeps.pkl.API", API{})
-	pkl.RegisterMapping("org.kdeps.pkl.API#ResourceAPI", ResourceAPI{})
-	pkl.RegisterMapping("org.kdeps.pkl.API#ResourceAPIHeaders", ResourceAPIHeaders{})
+	pkl.RegisterMapping("org.kdeps.pkl.API#ResourceHTTPClient", ResourceHTTPClient{})
+	pkl.RegisterMapping("org.kdeps.pkl.API#ResourceHTTPClientHeaders", ResourceHTTPClientHeaders{})
 }

@@ -17,15 +17,11 @@ type ResourceAction struct {
 
 	Skip *[]string `pkl:"skip"`
 
-	Check *[]string `pkl:"check"`
-
-	Expect *[]string `pkl:"expect"`
+	Preflight *[]string `pkl:"preflight"`
 
 	Env *[]*env.ResourceEnv `pkl:"env"`
 
 	Chat *[]*llm.ResourceChat `pkl:"chat"`
 
-	Schat *[]*llm.ResourceChatSchema `pkl:"schat"`
-
-	Api *[]*api.ResourceAPI `pkl:"api"`
+	HttpClient *[]*api.ResourceHTTPClient `pkl:"httpClient"`
 }

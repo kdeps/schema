@@ -9,8 +9,6 @@ import (
 
 type Resource struct {
 	Resources []*AppResource `pkl:"resources"`
-
-	Rag []*RAGResource `pkl:"rag"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Resource

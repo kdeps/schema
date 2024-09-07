@@ -7,6 +7,4 @@ func init() {
 	pkl.RegisterMapping("org.kdeps.pkl.Resource", Resource{})
 	pkl.RegisterMapping("org.kdeps.pkl.Resource#AppResource", AppResource{})
 	pkl.RegisterMapping("org.kdeps.pkl.Resource#ResourceAction", ResourceAction{})
-	pkl.RegisterMapping("org.kdeps.pkl.Resource#RAGResource", RAGResource{})
-	pkl.RegisterMapping("org.kdeps.pkl.Resource#RAGAction", RAGAction{})
 }
