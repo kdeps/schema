@@ -16,10 +16,10 @@ hidden isValidId = (str) ->
   else
     throw("Error: Invalid name: The name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
 
-id: String(isValidId)
-name: String
-description: String
-category: String(isValidId)
+id: String(isValidId) = "helloWorld"
+name: String?
+description: String?
+category: String(isValidId)?
 requires: Listing<String(isValidId)>?
 run: Listing<ResourceAction>?
 
@@ -32,8 +32,8 @@ class ResourceAction {
     else
       throw("Error: Invalid configuration string: The input string does not match any of the expected formats: ENV:, FILE:, DIR:, URL:, EXEC:. Please ensure that the string starts with one of these prefixes, optionally preceded by an exclamation mark to indicate negation (e.g. !ENV:, !FILE:, etc.).")
 
-  name: String
-  exec: String
+  name: String?
+  exec: String?
   settings: Project.Settings?
   skip: Listing<String(isValidPrefix)>?
   preflight: Listing<String(isValidPrefix)>?
