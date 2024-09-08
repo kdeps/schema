@@ -4,21 +4,6 @@ module org.kdeps.pkl.LLM
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-typealias LLMBackend = "local"|"openai-api"|"mistral-api"|"huggingface-api"|"groq-api"
-
-class LLMSettings {
-  llmAPIKeys: LLMAPIKeys = new {}
-  llmFallbackBackend: LLMBackend = "local"
-  llmFallbackModel: String = "llama3.1"
-}
-
-class LLMAPIKeys {
-  openai_api_key: String? = read?("env:OPENAI_API_KEY")
-  mistral_api_key: String? = read?("env:MISTRAL_API_KEY")
-  huggingface_api_token: String? = read?("env:HUGGINGFACE_API_TOKEN")
-  groq_api_key: String? = read?("env:GROQ_API_KEY")
-}
-
 class ResourceChat {
   hidden llmActionPrefixRegex = Regex(#"^(?i:(ENV|FILE):)(.+$)"#)
 
@@ -28,7 +13,6 @@ class ResourceChat {
   else
     throw("Error: Invalid configuration string: The LLM output string does not match any of the expected formats: ENV:, FILE:. Please ensure that the string starts with one of these prefixes.")
 
-  backend: LLMBackend = "local"
   model: String = "llama3.1"
   prompt: String
   input: String(isValidLLMIOPrefix)?

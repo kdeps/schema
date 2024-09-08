@@ -4,11 +4,8 @@ module org.kdeps.pkl.Kdeps
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-import "LLM.pkl"
-
 typealias GPU = "nvidia"|"amd"|"cpu"
 typealias RunMode = "docker"|"local"
 
 runMode: RunMode = "docker"
 dockerGPU: GPU = "cpu"
-llmSettings: LLM.LLMSettings
