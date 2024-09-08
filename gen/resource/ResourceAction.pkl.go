@@ -9,9 +9,9 @@ import (
 )
 
 type ResourceAction struct {
-	Name string `pkl:"name"`
+	Name *string `pkl:"name"`
 
-	Exec string `pkl:"exec"`
+	Exec *string `pkl:"exec"`
 
 	Settings *project.Settings `pkl:"settings"`
 

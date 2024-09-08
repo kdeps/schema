@@ -12,13 +12,21 @@ import (
 type Workflow struct {
 	Name string `pkl:"name"`
 
+	Description string `pkl:"description"`
+
+	Authors *[]string `pkl:"authors"`
+
+	Website *string `pkl:"website"`
+
+	Documentation *string `pkl:"documentation"`
+
+	Repository *string `pkl:"repository"`
+
 	Version string `pkl:"version"`
 
 	Action string `pkl:"action"`
 
 	Settings *project.Settings `pkl:"settings"`
-
-	Workflows []string `pkl:"workflows"`
 
 	Args *[]*parameters.Args `pkl:"args"`
 }

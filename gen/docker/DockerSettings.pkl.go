@@ -4,5 +4,5 @@ package docker
 type DockerSettings struct {
 	Packages *[]string `pkl:"packages"`
 
-	LocalModels *[]string `pkl:"localModels"`
+	Models *[]string `pkl:"models"`
 }

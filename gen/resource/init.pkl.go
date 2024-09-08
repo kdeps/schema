@@ -5,6 +5,5 @@ import "github.com/apple/pkl-go/pkl"
 
 func init() {
 	pkl.RegisterMapping("org.kdeps.pkl.Resource", Resource{})
-	pkl.RegisterMapping("org.kdeps.pkl.Resource#AppResource", AppResource{})
 	pkl.RegisterMapping("org.kdeps.pkl.Resource#ResourceAction", ResourceAction{})
 }
