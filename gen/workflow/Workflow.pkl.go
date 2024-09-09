@@ -24,7 +24,9 @@ type Workflow struct {
 
 	Version string `pkl:"version"`
 
-	Action string `pkl:"action"`
+	Action *string `pkl:"action"`
+
+	Workflows *[]string `pkl:"workflows"`
 
 	Settings *project.Settings `pkl:"settings"`
 
