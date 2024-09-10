@@ -29,26 +29,13 @@ hidden isValidDependency = (str) ->
   else
     throw("Action must be either a simple alphanumeric string or start with `@`, followed by `/action` and an optional `:version` (e.g., `@agent/action:1.0.0`).")
 
-id: String(isValidId) = "helloWorld"
-name: String? = "Hello World"
-description: String? = "This action just echo hello world then exits"
-category: String(isValidName)? = "introduction"
-requires: Listing<String(isValidDependency)>? = new {
-  "@workflow/action:1.0.0"
-  "@workflow/action2"
-  "action"
-}
+id: String(isValidId)?
+name: String?
+description: String?
+category: String(isValidName)?
+requires: Listing<String(isValidDependency)>?
 
-run: Listing<ResourceAction>? = new {
-  new {
-      name = "Say Hello"
-      exec = "echo 'hello'"
-  }
-  new {
-      name = "Say World"
-      exec = "echo 'world!'"
-  }
-}
+run: Listing<ResourceAction>?
 
 class ResourceAction {
   hidden actionPrefixRegex = Regex(#"^(?i:(!?(ENV|FILE|DIR|CMD|URL|EXEC):))(.+)$"#)

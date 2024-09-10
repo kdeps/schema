@@ -36,21 +36,17 @@ if (str.matches(versionStringRegex))
 else
   throw("Error: Invalid version format. Expected format: major.minor.patch or major.minor.")
 
-name: String(isValidName) = "myAgent"
-description: String = "My awesome AI Agent"
+name: String(isValidName)?
+description: String?
 authors: Listing<String>?
 website: Uri?
 documentation: Uri?
 repository: Uri?
 
-version: String(isValidVersion) = "1.0.0"
-action: String(isValidAction)? = "helloWorld"
+version: String(isValidVersion)? = "1.0.0"
+action: String(isValidAction)?
 
-workflows: Listing<String(isValidWorkflow)>? = new {
-  "@hello"
-  "@hellow/world"
-  "@hellow/world:3.0.0"
-}
+workflows: Listing<String(isValidWorkflow)>?
 
 settings: Project.Settings?
 args: Listing<Parameters.Args>?
