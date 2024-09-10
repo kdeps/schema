@@ -8,7 +8,7 @@ import (
 )
 
 type Resource struct {
-	Id string `pkl:"id"`
+	Id *string `pkl:"id"`
 
 	Name *string `pkl:"name"`
 

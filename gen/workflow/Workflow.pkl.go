@@ -10,9 +10,9 @@ import (
 )
 
 type Workflow struct {
-	Name string `pkl:"name"`
+	Name *string `pkl:"name"`
 
-	Description string `pkl:"description"`
+	Description *string `pkl:"description"`
 
 	Authors *[]string `pkl:"authors"`
 
@@ -22,7 +22,7 @@ type Workflow struct {
 
 	Repository *string `pkl:"repository"`
 
-	Version string `pkl:"version"`
+	Version *string `pkl:"version"`
 
 	Action *string `pkl:"action"`
 
