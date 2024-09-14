@@ -6,7 +6,7 @@ type DockerSettings struct {
 
 	Models *[]string `pkl:"models"`
 
-	HostName string `pkl:"hostName"`
+	Host string `pkl:"host"`
 
-	PortNum uint16 `pkl:"portNum"`
+	Port uint16 `pkl:"port"`
 }
