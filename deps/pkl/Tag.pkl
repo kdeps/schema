@@ -1,0 +1,18 @@
+@go.Package { name = "github.com/kdeps/schema/gen/tag" }
+
+module org.kdeps.pkl.Tag
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+
+class ResourceTag {
+  hidden idStringRegex = Regex(#"(^\w+$)"#)
+
+  hidden isValidTag = (str) ->
+  if (str.matches(idStringRegex))
+    true
+  else
+    throw("Error: invalid tag: The Tag name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+
+  name: String(isValidTag)
+  value: String?
+}

@@ -6,6 +6,7 @@ import (
 	"github.com/kdeps/schema/gen/env"
 	"github.com/kdeps/schema/gen/llm"
 	"github.com/kdeps/schema/gen/project"
+	"github.com/kdeps/schema/gen/tag"
 )
 
 type ResourceAction struct {
@@ -17,9 +18,11 @@ type ResourceAction struct {
 
 	Skip *[]string `pkl:"skip"`
 
-	Preflight *[]string `pkl:"preflight"`
+	PreflightCheck *[]string `pkl:"preflightCheck"`
 
 	Env *[]*env.ResourceEnv `pkl:"env"`
+
+	Tags *[]*tag.ResourceTag `pkl:"tags"`
 
 	Chat *[]*llm.ResourceChat `pkl:"chat"`
 
