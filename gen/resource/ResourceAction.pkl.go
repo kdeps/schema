@@ -2,7 +2,7 @@
 package resource
 
 import (
-	"github.com/kdeps/schema/gen/api"
+	"github.com/kdeps/schema/gen/api_server"
 	"github.com/kdeps/schema/gen/env"
 	"github.com/kdeps/schema/gen/llm"
 	"github.com/kdeps/schema/gen/project"
@@ -26,5 +26,5 @@ type ResourceAction struct {
 
 	Chat *[]*llm.ResourceChat `pkl:"chat"`
 
-	HttpClient *[]*api.ResourceHTTPClient `pkl:"httpClient"`
+	HttpClient *[]*apiserver.ResourceHTTPClient `pkl:"httpClient"`
 }

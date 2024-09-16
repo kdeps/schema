@@ -1,5 +1,5 @@
-// Code generated from Pkl module `org.kdeps.pkl.API`. DO NOT EDIT.
-package api
+// Code generated from Pkl module `org.kdeps.pkl.APIServer`. DO NOT EDIT.
+package apiserver
 
 type ResourceHTTPClient struct {
 	Method string `pkl:"method"`
@@ -7,8 +7,6 @@ type ResourceHTTPClient struct {
 	Url string `pkl:"url"`
 
 	Data string `pkl:"data"`
-
-	Output *string `pkl:"output"`
 
 	Headers []*ResourceHTTPClientHeaders `pkl:"headers"`
 }

@@ -1,0 +1,20 @@
+@go.Package { name = "github.com/kdeps/schema/gen/api_server_response" }
+
+module org.kdeps.pkl.APIServerResponse
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+
+class APIServerResponseBlock {
+  data: Listing<Any>?
+}
+
+class APIServerErrorsBlock {
+  code: Int?
+  message: String?
+}
+
+success: Boolean = true
+response: APIServerResponseBlock = new {
+  data = new {}
+}
+errors: APIServerErrorsBlock = new {}

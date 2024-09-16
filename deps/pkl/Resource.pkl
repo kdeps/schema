@@ -5,7 +5,7 @@ module org.kdeps.pkl.Resource
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 import "Project.pkl"
-import "API.pkl"
+import "APIServer.pkl"
 import "LLM.pkl"
 import "ENV.pkl"
 import "Tag.pkl"
@@ -55,5 +55,5 @@ class ResourceAction {
   env: Listing<ENV.ResourceEnv>?
   tags: Listing<Tag.ResourceTag>?
   chat: Listing<LLM.ResourceChat>?
-  httpClient: Listing<API.ResourceHTTPClient>?
+  httpClient: Listing<APIServer.ResourceHTTPClient>?
 }

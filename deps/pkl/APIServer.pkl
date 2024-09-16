@@ -1,0 +1,53 @@
+@go.Package { name = "github.com/kdeps/schema/gen/api_server" }
+
+module org.kdeps.pkl.APIServer
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+import "APIServerResponse.pkl"
+import "APIServerRequest.pkl"
+
+typealias APIServerResponseType = "json"|"yaml"|"jsonnet"|"plist"|"xml"|"pcf"|"textproto"
+
+class APIServerSettings {
+  serverPort: Int(isBetween(1024, 65535)) = 3000
+  routes: Listing<APIServerRoutes> = new { new {} }
+}
+
+class APIServerRoutes {
+  hidden apiServerMethodRegex = Regex(#"^(?i:(GET|POST))"#)
+
+  hidden isValidHTTPMethod = (str) ->
+  if (str.matches(apiServerMethodRegex))
+    true
+  else
+    throw("Error: Unsupported HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET or POST.")
+
+  path: String
+  methods: Listing<String(isValidHTTPMethod)> = new {
+    "POST"
+    "GET"
+  }
+  responseType: APIServerResponseType = "json"
+  hidden request: APIServerRequest
+  hidden response: APIServerResponse
+}
+
+class ResourceHTTPClient {
+  hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
+
+  hidden isValidHTTPMethod = (str) ->
+  if (str.matches(apiMethodRegex))
+    true
+  else
+    throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
+
+  method: String(isValidHTTPMethod)
+  url: Uri
+  data: String
+  headers: Listing<ResourceHTTPClientHeaders>
+}
+
+class ResourceHTTPClientHeaders {
+  name: String
+  value: String
+}

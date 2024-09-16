@@ -1,0 +1,34 @@
+@go.Package { name = "github.com/kdeps/schema/gen/api_server_request" }
+
+module org.kdeps.pkl.APIServerRequest
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+
+class APIServerRequestParams {
+  name: String
+  value: String
+}
+
+class APIServerRequestData {
+  name: String?
+  type: String?
+  value: Any?
+}
+
+class APIServerRequestHeader {
+  name: String?
+  value: Any?
+}
+
+hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
+hidden isValidHTTPMethod = (str) ->
+  if (str.matches(apiMethodRegex))
+    true
+  else
+    throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
+
+url: Uri?
+data: Listing<APIServerRequestData> = new {}
+method: String(isValidHTTPMethod)?
+params: Listing<APIServerRequestParams> = new {}
+headers: Listing<APIServerRequestHeader> = new {}

@@ -2,14 +2,14 @@
 package project
 
 import (
-	"github.com/kdeps/schema/gen/api"
+	"github.com/kdeps/schema/gen/api_server"
 	"github.com/kdeps/schema/gen/docker"
 )
 
 type Settings struct {
 	ApiServerMode *bool `pkl:"apiServerMode"`
 
-	ApiServerSettings *api.APIServerSettings `pkl:"apiServerSettings"`
+	ApiServerSettings *apiserver.APIServerSettings `pkl:"apiServerSettings"`
 
 	DockerSettings *docker.DockerSettings `pkl:"dockerSettings"`
 }

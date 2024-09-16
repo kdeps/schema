@@ -4,11 +4,11 @@ module org.kdeps.pkl.Project
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-import "API.pkl"
+import "APIServer.pkl"
 import "Docker.pkl"
 
 class Settings {
   apiServerMode: Boolean? = false
-  apiServerSettings: API.APIServerSettings?
+  apiServerSettings: APIServer.APIServerSettings?
   dockerSettings: Docker.DockerSettings?
 }
