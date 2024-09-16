@@ -9,7 +9,8 @@ import "APIServerRequest.pkl"
 typealias APIServerResponseType = "json"|"yaml"|"jsonnet"|"plist"|"xml"|"pcf"|"textproto"
 
 class APIServerSettings {
-  serverPort: Int(isBetween(1024, 65535)) = 3000
+  hostIP: String = "127.0.0.1"
+  portNum: UInt16 = 3000
   routes: Listing<APIServerRoutes> = new { new {} }
 }
 

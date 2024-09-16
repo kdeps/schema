@@ -7,6 +7,4 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 class DockerSettings {
   packages: Listing<String>?
   models: Listing<String>?
-  hostIP: String = "127.0.0.1"
-  portNum: UInt16 = 3000
 }
