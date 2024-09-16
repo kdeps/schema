@@ -2,7 +2,9 @@
 package apiserver
 
 type APIServerSettings struct {
-	ServerPort int `pkl:"serverPort"`
+	HostIP string `pkl:"hostIP"`
+
+	PortNum uint16 `pkl:"portNum"`
 
 	Routes []*APIServerRoutes `pkl:"routes"`
 }

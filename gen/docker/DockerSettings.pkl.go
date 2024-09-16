@@ -5,8 +5,4 @@ type DockerSettings struct {
 	Packages *[]string `pkl:"packages"`
 
 	Models *[]string `pkl:"models"`
-
-	HostIP string `pkl:"hostIP"`
-
-	PortNum uint16 `pkl:"portNum"`
 }
