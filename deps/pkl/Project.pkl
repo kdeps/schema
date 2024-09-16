@@ -10,5 +10,5 @@ import "Docker.pkl"
 class Settings {
   apiServerMode: Boolean? = false
   apiServerSettings: APIServer.APIServerSettings?
-  dockerSettings: Docker.DockerSettings?
+  agentSettings: Docker.DockerSettings?
 }

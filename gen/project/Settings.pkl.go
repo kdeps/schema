@@ -11,5 +11,5 @@ type Settings struct {
 
 	ApiServerSettings *apiserver.APIServerSettings `pkl:"apiServerSettings"`
 
-	DockerSettings *docker.DockerSettings `pkl:"dockerSettings"`
+	AgentSettings *docker.DockerSettings `pkl:"agentSettings"`
 }
