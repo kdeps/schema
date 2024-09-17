@@ -10,13 +10,13 @@ import (
 type APIServerRequest struct {
 	Url string `pkl:"url"`
 
-	Data *[]*APIServerRequestData `pkl:"data"`
-
 	Method string `pkl:"method"`
 
-	Params *[]*APIServerRequestParams `pkl:"params"`
+	Data *string `pkl:"data"`
 
-	Headers *[]*APIServerRequestHeader `pkl:"headers"`
+	Params *map[string]string `pkl:"params"`
+
+	Headers *map[string]string `pkl:"headers"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a APIServerRequest
