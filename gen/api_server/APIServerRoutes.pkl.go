@@ -8,7 +8,5 @@ type APIServerRoutes struct {
 
 	Methods []string `pkl:"methods"`
 
-	Action *string `pkl:"action"`
-
 	ResponseType apiserverresponsetype.APIServerResponseType `pkl:"responseType"`
 }

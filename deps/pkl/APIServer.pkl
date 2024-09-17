@@ -28,7 +28,6 @@ class APIServerRoutes {
     "POST"
     "GET"
   }
-  action: String?
   responseType: APIServerResponseType = "json"
 }
 
