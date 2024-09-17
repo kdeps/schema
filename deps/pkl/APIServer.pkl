@@ -11,7 +11,7 @@ typealias APIServerResponseType = "json"|"yaml"|"jsonnet"|"plist"|"xml"|"pcf"|"t
 class APIServerSettings {
   hostIP: String = "127.0.0.1"
   portNum: UInt16 = 3000
-  routes: Listing<APIServerRoutes> = new { new {} }
+  routes: Listing<APIServerRoutes>
 }
 
 class APIServerRoutes {
@@ -28,9 +28,8 @@ class APIServerRoutes {
     "POST"
     "GET"
   }
+  action: String?
   responseType: APIServerResponseType = "json"
-  hidden request: APIServerRequest
-  hidden response: APIServerResponse
 }
 
 class ResourceHTTPClient {

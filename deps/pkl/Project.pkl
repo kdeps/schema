@@ -8,7 +8,7 @@ import "APIServer.pkl"
 import "Docker.pkl"
 
 class Settings {
-  apiServerMode: Boolean? = false
-  apiServerSettings: APIServer.APIServerSettings?
-  agentSettings: Docker.DockerSettings?
+  apiServerMode: Boolean = false
+  apiServer: APIServer.APIServerSettings?
+  agentSettings: Docker.DockerSettings
 }

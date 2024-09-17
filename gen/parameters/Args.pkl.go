@@ -6,5 +6,5 @@ type Args struct {
 
 	Required bool `pkl:"required"`
 
-	Description string `pkl:"description"`
+	Description *string `pkl:"description"`
 }

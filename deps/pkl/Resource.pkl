@@ -30,28 +30,18 @@ hidden isValidDependency = (str) ->
   else
     throw("Action must be either a simple alphanumeric string or start with `@`, followed by `/action` and an optional `:version` (e.g., `@agent/action:1.0.0`).")
 
-id: String(isValidId)?
-name: String?
-description: String?
-category: String(isValidName)?
+id: String(isValidId)
+name: String
+description: String
+category: String(isValidName)
 requires: Listing<String(isValidDependency)>?
-
-run: Listing<ResourceAction>?
+run: Listing<ResourceAction>
 
 class ResourceAction {
-  hidden actionPrefixRegex = Regex(#"^(?i:(!?(ENV|FILE|DIR|CMD|URL|EXEC):))(.+)$"#)
-
-  hidden isValidPrefix = (str) ->
-    if (str.matches(actionPrefixRegex))
-      true
-    else
-      throw("Error: Invalid configuration string: The input string does not match any of the expected formats: ENV:, FILE:, DIR:, URL:, EXEC:. Please ensure that the string starts with one of these prefixes, optionally preceded by an exclamation mark to indicate negation (e.g. !ENV:, !FILE:, etc.).")
-
-  name: String?
+  name: String
   exec: String?
-  settings: Project.Settings?
-  skip: Listing<String(isValidPrefix)>?
-  preflightCheck: Listing<String(isValidPrefix)>?
+  skip: Listing<Boolean>?
+  preflightCheck: Listing<Boolean>?
   env: Listing<ENV.ResourceEnv>?
   tags: Listing<Tag.ResourceTag>?
   chat: Listing<LLM.ResourceChat>?

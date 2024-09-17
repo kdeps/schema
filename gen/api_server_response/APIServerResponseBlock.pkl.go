@@ -2,5 +2,5 @@
 package apiserverresponse
 
 type APIServerResponseBlock struct {
-	Data *[]any `pkl:"data"`
+	Data []any `pkl:"data"`
 }

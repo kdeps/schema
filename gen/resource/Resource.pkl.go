@@ -8,17 +8,17 @@ import (
 )
 
 type Resource struct {
-	Id *string `pkl:"id"`
+	Id string `pkl:"id"`
 
-	Name *string `pkl:"name"`
+	Name string `pkl:"name"`
 
-	Description *string `pkl:"description"`
+	Description string `pkl:"description"`
 
-	Category *string `pkl:"category"`
+	Category string `pkl:"category"`
 
 	Requires *[]string `pkl:"requires"`
 
-	Run *[]*ResourceAction `pkl:"run"`
+	Run []*ResourceAction `pkl:"run"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Resource

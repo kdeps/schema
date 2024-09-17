@@ -15,5 +15,5 @@ class Args {
 
   name: String(isValidARG)
   required: Boolean = true
-  description: String
+  description: String?
 }

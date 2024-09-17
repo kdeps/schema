@@ -2,7 +2,7 @@
 package apiserverresponse
 
 type APIServerErrorsBlock struct {
-	Code *int `pkl:"code"`
+	Code int `pkl:"code"`
 
-	Message *string `pkl:"message"`
+	Message string `pkl:"message"`
 }

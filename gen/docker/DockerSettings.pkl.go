@@ -4,5 +4,5 @@ package docker
 type DockerSettings struct {
 	Packages *[]string `pkl:"packages"`
 
-	Models *[]string `pkl:"models"`
+	Models []string `pkl:"models"`
 }

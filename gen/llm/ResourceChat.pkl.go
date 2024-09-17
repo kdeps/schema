@@ -5,8 +5,4 @@ type ResourceChat struct {
 	Model string `pkl:"model"`
 
 	Prompt string `pkl:"prompt"`
-
-	Input *string `pkl:"input"`
-
-	Output string `pkl:"output"`
 }

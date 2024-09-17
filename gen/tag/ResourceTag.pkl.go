@@ -4,5 +4,5 @@ package tag
 type ResourceTag struct {
 	Name string `pkl:"name"`
 
-	Value *string `pkl:"value"`
+	Value string `pkl:"value"`
 }

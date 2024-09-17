@@ -2,9 +2,9 @@
 package apiserverrequest
 
 type APIServerRequestData struct {
-	Name *string `pkl:"name"`
+	Name string `pkl:"name"`
 
-	Type *string `pkl:"type"`
+	Type string `pkl:"type"`
 
-	Value *any `pkl:"value"`
+	Value any `pkl:"value"`
 }

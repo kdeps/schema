@@ -8,15 +8,15 @@ import (
 )
 
 type APIServerRequest struct {
-	Url *string `pkl:"url"`
+	Url string `pkl:"url"`
 
-	Data []*APIServerRequestData `pkl:"data"`
+	Data *[]*APIServerRequestData `pkl:"data"`
 
-	Method *string `pkl:"method"`
+	Method string `pkl:"method"`
 
-	Params []*APIServerRequestParams `pkl:"params"`
+	Params *[]*APIServerRequestParams `pkl:"params"`
 
-	Headers []*APIServerRequestHeader `pkl:"headers"`
+	Headers *[]*APIServerRequestHeader `pkl:"headers"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a APIServerRequest

@@ -5,20 +5,17 @@ import (
 	"github.com/kdeps/schema/gen/api_server"
 	"github.com/kdeps/schema/gen/env"
 	"github.com/kdeps/schema/gen/llm"
-	"github.com/kdeps/schema/gen/project"
 	"github.com/kdeps/schema/gen/tag"
 )
 
 type ResourceAction struct {
-	Name *string `pkl:"name"`
+	Name string `pkl:"name"`
 
 	Exec *string `pkl:"exec"`
 
-	Settings *project.Settings `pkl:"settings"`
+	Skip *[]bool `pkl:"skip"`
 
-	Skip *[]string `pkl:"skip"`
-
-	PreflightCheck *[]string `pkl:"preflightCheck"`
+	PreflightCheck *[]bool `pkl:"preflightCheck"`
 
 	Env *[]*env.ResourceEnv `pkl:"env"`
 

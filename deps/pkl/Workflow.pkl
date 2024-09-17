@@ -36,17 +36,17 @@ if (str.matches(versionStringRegex))
 else
   throw("Error: Invalid version format. Expected format: major.minor.patch or major.minor.")
 
-name: String(isValidName)?
-description: String?
-authors: Listing<String>?
+name: String(isValidName)
+description: String
 website: Uri?
+authors: Listing<String>?
 documentation: Uri?
 repository: Uri?
 
-version: String(isValidVersion)? = "1.0.0"
-action: String(isValidAction)?
+version: String(isValidVersion) = "1.0.0"
+action: String(isValidAction)
 
-workflows: Listing<String(isValidWorkflow)>?
+workflows: Listing<String(isValidWorkflow)>
 
-settings: Project.Settings?
+settings: Project.Settings
 args: Listing<Parameters.Args>?

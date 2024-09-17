@@ -14,5 +14,5 @@ class ResourceTag {
     throw("Error: invalid tag: The Tag name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
 
   name: String(isValidTag)
-  value: String?
+  value: String
 }

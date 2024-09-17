@@ -7,9 +7,9 @@ import (
 )
 
 type Settings struct {
-	ApiServerMode *bool `pkl:"apiServerMode"`
+	ApiServerMode bool `pkl:"apiServerMode"`
 
-	ApiServerSettings *apiserver.APIServerSettings `pkl:"apiServerSettings"`
+	ApiServer *apiserver.APIServerSettings `pkl:"apiServer"`
 
 	AgentSettings *docker.DockerSettings `pkl:"agentSettings"`
 }

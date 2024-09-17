@@ -2,7 +2,7 @@
 package apiserverrequest
 
 type APIServerRequestHeader struct {
-	Name *string `pkl:"name"`
+	Name string `pkl:"name"`
 
-	Value *any `pkl:"value"`
+	Value any `pkl:"value"`
 }
