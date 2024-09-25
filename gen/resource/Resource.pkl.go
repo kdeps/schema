@@ -18,7 +18,7 @@ type Resource struct {
 
 	Requires *[]string `pkl:"requires"`
 
-	Run []*ResourceAction `pkl:"run"`
+	Action []*ResourceAction `pkl:"action"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Resource

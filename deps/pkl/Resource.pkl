@@ -6,6 +6,7 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 import "Project.pkl"
 import "APIServer.pkl"
+import "APIServerResponse.pkl"
 import "LLM.pkl"
 import "ENV.pkl"
 import "Tag.pkl"
@@ -35,15 +36,17 @@ name: String
 description: String
 category: String(isValidName)
 requires: Listing<String(isValidDependency)>?
-run: Listing<ResourceAction>
+action: Listing<ResourceAction>
 
 class ResourceAction {
   name: String
   exec: String?
-  skip: Listing<Boolean>?
-  preflightCheck: Listing<Boolean>?
   env: Listing<ENV.ResourceEnv>?
   tags: Listing<Tag.ResourceTag>?
   chat: Listing<LLM.ResourceChat>?
+  skipCondition: Listing<Boolean>?
+  preflightCheck: Listing<Boolean>?
+  postflightCheck: Listing<Boolean>?
   httpClient: Listing<APIServer.ResourceHTTPClient>?
+  apiResponse: APIServerResponse?
 }
