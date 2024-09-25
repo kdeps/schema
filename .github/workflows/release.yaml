@@ -22,31 +22,34 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: build/generated/pkl/packages/*
-  #   - name: create docs
-  #     env:
-  #       VERSION_NUM: ${{ github.ref_name }}
-  #     run: |
-  #       # Extract version number without the leading 'v'
-  #       export VERSION=$(echo "${VERSION_NUM}" | sed -E 's/^v(.*)/\1/')
-  #       ./gradlew pkldoc
-  #   - name: setup pages
-  #     uses: actions/configure-pages@v4
-  #   - name: upload artifact
-  #     uses: actions/upload-pages-artifact@v3
-  #     with:
-  #       path: build/pkldoc/pkldoc
-  #   permissions:
-  #     contents: write
-  # deploy-pages:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - id: deployment
-  #     name: deploy pages
-  #     uses: actions/deploy-pages@v4
-  #   needs: build-and-upload
-  #   permissions:
-  #     pages: write
-  #     id-token: write
-  #   environment:
-  #     name: pkl-docs
-  #     url: ${{ steps.deployment.outputs.page_url }}
+    - name: Sleep for 5 seconds (to resolve new pkl version release)
+      run: sleep 5s
+      shell: bash
+    - name: create docs
+      env:
+        VERSION_NUM: ${{ github.ref_name }}
+      run: |
+        # Extract version number without the leading 'v'
+        export VERSION=$(echo "${VERSION_NUM}" | sed -E 's/^v(.*)/\1/')
+        ./gradlew pkldoc
+    - name: setup pages
+      uses: actions/configure-pages@v4
+    - name: upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: build/pkldoc/pkldoc
+    permissions:
+      contents: write
+  deploy-pages:
+    runs-on: ubuntu-latest
+    steps:
+    - id: deployment
+      name: deploy pages
+      uses: actions/deploy-pages@v4
+    needs: build-and-upload
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: pkl-docs
+      url: ${{ steps.deployment.outputs.page_url }}
