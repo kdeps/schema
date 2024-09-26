@@ -20,9 +20,9 @@ type ResourceAction struct {
 
 	SkipCondition *[]bool `pkl:"skipCondition"`
 
-	PreflightCheck *[]bool `pkl:"preflightCheck"`
+	PreflightCheck *ValidationCheck `pkl:"preflightCheck"`
 
-	PostflightCheck *[]bool `pkl:"postflightCheck"`
+	PostflightCheck *ValidationCheck `pkl:"postflightCheck"`
 
 	HttpClient *[]*apiserver.ResourceHTTPClient `pkl:"httpClient"`
 
