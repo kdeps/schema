@@ -11,19 +11,12 @@ import "LLM.pkl"
 import "ENV.pkl"
 import "Tag.pkl"
 
-hidden nameStringRegex = Regex(#"(^\w+$)"#)
 hidden actionStringRegex = Regex(#"^(\w+|@\w+(/[\w-]+)(:[\w.]+)?)$"#)
 hidden isValidId = (str) ->
   if (str.matches(actionStringRegex))
     true
   else
-    throw("Error: Invalid name: The name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
-
-hidden isValidName = (str) ->
-  if (str.matches(nameStringRegex))
-    true
-  else
-    throw("Error: Invalid category name: The name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+    throw("Error: Invalid id name: The id contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
 
 hidden isValidDependency = (str) ->
   if (str.matches(actionStringRegex))
@@ -34,12 +27,11 @@ hidden isValidDependency = (str) ->
 id: String(isValidId)
 name: String
 description: String
-category: String(isValidName)
+category: String
 requires: Listing<String(isValidDependency)>?
-action: Listing<ResourceAction>
+run: ResourceAction
 
 class ResourceAction {
-  name: String
   exec: String?
   env: Listing<ENV.ResourceEnv>?
   tags: Listing<Tag.ResourceTag>?

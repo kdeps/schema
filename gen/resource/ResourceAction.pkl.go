@@ -10,8 +10,6 @@ import (
 )
 
 type ResourceAction struct {
-	Name string `pkl:"name"`
-
 	Exec *string `pkl:"exec"`
 
 	Env *[]*env.ResourceEnv `pkl:"env"`
