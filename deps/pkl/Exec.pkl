@@ -1,0 +1,19 @@
+@go.Package { name = "github.com/kdeps/schema/gen/exec" }
+
+module org.kdeps.pkl.Exec
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+
+stdout: Mapping<String, String>?
+stderr: Mapping<String, String>?
+
+class ResourceExec {
+  hidden envStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
+  hidden isValidEnv = (str) ->
+  if (str.matches(envStringRegex))
+    true
+  else
+    throw("Error: Invalid env name: The env name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
+  env: Mapping<String(isValidEnv), String>?
+  command: String
+}

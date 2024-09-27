@@ -1,10 +1,8 @@
-// Code generated from Pkl module `org.kdeps.pkl.ENV`. DO NOT EDIT.
+// Code generated from Pkl module `org.kdeps.pkl.Env`. DO NOT EDIT.
 package env
 
 type ResourceEnv struct {
 	Name string `pkl:"name"`
 
-	Exec *string `pkl:"exec"`
-
-	Value *string `pkl:"value"`
+	Value string `pkl:"value"`
 }

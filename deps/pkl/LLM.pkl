@@ -4,7 +4,10 @@ module org.kdeps.pkl.LLM
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
+chat: Mapping<String, ResourceChat>?
+
 class ResourceChat {
   model: String = "llama3.1"
   prompt: String
+  response: String?
 }

@@ -1,0 +1,26 @@
+@go.Package { name = "github.com/kdeps/schema/gen/http" }
+
+module org.kdeps.pkl.Http
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+
+client: Mapping<String, ResourceHTTPClient>?
+
+class ResourceHTTPClient {
+  hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
+
+  hidden isValidHTTPMethod = (str) ->
+  if (str.matches(apiMethodRegex))
+    true
+  else
+    throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
+
+  method: String(isValidHTTPMethod)
+  url: Uri
+  data: String?
+  headers: Mapping<String, String>?
+  response: String?
+  responseData: String?
+  responseBody: String?
+  responseHeaders: Mapping<String, String>?
+}

@@ -8,6 +8,7 @@ import (
 )
 
 type LLM struct {
+	Chat *map[string]*ResourceChat `pkl:"chat"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a LLM

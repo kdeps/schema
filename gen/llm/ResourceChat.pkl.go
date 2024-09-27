@@ -5,4 +5,6 @@ type ResourceChat struct {
 	Model string `pkl:"model"`
 
 	Prompt string `pkl:"prompt"`
+
+	Response *string `pkl:"response"`
 }

@@ -8,6 +8,9 @@ import (
 )
 
 type Tag struct {
+	ResourceTags *map[string]*ResourceTag `pkl:"resourceTags"`
+
+	Tags *map[string]string `pkl:"tags"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Tag

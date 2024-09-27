@@ -30,23 +30,3 @@ class APIServerRoutes {
   }
   responseType: APIServerResponseType = "json"
 }
-
-class ResourceHTTPClient {
-  hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
-
-  hidden isValidHTTPMethod = (str) ->
-  if (str.matches(apiMethodRegex))
-    true
-  else
-    throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
-
-  method: String(isValidHTTPMethod)
-  url: Uri
-  data: String
-  headers: Listing<ResourceHTTPClientHeaders>
-}
-
-class ResourceHTTPClientHeaders {
-  name: String
-  value: String
-}

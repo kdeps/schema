@@ -2,21 +2,16 @@
 package resource
 
 import (
-	"github.com/kdeps/schema/gen/api_server"
 	"github.com/kdeps/schema/gen/api_server_response"
-	"github.com/kdeps/schema/gen/env"
+	"github.com/kdeps/schema/gen/exec"
+	"github.com/kdeps/schema/gen/http"
 	"github.com/kdeps/schema/gen/llm"
-	"github.com/kdeps/schema/gen/tag"
 )
 
 type ResourceAction struct {
-	Exec *string `pkl:"exec"`
+	Exec *exec.ResourceExec `pkl:"exec"`
 
-	Env *[]*env.ResourceEnv `pkl:"env"`
-
-	Tags *[]*tag.ResourceTag `pkl:"tags"`
-
-	Chat *[]*llm.ResourceChat `pkl:"chat"`
+	Chat *llm.ResourceChat `pkl:"chat"`
 
 	SkipCondition *[]bool `pkl:"skipCondition"`
 
@@ -24,7 +19,7 @@ type ResourceAction struct {
 
 	PostflightCheck *ValidationCheck `pkl:"postflightCheck"`
 
-	HttpClient *[]*apiserver.ResourceHTTPClient `pkl:"httpClient"`
+	HttpClient *http.ResourceHTTPClient `pkl:"httpClient"`
 
 	ApiResponse *apiserverresponse.APIServerResponse `pkl:"apiResponse"`
 }
