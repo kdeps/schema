@@ -6,11 +6,10 @@ import (
 
 	"github.com/apple/pkl-go/pkl"
 	"github.com/kdeps/schema/gen/kdeps/gpu"
-	"github.com/kdeps/schema/gen/kdeps/runmode"
 )
 
 type Kdeps struct {
-	RunMode runmode.RunMode `pkl:"runMode"`
+	RunMode string `pkl:"runMode"`
 
 	DockerGPU gpu.GPU `pkl:"dockerGPU"`
 }

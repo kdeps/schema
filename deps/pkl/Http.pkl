@@ -4,7 +4,7 @@ module org.kdeps.pkl.Http
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-client: Mapping<String, ResourceHTTPClient>?
+resource: Mapping<String, ResourceHTTPClient>?
 
 class ResourceHTTPClient {
   hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
@@ -23,4 +23,5 @@ class ResourceHTTPClient {
   responseData: String?
   responseBody: String?
   responseHeaders: Mapping<String, String>?
+  timestamp: UInt32?
 }

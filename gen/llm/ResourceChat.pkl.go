@@ -7,4 +7,6 @@ type ResourceChat struct {
 	Prompt string `pkl:"prompt"`
 
 	Response *string `pkl:"response"`
+
+	Timestamp *uint32 `pkl:"timestamp"`
 }

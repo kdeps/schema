@@ -8,9 +8,7 @@ import (
 )
 
 type Exec struct {
-	Stdout *map[string]string `pkl:"stdout"`
-
-	Stderr *map[string]string `pkl:"stderr"`
+	Resource *map[string]*ResourceExec `pkl:"resource"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Exec

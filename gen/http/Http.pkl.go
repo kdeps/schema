@@ -8,7 +8,7 @@ import (
 )
 
 type Http struct {
-	Client *map[string]*ResourceHTTPClient `pkl:"client"`
+	Resource *map[string]*ResourceHTTPClient `pkl:"resource"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Http

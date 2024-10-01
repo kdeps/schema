@@ -26,4 +26,5 @@ class ResourceTag {
 
   name: String(isValidTag)
   value: String
+  timestamp: UInt32?
 }

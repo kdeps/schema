@@ -4,8 +4,7 @@ module org.kdeps.pkl.Exec
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-stdout: Mapping<String, String>?
-stderr: Mapping<String, String>?
+resource: Mapping<String, ResourceExec>?
 
 class ResourceExec {
   hidden envStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
@@ -16,4 +15,7 @@ class ResourceExec {
     throw("Error: Invalid env name: The env name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
   env: Mapping<String(isValidEnv), String>?
   command: String
+  stderr: String?
+  stdout: String?
+  timestamp: UInt32?
 }

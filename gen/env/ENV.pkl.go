@@ -8,9 +8,7 @@ import (
 )
 
 type Env struct {
-	ResourceEnv *map[string]*ResourceEnv `pkl:"resourceEnv"`
-
-	Env *map[string]string `pkl:"env"`
+	Resource *map[string]*ResourceEnv `pkl:"resource"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Env
