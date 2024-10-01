@@ -22,8 +22,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: build/generated/pkl/packages/*
-    - name: Sleep for 5 seconds (to resolve new pkl version release)
-      run: sleep 5s
+    - name: Sleep to resolve new pkl version release
+      run: sleep 60s
       shell: bash
     - name: create docs
       env:
