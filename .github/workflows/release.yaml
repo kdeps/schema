@@ -22,16 +22,22 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: build/generated/pkl/packages/*
-    - name: Sleep to resolve new pkl version release
-      run: sleep 60s
-      shell: bash
     - name: create docs
       env:
         VERSION_NUM: ${{ github.ref_name }}
       run: |
+        # Retry mechanism
+        set +e
         # Extract version number without the leading 'v'
         export VERSION=$(echo "${VERSION_NUM}" | sed -E 's/^v(.*)/\1/')
         ./gradlew pkldoc
+        EXIT_CODE=$?
+        if [ $EXIT_CODE -ne 0 ]; then
+          echo "First attempt failed, retrying..."
+          sleep 30s
+          ./gradlew pkldoc
+        fi
+        set -e
     - name: setup pages
       uses: actions/configure-pages@v4
     - name: upload artifact
