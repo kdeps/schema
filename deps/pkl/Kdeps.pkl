@@ -6,6 +6,10 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 typealias GPU = "nvidia"|"amd"|"cpu"
 typealias RunMode = "docker"
+typealias Path = "user"|"project"|"xdg"
 
 runMode: RunMode = "docker"
 dockerGPU: GPU = "cpu"
+llmTimeoutSeconds: Int = 30
+kdepsDir: String = ".kdeps"
+kdepsPath: Path = "user"

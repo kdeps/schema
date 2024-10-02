@@ -6,12 +6,19 @@ import (
 
 	"github.com/apple/pkl-go/pkl"
 	"github.com/kdeps/schema/gen/kdeps/gpu"
+	"github.com/kdeps/schema/gen/kdeps/path"
 )
 
 type Kdeps struct {
 	RunMode string `pkl:"runMode"`
 
 	DockerGPU gpu.GPU `pkl:"dockerGPU"`
+
+	LlmTimeoutSeconds int `pkl:"llmTimeoutSeconds"`
+
+	KdepsDir string `pkl:"kdepsDir"`
+
+	KdepsPath path.Path `pkl:"kdepsPath"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Kdeps
