@@ -17,11 +17,10 @@ class ResourceHTTPClient {
 
   method: String(isValidHTTPMethod)
   url: Uri
-  data: String?
+  data: Listing<String>?
   headers: Mapping<String, String>?
-  response: String?
-  responseData: String?
-  responseBody: String?
+  responseData: Listing<String>?
   responseHeaders: Mapping<String, String>?
   timestamp: UInt32?
+  timeoutSeconds: Int? = 60
 }

@@ -9,4 +9,6 @@ type APIServerRoutes struct {
 	Methods []string `pkl:"methods"`
 
 	ResponseType apiserverresponsetype.APIServerResponseType `pkl:"responseType"`
+
+	DeferredApi *bool `pkl:"deferredApi"`
 }

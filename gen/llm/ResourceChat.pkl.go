@@ -9,4 +9,6 @@ type ResourceChat struct {
 	Response *string `pkl:"response"`
 
 	Timestamp *uint32 `pkl:"timestamp"`
+
+	TimeoutSeconds *int `pkl:"timeoutSeconds"`
 }

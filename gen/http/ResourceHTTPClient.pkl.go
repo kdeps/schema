@@ -6,17 +6,15 @@ type ResourceHTTPClient struct {
 
 	Url string `pkl:"url"`
 
-	Data *string `pkl:"data"`
+	Data *[]string `pkl:"data"`
 
 	Headers *map[string]string `pkl:"headers"`
 
-	Response *string `pkl:"response"`
-
-	ResponseData *string `pkl:"responseData"`
-
-	ResponseBody *string `pkl:"responseBody"`
+	ResponseData *[]string `pkl:"responseData"`
 
 	ResponseHeaders *map[string]string `pkl:"responseHeaders"`
 
 	Timestamp *uint32 `pkl:"timestamp"`
+
+	TimeoutSeconds *int `pkl:"timeoutSeconds"`
 }

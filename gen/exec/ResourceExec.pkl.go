@@ -11,4 +11,6 @@ type ResourceExec struct {
 	Stdout *string `pkl:"stdout"`
 
 	Timestamp *uint32 `pkl:"timestamp"`
+
+	TimeoutSeconds *int `pkl:"timeoutSeconds"`
 }

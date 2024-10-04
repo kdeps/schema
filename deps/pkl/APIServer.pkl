@@ -29,4 +29,5 @@ class APIServerRoutes {
     "GET"
   }
   responseType: APIServerResponseType = "json"
+  deferredApi: Boolean? = false
 }

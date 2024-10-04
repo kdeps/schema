@@ -10,6 +10,5 @@ typealias Path = "user"|"project"|"xdg"
 
 runMode: RunMode = "docker"
 dockerGPU: GPU = "cpu"
-llmTimeoutSeconds: Int = 30
 kdepsDir: String = ".kdeps"
 kdepsPath: Path = "user"

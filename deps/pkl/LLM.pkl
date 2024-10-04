@@ -11,4 +11,5 @@ class ResourceChat {
   prompt: String
   response: String?
   timestamp: UInt32?
+  timeoutSeconds: Int? = 60
 }

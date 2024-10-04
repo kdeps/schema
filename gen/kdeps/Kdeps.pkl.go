@@ -14,8 +14,6 @@ type Kdeps struct {
 
 	DockerGPU gpu.GPU `pkl:"dockerGPU"`
 
-	LlmTimeoutSeconds int `pkl:"llmTimeoutSeconds"`
-
 	KdepsDir string `pkl:"kdepsDir"`
 
 	KdepsPath path.Path `pkl:"kdepsPath"`
