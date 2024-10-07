@@ -10,9 +10,7 @@ type ResourceHTTPClient struct {
 
 	Headers *map[string]string `pkl:"headers"`
 
-	ResponseData *[]string `pkl:"responseData"`
-
-	ResponseHeaders *map[string]string `pkl:"responseHeaders"`
+	Response *ResponseBlock `pkl:"response"`
 
 	Timestamp *uint32 `pkl:"timestamp"`
 

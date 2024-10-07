@@ -1,10 +1,10 @@
 @go.Package { name = "github.com/kdeps/schema/gen/exec" }
 
-module org.kdeps.pkl.Exec
+open module org.kdeps.pkl.Exec
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-resource: Mapping<String, ResourceExec>?
+resources: Mapping<String, ResourceExec>?
 
 class ResourceExec {
   hidden envStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
@@ -20,3 +20,37 @@ class ResourceExec {
   timestamp: UInt32?
   timeoutSeconds: Int? = 60
 }
+
+function resource(id: String): ResourceExec =
+  if (!resources.isEmpty)
+    if (resources.containsKey(id))
+      resources[id]
+    else
+      new ResourceExec {
+          command = ""
+      }
+  else
+    new ResourceExec {
+          command = ""
+    }
+
+function stderr(id: String): String =
+  if (resource(id).stderr != null)
+    resource(id).stderr
+  else
+    ""
+
+function stdout(id: String): String =
+  if (resource(id).stdout != null)
+    resource(id).stdout
+  else
+    ""
+
+function env(id: String, envName: String): String =
+  if (resource(id).env != null)
+    if (!resource(id).env.isEmpty)
+      if (resource(id).env.containsKey(envName)) resource(id).env[envName] else ""
+    else
+      ""
+  else
+    ""

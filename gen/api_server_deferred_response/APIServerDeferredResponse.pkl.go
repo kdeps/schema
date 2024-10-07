@@ -7,12 +7,22 @@ import (
 	"github.com/apple/pkl-go/pkl"
 )
 
-type APIServerDeferredResponse struct {
-	Resource map[uint32]*APIServerDeferred `pkl:"resource"`
+type APIServerDeferredResponse interface {
+	GetResources() map[uint32]*APIServerDeferred
+}
+
+var _ APIServerDeferredResponse = (*APIServerDeferredResponseImpl)(nil)
+
+type APIServerDeferredResponseImpl struct {
+	Resources map[uint32]*APIServerDeferred `pkl:"resources"`
+}
+
+func (rcv *APIServerDeferredResponseImpl) GetResources() map[uint32]*APIServerDeferred {
+	return rcv.Resources
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a APIServerDeferredResponse
-func LoadFromPath(ctx context.Context, path string) (ret *APIServerDeferredResponse, err error) {
+func LoadFromPath(ctx context.Context, path string) (ret APIServerDeferredResponse, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
 		return nil, err
@@ -28,8 +38,8 @@ func LoadFromPath(ctx context.Context, path string) (ret *APIServerDeferredRespo
 }
 
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a APIServerDeferredResponse
-func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (*APIServerDeferredResponse, error) {
-	var ret APIServerDeferredResponse
+func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (APIServerDeferredResponse, error) {
+	var ret APIServerDeferredResponseImpl
 	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
 		return nil, err
 	}

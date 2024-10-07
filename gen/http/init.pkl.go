@@ -5,5 +5,6 @@ import "github.com/apple/pkl-go/pkl"
 
 func init() {
 	pkl.RegisterMapping("org.kdeps.pkl.Http#ResourceHTTPClient", ResourceHTTPClient{})
-	pkl.RegisterMapping("org.kdeps.pkl.Http", Http{})
+	pkl.RegisterMapping("org.kdeps.pkl.Http#ResponseBlock", ResponseBlock{})
+	pkl.RegisterMapping("org.kdeps.pkl.Http", HttpImpl{})
 }

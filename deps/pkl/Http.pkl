@@ -1,26 +1,60 @@
 @go.Package { name = "github.com/kdeps/schema/gen/http" }
 
-module org.kdeps.pkl.Http
+open module org.kdeps.pkl.Http
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-resource: Mapping<String, ResourceHTTPClient>?
+resources: Mapping<String, ResourceHTTPClient>?
 
 class ResourceHTTPClient {
-  hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
+        hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
 
-  hidden isValidHTTPMethod = (str) ->
-  if (str.matches(apiMethodRegex))
-    true
-  else
-    throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
+        hidden isValidHTTPMethod = (str) ->
+          if (str.matches(apiMethodRegex))
+            true
+          else
+            throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
 
-  method: String(isValidHTTPMethod)
-  url: Uri
-  data: Listing<String>?
-  headers: Mapping<String, String>?
-  responseData: Listing<String>?
-  responseHeaders: Mapping<String, String>?
-  timestamp: UInt32?
-  timeoutSeconds: Int? = 60
+        method: String(isValidHTTPMethod)
+        url: Uri
+        data: Listing<String>?
+        headers: Mapping<String, String>?
+        response: ResponseBlock?
+        timestamp: UInt32?
+        timeoutSeconds: Int? = 60
 }
+
+class ResponseBlock {
+        body: String?
+        headers: Mapping<String, String>?
+}
+
+function resource(id: String): ResourceHTTPClient =
+  if (!resources.isEmpty)
+    if (resources.containsKey(id))
+      resources[id]
+    else
+      new ResourceHTTPClient {
+          method = "GET"
+          url = ""
+      }
+  else
+    new ResourceHTTPClient {
+          method = "GET"
+          url = ""
+    }
+
+function responseBody(id: String): String =
+  if (resource(id).response != null)
+    resource(id).response.body
+  else
+    ""
+
+function responseHeader(id: String, headerId: String): String =
+  if (resource(id).response != null)
+    if (!resource(id).response.headers.isEmpty)
+      if (resource(id).response.headers.containsKey(headerId)) resource(id).response.headers[headerId] else ""
+    else
+      ""
+  else
+    ""

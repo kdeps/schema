@@ -1,10 +1,10 @@
 @go.Package { name = "github.com/kdeps/schema/gen/api_server_deferred_response" }
 
-module org.kdeps.pkl.APIServerDeferredResponse
+open module org.kdeps.pkl.APIServerDeferredResponse
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-resource: Mapping<UInt32, APIServerDeferred>
+resources: Mapping<UInt32, APIServerDeferred>
 
 class APIServerDeferredResponseBlock {
         data: Listing<Any>
@@ -21,3 +21,12 @@ class APIServerDeferred {
         response: APIServerDeferredResponseBlock?
         errors: APIServerDeferredErrorsBlock?
 }
+
+function resource(id: String): APIServerDeferred =
+  if (!resources.isEmpty)
+    if (resources.containsKey(id))
+      resources[id]
+    else
+      new APIServerDeferred {}
+  else
+    new APIServerDeferred {}

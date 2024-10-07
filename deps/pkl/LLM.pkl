@@ -1,10 +1,10 @@
 @go.Package { name = "github.com/kdeps/schema/gen/llm" }
 
-module org.kdeps.pkl.LLM
+open module org.kdeps.pkl.LLM
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-resource: Mapping<String, ResourceChat>?
+resources: Mapping<String, ResourceChat>?
 
 class ResourceChat {
   model: String = "llama3.1"
@@ -13,3 +13,28 @@ class ResourceChat {
   timestamp: UInt32?
   timeoutSeconds: Int? = 60
 }
+
+function resource(id: String): ResourceChat =
+  if (!resources.isEmpty)
+    if (resources.containsKey(id))
+      resources[id]
+    else
+      new ResourceChat {
+          prompt = ""
+      }
+  else
+    new ResourceChat {
+          prompt = ""
+    }
+
+function response(id: String): String =
+  if (resource(id).response != null)
+    resource(id).response
+  else
+    ""
+
+function prompt(id: String): String =
+  if (resource(id).prompt != null)
+    resource(id).prompt
+  else
+    ""
