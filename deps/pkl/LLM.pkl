@@ -10,6 +10,7 @@ class ResourceChat {
   model: String = "llama3.1"
   prompt: String
   jsonResponse: Boolean? = false
+  jsonResponseKeys: Listing<String>?
   response: String?
   timestamp: UInt32?
   timeoutSeconds: Int? = 60
@@ -24,12 +25,14 @@ function resource(id: String): ResourceChat =
         prompt = ""
         response = ""
         jsonResponse = false
+        jsonResponseKeys {}
       }
   else
     new ResourceChat {
-        prompt = ""
-        response = ""
-        jsonResponse = false
+      prompt = ""
+      response = ""
+      jsonResponse = false
+      jsonResponseKeys {}
     }
 
 function response(id: String): String =
