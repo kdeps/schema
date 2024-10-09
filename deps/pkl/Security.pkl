@@ -1,0 +1,15 @@
+@go.Package { name = "github.com/kdeps/schema/gen/security" }
+
+module org.kdeps.pkl.Security
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+
+class Settings {
+        enforceSecurityRules: Boolean? = false
+        allowedHttpServerHeaders: Listing<String>?
+        allowedHttpClientHeaders: Listing<String>?
+        allowedHttpClientUrl: Listing<Uri>?
+        allowedCmdExecutable: Listing<String>?
+        allowedExternalWorkflow: Listing<String>?
+        allowedModels: Listing<String>?
+}

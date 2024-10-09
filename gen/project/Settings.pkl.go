@@ -4,6 +4,7 @@ package project
 import (
 	"github.com/kdeps/schema/gen/api_server"
 	"github.com/kdeps/schema/gen/docker"
+	"github.com/kdeps/schema/gen/security"
 )
 
 type Settings struct {
@@ -12,4 +13,6 @@ type Settings struct {
 	ApiServer *apiserver.APIServerSettings `pkl:"apiServer"`
 
 	AgentSettings *docker.DockerSettings `pkl:"agentSettings"`
+
+	SecuritySettings *security.Settings `pkl:"securitySettings"`
 }
