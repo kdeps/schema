@@ -35,13 +35,19 @@ function resource(id: String): ResourceHTTPClient =
       resources[id]
     else
       new ResourceHTTPClient {
-          method = "GET"
-          url = ""
+        method = "GET"
+        url = ""
+        data {}
+        headers {}
+        response = ""
       }
   else
     new ResourceHTTPClient {
-          method = "GET"
-          url = ""
+      method = "GET"
+      url = ""
+      data {}
+      headers {}
+      response = ""
     }
 
 function responseBody(id: String): String =

@@ -10,6 +10,8 @@ type ResourceExec struct {
 
 	Stdout *string `pkl:"stdout"`
 
+	ExitCode *int `pkl:"exitCode"`
+
 	Timestamp *uint32 `pkl:"timestamp"`
 
 	TimeoutSeconds *int `pkl:"timeoutSeconds"`

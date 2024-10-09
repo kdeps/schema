@@ -17,6 +17,7 @@ class ResourceExec {
   command: String
   stderr: String?
   stdout: String?
+  exitCode: Int? = 0
   timestamp: UInt32?
   timeoutSeconds: Int? = 60
 }
@@ -27,11 +28,17 @@ function resource(id: String): ResourceExec =
       resources[id]
     else
       new ResourceExec {
-          command = ""
+        command = ""
+        stderr = ""
+        stdout = ""
+        exitCode = 0
       }
   else
     new ResourceExec {
-          command = ""
+      command = ""
+      stderr = ""
+      stdout = ""
+      exitCode = 0
     }
 
 function stderr(id: String): String =
@@ -45,6 +52,12 @@ function stdout(id: String): String =
     resource(id).stdout
   else
     ""
+
+function exitCode(id: String): Int =
+  if (resource(id).exitCode != null)
+    resource(id).exitCode
+  else
+    0
 
 function env(id: String, envName: String): String =
   if (resource(id).env != null)

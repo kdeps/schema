@@ -23,11 +23,13 @@ function resource(id: String): ResourceChat =
       new ResourceChat {
         prompt = ""
         response = ""
+        schema = ""
       }
   else
     new ResourceChat {
         prompt = ""
         response = ""
+        schema = ""
     }
 
 function response(id: String): String =
@@ -39,5 +41,11 @@ function response(id: String): String =
 function prompt(id: String): String =
   if (resource(id).prompt != null)
     resource(id).prompt
+  else
+    ""
+
+function schema(id: String): String =
+  if (resource(id).schema != null)
+    resource(id).schema
   else
     ""
