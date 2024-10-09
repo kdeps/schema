@@ -9,6 +9,7 @@ resources: Mapping<String, ResourceChat>?
 class ResourceChat {
   model: String = "llama3.1"
   prompt: String
+  schema: String?
   response: String?
   timestamp: UInt32?
   timeoutSeconds: Int? = 60
@@ -20,11 +21,13 @@ function resource(id: String): ResourceChat =
       resources[id]
     else
       new ResourceChat {
-          prompt = ""
+        prompt = ""
+        response = ""
       }
   else
     new ResourceChat {
-          prompt = ""
+        prompt = ""
+        response = ""
     }
 
 function response(id: String): String =
