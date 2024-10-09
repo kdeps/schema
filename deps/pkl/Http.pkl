@@ -39,15 +39,15 @@ function resource(id: String): ResourceHTTPClient =
         url = ""
         data {}
         headers {}
-        response = ""
-      }
+        response {}
+}
   else
     new ResourceHTTPClient {
-      method = "GET"
-      url = ""
-      data {}
-      headers {}
-      response = ""
+        method = "GET"
+        url = ""
+        data {}
+        headers {}
+        response {}
     }
 
 function responseBody(id: String): String =
