@@ -9,7 +9,7 @@ resources: Mapping<String, ResourceChat>?
 class ResourceChat {
   model: String = "llama3.1"
   prompt: String
-  schema: String?
+  jsonResponse: Boolean? = false
   response: String?
   timestamp: UInt32?
   timeoutSeconds: Int? = 60
@@ -23,13 +23,13 @@ function resource(id: String): ResourceChat =
       new ResourceChat {
         prompt = ""
         response = ""
-        schema = ""
+        jsonResponse = false
       }
   else
     new ResourceChat {
         prompt = ""
         response = ""
-        schema = ""
+        jsonResponse = false
     }
 
 function response(id: String): String =
@@ -44,8 +44,8 @@ function prompt(id: String): String =
   else
     ""
 
-function schema(id: String): String =
-  if (resource(id).schema != null)
-    resource(id).schema
+function jsonResponse(id: String): Boolean =
+  if (resource(id).jsonResponse != null)
+    resource(id).jsonResponse
   else
-    ""
+    false

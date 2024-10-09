@@ -6,7 +6,7 @@ type ResourceChat struct {
 
 	Prompt string `pkl:"prompt"`
 
-	Schema *string `pkl:"schema"`
+	JsonResponse *bool `pkl:"jsonResponse"`
 
 	Response *string `pkl:"response"`
 
