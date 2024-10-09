@@ -8,6 +8,8 @@ type ResourceChat struct {
 
 	JsonResponse *bool `pkl:"jsonResponse"`
 
+	JsonResponseKeys *[]string `pkl:"jsonResponseKeys"`
+
 	Response *string `pkl:"response"`
 
 	Timestamp *uint32 `pkl:"timestamp"`
