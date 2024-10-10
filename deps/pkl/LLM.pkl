@@ -7,31 +7,26 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 resources: Mapping<String, ResourceChat>?
 
 class ResourceChat {
-  model: String = "llama3.1"
-  prompt: String
-  jsonResponse: Boolean? = false
-  jsonResponseKeys: Listing<String>?
-  response: String?
-  timestamp: UInt32?
-  timeoutSeconds: Int? = 60
+        model: String = "llama3.1"
+        prompt: String
+        jsonResponse: Boolean? = false
+        jsonResponseKeys: Listing<String>?
+        response: String?
+        timestamp: UInt32?
+        timeoutSeconds: Int? = 60
 }
 
 function resource(id: String): ResourceChat =
-  if (resources.getOrNull(id) != null)
-    resources[id]
-  else
-    new ResourceChat {
-      prompt = ""
-      response = ""
-      jsonResponse = false
-      jsonResponseKeys {}
-    }
+        if (resources.getOrNull(id) != null)
+                resources[id]
+        else
+                new ResourceChat {
+                        prompt = ""
+                        response = ""
+                        jsonResponse = false
+                        jsonResponseKeys {}
+                }
 
-function response(id: String): String =
-  resource(id).response
-
-function prompt(id: String): String =
-  resource(id).prompt
-
-function jsonResponse(id: String): Boolean =
-  resource(id).jsonResponse
+function response(id: String): String = resource(id).response
+function prompt(id: String): String = resource(id).prompt
+function jsonResponse(id: String): Boolean = resource(id).jsonResponse
