@@ -23,16 +23,8 @@ class ResourceExec {
 }
 
 function resource(id: String): ResourceExec =
-  if (!resources.isEmpty)
-    if (resources.containsKey(id))
+  if (resources.getOrNull(id) != null)
       resources[id]
-    else
-      new ResourceExec {
-        command = ""
-        stderr = ""
-        stdout = ""
-        exitCode = 0
-      }
   else
     new ResourceExec {
       command = ""
@@ -42,28 +34,16 @@ function resource(id: String): ResourceExec =
     }
 
 function stderr(id: String): String =
-  if (resource(id).stderr != null)
-    resource(id).stderr
-  else
-    ""
+  resource(id).stderr
 
 function stdout(id: String): String =
-  if (resource(id).stdout != null)
-    resource(id).stdout
-  else
-    ""
+  resource(id).stdout
 
 function exitCode(id: String): Int =
-  if (resource(id).exitCode != null)
-    resource(id).exitCode
-  else
-    0
+  resource(id).exitCode
 
 function env(id: String, envName: String): String =
-  if (resource(id).env != null)
-    if (!resource(id).env.isEmpty)
-      if (resource(id).env.containsKey(envName)) resource(id).env[envName] else ""
-    else
-      ""
+  if (!resource(id).env.isEmpty)
+    if (resource(id).env.containsKey(envName)) resource(id).env[envName] else ""
   else
     ""

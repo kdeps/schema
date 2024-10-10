@@ -17,16 +17,8 @@ class ResourceChat {
 }
 
 function resource(id: String): ResourceChat =
-  if (!resources.isEmpty)
-    if (resources.containsKey(id))
-      resources[id]
-    else
-      new ResourceChat {
-        prompt = ""
-        response = ""
-        jsonResponse = false
-        jsonResponseKeys {}
-      }
+  if (resources.getOrNull(id) != null)
+    resources[id]
   else
     new ResourceChat {
       prompt = ""
@@ -36,19 +28,10 @@ function resource(id: String): ResourceChat =
     }
 
 function response(id: String): String =
-  if (resource(id).response != null)
-    resource(id).response
-  else
-    ""
+  resource(id).response
 
 function prompt(id: String): String =
-  if (resource(id).prompt != null)
-    resource(id).prompt
-  else
-    ""
+  resource(id).prompt
 
 function jsonResponse(id: String): Boolean =
-  if (resource(id).jsonResponse != null)
-    resource(id).jsonResponse
-  else
-    false
+  resource(id).jsonResponse

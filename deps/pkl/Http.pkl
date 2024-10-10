@@ -30,34 +30,25 @@ class ResponseBlock {
 }
 
 function resource(id: String): ResourceHTTPClient =
-  if (!resources.isEmpty)
-    if (resources.containsKey(id))
-      resources[id]
-    else
-      new ResourceHTTPClient {
-        method = "GET"
-        url = ""
-        data {}
-        headers {}
-        response {}
-}
+  if (resources.getOrNull(id) != null)
+    resources[id]
   else
     new ResourceHTTPClient {
-        method = "GET"
-        url = ""
-        data {}
-        headers {}
-        response {}
+      method = "GET"
+      url = ""
+      data {}
+      headers {}
+      response {}
     }
 
 function responseBody(id: String): String =
-  if (resource(id).response != null)
+  if (!resource(id).response.isEmpty)
     resource(id).response.body
   else
     ""
 
 function responseHeader(id: String, headerId: String): String =
-  if (resource(id).response != null)
+  if (!resource(id).response.isEmpty)
     if (!resource(id).response.headers.isEmpty)
       if (resource(id).response.headers.containsKey(headerId)) resource(id).response.headers[headerId] else ""
     else
