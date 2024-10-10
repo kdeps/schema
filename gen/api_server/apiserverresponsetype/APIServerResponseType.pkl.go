@@ -9,13 +9,12 @@ import (
 type APIServerResponseType string
 
 const (
-	Json      APIServerResponseType = "json"
-	Yaml      APIServerResponseType = "yaml"
-	Jsonnet   APIServerResponseType = "jsonnet"
-	Plist     APIServerResponseType = "plist"
-	Xml       APIServerResponseType = "xml"
-	Pcf       APIServerResponseType = "pcf"
-	Textproto APIServerResponseType = "textproto"
+	Json    APIServerResponseType = "json"
+	Yaml    APIServerResponseType = "yaml"
+	Jsonnet APIServerResponseType = "jsonnet"
+	Plist   APIServerResponseType = "plist"
+	Xml     APIServerResponseType = "xml"
+	Pcf     APIServerResponseType = "pcf"
 )
 
 // String returns the string representation of APIServerResponseType
@@ -40,8 +39,6 @@ func (rcv *APIServerResponseType) UnmarshalBinary(data []byte) error {
 		*rcv = Xml
 	case "pcf":
 		*rcv = Pcf
-	case "textproto":
-		*rcv = Textproto
 	default:
 		return fmt.Errorf(`illegal: "%s" is not a valid APIServerResponseType`, str)
 	}
