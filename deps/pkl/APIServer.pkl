@@ -6,7 +6,7 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 import "APIServerResponse.pkl"
 import "APIServerRequest.pkl"
 
-typealias APIServerResponseType = "json"|"yaml"|"jsonnet"|"plist"|"xml"|"pcf"|"textproto"
+typealias APIServerResponseType = "json"|"yaml"|"jsonnet"|"plist"|"xml"|"pcf"
 
 class APIServerSettings {
   hostIP: String = "127.0.0.1"
