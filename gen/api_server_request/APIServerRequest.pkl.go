@@ -8,7 +8,7 @@ import (
 )
 
 type APIServerRequest struct {
-	Url string `pkl:"url"`
+	Path string `pkl:"path"`
 
 	Method string `pkl:"method"`
 
@@ -17,6 +17,10 @@ type APIServerRequest struct {
 	Params *map[string]string `pkl:"params"`
 
 	Headers *map[string]string `pkl:"headers"`
+
+	Filename *string `pkl:"filename"`
+
+	Filetype *string `pkl:"filetype"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a APIServerRequest

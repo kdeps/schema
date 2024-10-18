@@ -13,18 +13,15 @@ class APIServerSettings {
 }
 
 class APIServerRoutes {
-  hidden apiServerMethodRegex = Regex(#"^(?i:(GET|POST))"#)
+  hidden apiServerMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
 
   hidden isValidHTTPMethod = (str) ->
   if (str.matches(apiServerMethodRegex))
     true
   else
-    throw("Error: Unsupported HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET or POST.")
+    throw("Error: Unsupported HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
 
   path: String
-  methods: Listing<String(isValidHTTPMethod)> = new {
-    "POST"
-    "GET"
-  }
+  methods: Listing<String(isValidHTTPMethod)>
   deferredApi: Boolean? = false
 }

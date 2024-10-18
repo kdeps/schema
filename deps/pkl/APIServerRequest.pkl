@@ -4,15 +4,30 @@ module org.kdeps.pkl.APIServerRequest
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
+hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
 hidden isValidHTTPMethod = (str) ->
   if (str.matches(apiMethodRegex))
     true
   else
-    throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
+    throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
 
-url: Uri
+path: Uri
 method: String(isValidHTTPMethod)
 data: String?
 params: Mapping<String, String>?
 headers: Mapping<String, String>?
+filename: String?
+filetype: String?
+
+function data(): String = if (data != "") data.base64Decoded else ""
+function filename(): String = if (filename != "") filename.base64Decoded else ""
+function param(name: String): String =
+        if (params.getOrNull(name) != null)
+                params[name].base64Decoded
+        else
+                ""
+function header(name: String): String =
+        if (headers.getOrNull(name) != null)
+                headers[name].base64Decoded
+        else
+                ""
