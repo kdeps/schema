@@ -7,8 +7,11 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 resources: Mapping<String, ResourceChat>?
 
 class ResourceChat {
-        model: String = "llama3.1"
+        model: String = "llama3.2"
         prompt: String
+        visionModel: Boolean? = false
+        imageGeneration: Boolean? = false
+        generatedFile: String?
         jsonResponse: Boolean? = false
         jsonResponseKeys: Listing<String>?
         response: String?
@@ -30,3 +33,7 @@ function resource(id: String): ResourceChat =
 function response(id: String): String = resource(id).response
 function prompt(id: String): String = resource(id).prompt
 function jsonResponse(id: String): Boolean = resource(id).jsonResponse
+function jsonResponseKeys(id: String): Boolean = resource(id).jsonResponseKeys
+function visionModel(id: String): Boolean = resource(id).visionModel
+function imageGeneration(id: String): Boolean = resource(id).imageGeneration
+function generatedFile(id: String): String = resource(id).generatedFile

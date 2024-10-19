@@ -31,3 +31,7 @@ function header(name: String): String =
                 headers[name].base64Decoded
         else
                 ""
+// For consistency
+function path(): String = path
+function method(): String = method
+function filetype(): String = filetype

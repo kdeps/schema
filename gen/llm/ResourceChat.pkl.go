@@ -6,6 +6,12 @@ type ResourceChat struct {
 
 	Prompt string `pkl:"prompt"`
 
+	VisionModel *bool `pkl:"visionModel"`
+
+	ImageGeneration *bool `pkl:"imageGeneration"`
+
+	GeneratedFile *string `pkl:"generatedFile"`
+
 	JsonResponse *bool `pkl:"jsonResponse"`
 
 	JsonResponseKeys *[]string `pkl:"jsonResponseKeys"`
