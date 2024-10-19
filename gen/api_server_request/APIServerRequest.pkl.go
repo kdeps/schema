@@ -7,7 +7,25 @@ import (
 	"github.com/apple/pkl-go/pkl"
 )
 
-type APIServerRequest struct {
+type APIServerRequest interface {
+	GetPath() string
+
+	GetMethod() string
+
+	GetData() *string
+
+	GetParams() *map[string]string
+
+	GetHeaders() *map[string]string
+
+	GetFilename() *string
+
+	GetFiletype() *string
+}
+
+var _ APIServerRequest = (*APIServerRequestImpl)(nil)
+
+type APIServerRequestImpl struct {
 	Path string `pkl:"path"`
 
 	Method string `pkl:"method"`
@@ -23,8 +41,36 @@ type APIServerRequest struct {
 	Filetype *string `pkl:"filetype"`
 }
 
+func (rcv *APIServerRequestImpl) GetPath() string {
+	return rcv.Path
+}
+
+func (rcv *APIServerRequestImpl) GetMethod() string {
+	return rcv.Method
+}
+
+func (rcv *APIServerRequestImpl) GetData() *string {
+	return rcv.Data
+}
+
+func (rcv *APIServerRequestImpl) GetParams() *map[string]string {
+	return rcv.Params
+}
+
+func (rcv *APIServerRequestImpl) GetHeaders() *map[string]string {
+	return rcv.Headers
+}
+
+func (rcv *APIServerRequestImpl) GetFilename() *string {
+	return rcv.Filename
+}
+
+func (rcv *APIServerRequestImpl) GetFiletype() *string {
+	return rcv.Filetype
+}
+
 // LoadFromPath loads the pkl module at the given path and evaluates it into a APIServerRequest
-func LoadFromPath(ctx context.Context, path string) (ret *APIServerRequest, err error) {
+func LoadFromPath(ctx context.Context, path string) (ret APIServerRequest, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
 		return nil, err
@@ -40,8 +86,8 @@ func LoadFromPath(ctx context.Context, path string) (ret *APIServerRequest, err 
 }
 
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a APIServerRequest
-func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (*APIServerRequest, error) {
-	var ret APIServerRequest
+func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (APIServerRequest, error) {
+	var ret APIServerRequestImpl
 	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
 		return nil, err
 	}

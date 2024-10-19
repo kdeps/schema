@@ -4,5 +4,5 @@ package apiserverrequest
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.APIServerRequest", APIServerRequest{})
+	pkl.RegisterMapping("org.kdeps.pkl.APIServerRequest", APIServerRequestImpl{})
 }

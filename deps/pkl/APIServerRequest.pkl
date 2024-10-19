@@ -1,6 +1,6 @@
 @go.Package { name = "github.com/kdeps/schema/gen/api_server_request" }
 
-module org.kdeps.pkl.APIServerRequest
+open module org.kdeps.pkl.APIServerRequest
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
