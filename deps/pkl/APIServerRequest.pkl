@@ -18,6 +18,9 @@ params: Mapping<String, String>?
 headers: Mapping<String, String>?
 files: Mapping<String, APIServerRequestUploads>?
 
+hidden fileKeys = files.keys
+hidden firstFileKey = fileKeys.firstOrNull
+
 class APIServerRequestUploads {
         filepath: String
         filetype: String
@@ -34,9 +37,6 @@ function header(name: String): String =
                 headers[name].base64Decoded
         else
                 ""
-// For consistency
-function path(): String = path
-function method(): String = method
 
 function file(name: String): APIServerRequestUploads =
         if (!files.isEmpty)
@@ -44,7 +44,7 @@ function file(name: String): APIServerRequestUploads =
                         files[name]
                 else
                         // always return the first element, in case of a single file upload
-                        files[0]
+                        files[firstFileKey]
         else
                 new APIServerRequestUploads {
                         filepath = ""
@@ -58,3 +58,8 @@ function base64file(name: String): String =
                 read("file:\(filepath(name))").base64
         else
                 ""
+function filecount(): String = files.length
+
+// For consistency
+function path(): String = path
+function method(): String = method
