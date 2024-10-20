@@ -16,11 +16,14 @@ method: String(isValidHTTPMethod)
 data: String?
 params: Mapping<String, String>?
 headers: Mapping<String, String>?
-filename: String?
-filetype: String?
+files: Mapping<String, APIServerRequestUploads>?
+
+class APIServerRequestUploads {
+        filepath: String
+        filetype: String
+}
 
 function data(): String = if (data != "") data.base64Decoded else ""
-function filename(): String = if (filename != "") filename.base64Decoded else ""
 function param(name: String): String =
         if (params.getOrNull(name) != null)
                 params[name].base64Decoded
@@ -34,4 +37,24 @@ function header(name: String): String =
 // For consistency
 function path(): String = path
 function method(): String = method
-function filetype(): String = filetype
+
+function file(name: String): APIServerRequestUploads =
+        if (!files.isEmpty)
+                if (files.getOrNull(name) != null)
+                        files[name]
+                else
+                        // always return the first element, in case of a single file upload
+                        files[0]
+        else
+                new APIServerRequestUploads {
+                        filepath = ""
+                        filetype = ""
+                }
+
+function filetype(name: String): String = file(name).filetype
+function filepath(name: String): String = file(name).filepath
+function base64file(name: String): String =
+        if (filepath(name) != "")
+                read("file:\(filepath(name))").base64
+        else
+                ""

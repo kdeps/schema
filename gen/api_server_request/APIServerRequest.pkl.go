@@ -18,9 +18,7 @@ type APIServerRequest interface {
 
 	GetHeaders() *map[string]string
 
-	GetFilename() *string
-
-	GetFiletype() *string
+	GetFiles() *map[string]*APIServerRequestUploads
 }
 
 var _ APIServerRequest = (*APIServerRequestImpl)(nil)
@@ -36,9 +34,7 @@ type APIServerRequestImpl struct {
 
 	Headers *map[string]string `pkl:"headers"`
 
-	Filename *string `pkl:"filename"`
-
-	Filetype *string `pkl:"filetype"`
+	Files *map[string]*APIServerRequestUploads `pkl:"files"`
 }
 
 func (rcv *APIServerRequestImpl) GetPath() string {
@@ -61,12 +57,8 @@ func (rcv *APIServerRequestImpl) GetHeaders() *map[string]string {
 	return rcv.Headers
 }
 
-func (rcv *APIServerRequestImpl) GetFilename() *string {
-	return rcv.Filename
-}
-
-func (rcv *APIServerRequestImpl) GetFiletype() *string {
-	return rcv.Filetype
+func (rcv *APIServerRequestImpl) GetFiles() *map[string]*APIServerRequestUploads {
+	return rcv.Files
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a APIServerRequest
