@@ -15,5 +15,5 @@ class APIServerErrorsBlock {
 
 success: Boolean = true
 response: APIServerResponseBlock?
-responseFile: Uri?
+file: Uri?
 errors: APIServerErrorsBlock?
