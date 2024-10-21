@@ -9,8 +9,7 @@ resources: Mapping<String, ResourceChat>?
 class ResourceChat {
         model: String = "llama3.2"
         prompt: String
-        visionModel: Boolean? = false
-        visionFiles: Listing?
+        files: Listing<String>?
         imageGeneration: Boolean? = false
         generatedFile: String?
         jsonResponse: Boolean? = false

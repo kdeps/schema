@@ -6,9 +6,7 @@ type ResourceChat struct {
 
 	Prompt string `pkl:"prompt"`
 
-	VisionModel *bool `pkl:"visionModel"`
-
-	VisionFiles *[]any `pkl:"visionFiles"`
+	Files *[]string `pkl:"files"`
 
 	ImageGeneration *bool `pkl:"imageGeneration"`
 
