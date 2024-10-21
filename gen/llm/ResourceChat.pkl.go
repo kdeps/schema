@@ -8,6 +8,8 @@ type ResourceChat struct {
 
 	VisionModel *bool `pkl:"visionModel"`
 
+	VisionFiles *[]any `pkl:"visionFiles"`
+
 	ImageGeneration *bool `pkl:"imageGeneration"`
 
 	GeneratedFile *string `pkl:"generatedFile"`

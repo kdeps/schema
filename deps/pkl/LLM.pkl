@@ -10,6 +10,7 @@ class ResourceChat {
         model: String = "llama3.2"
         prompt: String
         visionModel: Boolean? = false
+        visionFiles: Listing?
         imageGeneration: Boolean? = false
         generatedFile: String?
         jsonResponse: Boolean? = false
