@@ -12,6 +12,8 @@ type APIServerResponse struct {
 
 	Response *APIServerResponseBlock `pkl:"response"`
 
+	ResponseFile *string `pkl:"responseFile"`
+
 	Errors *APIServerErrorsBlock `pkl:"errors"`
 }
 
