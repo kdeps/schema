@@ -60,6 +60,12 @@ function base64file(name: String): String =
                 ""
 function filecount(): String = files.length
 
+function allFiles(): Listing =
+       files.toMap().flatMap((_, v) ->  Map(v.filename, null)).keys.filter((v) -> v != null).toListing()
+
+function getFilesByType(mimeType: String): Listing =
+       files.toMap().flatMap((_, v) ->  if (v.filetype == mimeType) Map(v.filename, null) else Map(null, null)).keys.filter((v) -> v != null).toListing()
+
 // For consistency
 function path(): String = path
 function method(): String = method
