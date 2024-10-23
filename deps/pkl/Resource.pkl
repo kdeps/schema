@@ -12,17 +12,8 @@ import "Exec.pkl"
 import "Http.pkl"
 
 hidden actionStringRegex = Regex(#"^(\w+|@\w+(/[\w-]+)(:[\w.]+)?)$"#)
-hidden isValidId = (str) ->
-  if (str.matches(actionStringRegex))
-    true
-  else
-    throw("Error: Invalid id name: The id contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
-
-hidden isValidDependency = (str) ->
-  if (str.matches(actionStringRegex))
-    true
-  else
-    throw("Action must be either a simple alphanumeric string or start with `@`, followed by `/action` and an optional `:version` (e.g., `@agent/action:1.0.0`).")
+hidden isValidId = (str) -> if (str.matches(actionStringRegex)) true else throw("Error: Invalid id name: The id contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+hidden isValidDependency = (str) -> if (str.matches(actionStringRegex)) true else throw("Action must be either a simple alphanumeric string or start with `@`, followed by `/action` and an optional `:version` (e.g., `@agent/action:1.0.0`).")
 
 id: String(isValidId)
 name: String
@@ -32,21 +23,21 @@ requires: Listing<String(isValidDependency)>?
 run: ResourceAction
 
 class ResourceAction {
-  exec: Exec.ResourceExec?
-  chat: LLM.ResourceChat?
-  skipCondition: Listing<Boolean>?
-  preflightCheck: ValidationCheck?
-  postflightCheck: ValidationCheck?
-  httpClient: Http.ResourceHTTPClient?
-  apiResponse: APIServerResponse?
+        exec: Exec.ResourceExec?
+        chat: LLM.ResourceChat?
+        skipCondition: Listing<Boolean>?
+        preflightCheck: ValidationCheck?
+        postflightCheck: ValidationCheck?
+        httpClient: Http.ResourceHTTPClient?
+        apiResponse: APIServerResponse?
 }
 
 class ValidationCheck {
-  validations: Listing<Boolean>?
-  error: APIError?
+        validations: Listing<Boolean>?
+        error: APIError?
 }
 
 class APIError {
-  code: Int
-  message: String
+        code: Int
+        message: String
 }

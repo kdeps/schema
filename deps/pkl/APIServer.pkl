@@ -7,21 +7,16 @@ import "APIServerResponse.pkl"
 import "APIServerRequest.pkl"
 
 class APIServerSettings {
-  hostIP: String = "127.0.0.1"
-  portNum: UInt16 = 3000
-  routes: Listing<APIServerRoutes>
+        hostIP: String = "127.0.0.1"
+        portNum: UInt16 = 3000
+        routes: Listing<APIServerRoutes>
 }
 
 class APIServerRoutes {
-  hidden apiServerMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
+        hidden apiServerMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
+        hidden isValidHTTPMethod = (str) -> if (str.matches(apiServerMethodRegex)) true else throw("Error: Unsupported HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
 
-  hidden isValidHTTPMethod = (str) ->
-  if (str.matches(apiServerMethodRegex))
-    true
-  else
-    throw("Error: Unsupported HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
-
-  path: String
-  methods: Listing<String(isValidHTTPMethod)>
-  deferredApi: Boolean? = false
+        path: String
+        methods: Listing<String(isValidHTTPMethod)>
+        deferredApi: Boolean? = false
 }

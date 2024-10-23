@@ -3,16 +3,16 @@ amends "pkl:Project"
 local version_num = read?("env:VERSION")
 
 package {
-  name = "core"
-  authors {
-    "Joel Bryan Juliano <joelbryan.juliano@gmail.com>"
-  }
-  version = version_num?.replaceFirst(Regex("^v(\\d+\\.\\d+\\.\\d+)(-[\\w\\.]+)?(\\+[\\w\\.]+)?$"), "$1").replaceFirst("\(name)@v", "") ?? "0.0.1-SNAPSHOT"
-  baseUri = "package://schema.kdeps.com/core"
-  packageZipUrl = "https://github.com/kdeps/schema/releases/download/\(version_num)/\(name)@\(version).zip"
-  sourceCode = "https://github.com/kdeps/schema"
-  sourceCodeUrlScheme = "\(sourceCode)/blob/\(version_num)%{path}#L%{line}-L%{endLine}"
-  documentation = "https://schema.kdeps.com"
-  license = "Apache-2.0"
-  description = "Core PKL modules for KDEPS"
+        name = "core"
+        authors {
+                "Joel Bryan Juliano <joelbryan.juliano@gmail.com>"
+        }
+        version = version_num?.replaceFirst(Regex("^v(\\d+\\.\\d+\\.\\d+)(-[\\w\\.]+)?(\\+[\\w\\.]+)?$"), "$1").replaceFirst("\(name)@v", "") ?? "0.0.1-SNAPSHOT"
+        baseUri = "package://schema.kdeps.com/core"
+        packageZipUrl = "https://github.com/kdeps/schema/releases/download/\(version_num)/\(name)@\(version).zip"
+        sourceCode = "https://github.com/kdeps/schema"
+        sourceCodeUrlScheme = "\(sourceCode)/blob/\(version_num)%{path}#L%{line}-L%{endLine}"
+        documentation = "https://schema.kdeps.com"
+        license = "Apache-2.0"
+        description = "Core PKL modules for KDEPS"
 }

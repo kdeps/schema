@@ -8,11 +8,7 @@ resources: Mapping<String, ResourceExec>?
 
 class ResourceExec {
         hidden envStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
-        hidden isValidEnv = (str) ->
-        if (str.matches(envStringRegex))
-          true
-        else
-          throw("Error: Invalid env name: The env name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
+        hidden isValidEnv = (str) -> if (str.matches(envStringRegex)) true else throw("Error: Invalid env name: The env name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
 
         env: Mapping<String(isValidEnv), String>?
         command: String
@@ -22,24 +18,15 @@ class ResourceExec {
         timestamp: UInt32?
         timeoutSeconds: Int? = 60
 }
-
 function resource(id: String): ResourceExec =
-        if (resources.getOrNull(id) != null)
-                resources[id]
-        else
-                new ResourceExec {
-                        command = ""
-                        stderr = ""
-                        stdout = ""
-                        exitCode = 0
-                }
-
+        if (resources.getOrNull(id) != null) resources[id] else new ResourceExec {
+                command = ""
+                stderr = ""
+                stdout = ""
+                exitCode = 0
+        }
 function stderr(id: String): String = resource(id).stderr
 function stdout(id: String): String = resource(id).stdout
 function exitCode(id: String): Int = resource(id).exitCode
-
 function env(id: String, envName: String): String =
-        if (!resource(id).env.isEmpty)
-                if (resource(id).env.containsKey(envName)) resource(id).env[envName] else ""
-        else
-                ""
+        if (!resource(id).env.isEmpty) if (resource(id).env.containsKey(envName)) resource(id).env[envName] else "" else ""

@@ -15,4 +15,6 @@ type Settings struct {
 	AllowedExternalWorkflow *[]string `pkl:"allowedExternalWorkflow"`
 
 	AllowedModels *[]string `pkl:"allowedModels"`
+
+	AllowedPPA *[]string `pkl:"allowedPPA"`
 }

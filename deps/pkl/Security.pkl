@@ -12,4 +12,5 @@ class Settings {
         allowedCmdExecutable: Listing<String>?
         allowedExternalWorkflow: Listing<String>?
         allowedModels: Listing<String>?
+        allowedPPA: Listing<String>?
 }

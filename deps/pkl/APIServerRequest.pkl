@@ -6,10 +6,10 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
 hidden isValidHTTPMethod = (str) ->
-  if (str.matches(apiMethodRegex))
-    true
-  else
-    throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
+if (str.matches(apiMethodRegex))
+true
+else
+throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
 
 path: Uri
 method: String(isValidHTTPMethod)
@@ -28,43 +28,25 @@ class APIServerRequestUploads {
 
 function data(): String = if (data != "") data.base64Decoded else ""
 function param(name: String): String =
-        if (params.getOrNull(name) != null)
-                params[name].base64Decoded
-        else
-                ""
+        if (params.getOrNull(name) != null) params[name].base64Decoded else ""
 function header(name: String): String =
-        if (headers.getOrNull(name) != null)
-                headers[name].base64Decoded
-        else
-                ""
-
+        if (headers.getOrNull(name) != null) headers[name].base64Decoded else ""
 function file(name: String): APIServerRequestUploads =
-        if (!files.isEmpty)
-                if (files.getOrNull(name) != null)
-                        files[name]
-                else
-                        // always return the first element, in case of a single file upload
-                        files[firstFileKey]
-        else
-                new APIServerRequestUploads {
-                        filepath = ""
-                        filetype = ""
-                }
-
+        if (!files.isEmpty) if (files.getOrNull(name) != null) files[name] else files[firstFileKey] else new APIServerRequestUploads {
+                filepath = ""
+                filetype = ""
+        }
 function filetype(name: String): String = file(name).filetype
 function filepath(name: String): String = file(name).filepath
 function base64file(name: String): String =
-        if (filepath(name) != "")
-                read("file:\(filepath(name))").base64
-        else
-                ""
+        if (filepath(name) != "") read("file:\(filepath(name))").base64 else ""
 function filecount(): String = files.length
-
 function allFiles(): Listing =
-       files.toMap().flatMap((_, v) ->  Map(v.filepath, null)).keys.filter((v) -> v != null).toListing()
-
+        files.toMap().flatMap((_, v) ->  Map(v.filepath, null)).keys.filter((v) -> v != null).toListing()
+function allFiletypes(): Listing =
+        files.toMap().flatMap((_, v) ->  Map(v.filetype, null)).keys.filter((v) -> v != null).toListing()
 function getFilesByType(mimeType: String): Listing =
-       files.toMap().flatMap((_, v) ->  if (v.filetype == mimeType) Map(v.filepath, null) else Map(null, null)).keys.filter((v) -> v != null).toListing()
+        files.toMap().flatMap((_, v) ->  if (v.filetype == mimeType) Map(v.filepath, null) else Map(null, null)).keys.filter((v) -> v != null).toListing()
 
 // For consistency
 function path(): String = path

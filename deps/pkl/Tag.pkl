@@ -5,26 +5,16 @@ module org.kdeps.pkl.Tag
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 hidden tagStringRegex = Regex(#"(^\w+$)"#)
-
-hidden isValidTag = (str) ->
-  if (str.matches(tagStringRegex))
-    true
-  else
-    throw("Error: Invalid tag name: The tag name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+hidden isValidTag = (str) -> if (str.matches(tagStringRegex)) true else throw("Error: Invalid tag name: The tag name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
 
 resourceTags: Mapping<String, ResourceTag>?
 tags: Mapping<String(isValidTag), String>?
 
 class ResourceTag {
-  hidden tagStringRegex = Regex(#"(^\w+$)"#)
+        hidden tagStringRegex = Regex(#"(^\w+$)"#)
+        hidden isValidTag = (str) -> if (str.matches(tagStringRegex)) true else throw("Error: Invalid tag name: The tag name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
 
-  hidden isValidTag = (str) ->
-  if (str.matches(tagStringRegex))
-    true
-  else
-    throw("Error: Invalid tag name: The tag name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
-
-  name: String(isValidTag)
-  value: String
-  timestamp: UInt32?
+        name: String(isValidTag)
+        value: String
+        timestamp: UInt32?
 }

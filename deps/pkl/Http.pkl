@@ -8,12 +8,7 @@ resources: Mapping<String, ResourceHTTPClient>?
 
 class ResourceHTTPClient {
         hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
-
-        hidden isValidHTTPMethod = (str) ->
-        if (str.matches(apiMethodRegex))
-          true
-        else
-          throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
+        hidden isValidHTTPMethod = (str) -> if (str.matches(apiMethodRegex)) true else throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
 
         method: String(isValidHTTPMethod)
         url: Uri
@@ -30,21 +25,13 @@ class ResponseBlock {
 }
 
 function resource(id: String): ResourceHTTPClient =
-        if (resources.getOrNull(id) != null)
-                resources[id]
-        else
-                new ResourceHTTPClient {
-                        method = "GET"
-                        url = ""
-                        data {}
-                        headers {}
-                        response {}
-                }
-
+        if (resources.getOrNull(id) != null) resources[id] else new ResourceHTTPClient {
+                method = "GET"
+                url = ""
+                data {}
+                headers {}
+                response {}
+        }
 function responseBody(id: String): String = resource(id).response.body
-
 function responseHeader(id: String, headerId: String): String =
-        if (!resource(id).response.headers.isEmpty)
-                if (resource(id).response.headers.containsKey(headerId))resource(id).response.headers[headerId] else ""
-        else
-                ""
+        if (!resource(id).response.headers.isEmpty) if (resource(id).response.headers.containsKey(headerId))resource(id).response.headers[headerId] else "" else ""

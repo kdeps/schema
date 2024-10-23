@@ -20,20 +20,15 @@ class ResourceChat {
 }
 
 function resource(id: String): ResourceChat =
-        if (resources.getOrNull(id) != null)
-                resources[id]
-        else
-                new ResourceChat {
-                        prompt = ""
-                        response = ""
-                        jsonResponse = false
-                        jsonResponseKeys {}
-                }
-
+        if (resources.getOrNull(id) != null) resources[id] else new ResourceChat {
+                prompt = ""
+                response = ""
+                jsonResponse = false
+                jsonResponseKeys {}
+        }
 function response(id: String): String = resource(id).response
 function prompt(id: String): String = resource(id).prompt
 function jsonResponse(id: String): Boolean = resource(id).jsonResponse
 function jsonResponseKeys(id: String): Boolean = resource(id).jsonResponseKeys
-function visionModel(id: String): Boolean = resource(id).visionModel
 function imageGeneration(id: String): Boolean = resource(id).imageGeneration
 function generatedFile(id: String): String = resource(id).generatedFile
