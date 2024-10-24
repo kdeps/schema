@@ -1,23 +1,56 @@
+/// This module defines the execution resources for the KDEPS framework.
+/// It allows for the management and execution of commands, capturing their
+/// standard output and error, as well as handling environment variables and
+/// exit codes. The module provides functionalities to retrieve and manage
+/// executable resources based on their identifiers.
+@ModuleInfo { minPklVersion = "0.26.1" }
+
 @go.Package { name = "github.com/kdeps/schema/gen/exec" }
 
 open module org.kdeps.pkl.Exec
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
+/// A mapping of resource IDs to their associated [ResourceExec] objects.
 resources: Mapping<String, ResourceExec>?
 
+/// Class representing an executable resource, which includes the command to be executed,
+/// its environment variables, and various output/error properties.
 class ResourceExec {
-        hidden envStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
-        hidden isValidEnv = (str) -> if (str.matches(envStringRegex)) true else throw("Error: Invalid env name: The env name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
+    /// Regular expression for validating environment variable names.
+    hidden envStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
 
-        env: Mapping<String(isValidEnv), String>?
-        command: String
-        stderr: String?
-        stdout: String?
-        exitCode: Int? = 0
-        timestamp: UInt32?
-        timeoutSeconds: Int? = 60
+    /// Function to check if a given environment variable name is valid.
+    hidden isValidEnv = (str) -> if (str.matches(envStringRegex)) true else throw("Error: Invalid env name: The env name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
+
+    /// A mapping of environment variable names to their values.
+    env: Mapping<String(isValidEnv), String>?
+
+    /// The command to be executed.
+    command: String
+
+    /// The standard error output from the execution.
+    stderr: String?
+
+    /// The standard output from the execution.
+    stdout: String?
+
+    /// The exit code of the executed command. Defaults to 0.
+    exitCode: Int? = 0
+
+    /// A timestamp of when the command was executed, represented as an unsigned 32-bit integer.
+    timestamp: UInt32?
+
+    /// The timeout duration (in seconds) for the command execution. Defaults to 60 seconds.
+    timeoutSeconds: Int? = 60
 }
+
+/// Retrieves the [ResourceExec] associated with the given [id].
+///
+/// If the resource is not found, returns a new [ResourceExec] with default values.
+///
+/// [id]: The ID of the resource to retrieve.
+/// [ResourceExec]: The [ResourceExec] object associated with the resource ID.
 function resource(id: String): ResourceExec =
         if (resources.getOrNull(id) != null) resources[id] else new ResourceExec {
                 command = ""
@@ -25,8 +58,29 @@ function resource(id: String): ResourceExec =
                 stdout = ""
                 exitCode = 0
         }
+
+/// Retrieves the standard error output associated with the resource [id].
+///
+/// [id]: The ID of the resource to retrieve the standard error output for.
+/// [str]: The standard error output from the executed command.
 function stderr(id: String): String = resource(id).stderr
+
+/// Retrieves the standard output associated with the resource [id].
+///
+/// [id]: The ID of the resource to retrieve the standard output for.
+/// [str]: The standard output from the executed command.
 function stdout(id: String): String = resource(id).stdout
+
+/// Retrieves the exit code associated with the resource [id].
+///
+/// [id]: The ID of the resource to retrieve the exit code for.
+/// [int]: The exit code of the executed command.
 function exitCode(id: String): Int = resource(id).exitCode
+
+/// Retrieves the value of the specified environment variable for the resource [id].
+///
+/// [id]: The ID of the resource to retrieve the environment variable for.
+/// [envName]: The name of the environment variable to retrieve.
+/// [str]: The value of the specified environment variable, or an empty string if not found.
 function env(id: String, envName: String): String =
         if (!resource(id).env.isEmpty) if (resource(id).env.containsKey(envName)) resource(id).env[envName] else "" else ""

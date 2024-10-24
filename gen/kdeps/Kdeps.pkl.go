@@ -9,13 +9,18 @@ import (
 	"github.com/kdeps/schema/gen/kdeps/path"
 )
 
+// Abstractions for Kdeps Configuration
 type Kdeps struct {
+	// The mode of execution for Kdeps, defaulting to "docker".
 	RunMode string `pkl:"runMode"`
 
+	// The GPU type to use for Kdeps, defaulting to "cpu".
 	DockerGPU gpu.GPU `pkl:"dockerGPU"`
 
+	// The directory where Kdeps files are stored, defaulting to ".kdeps".
 	KdepsDir string `pkl:"kdepsDir"`
 
+	// The path where Kdeps configurations are stored, defaulting to "user".
 	KdepsPath path.Path `pkl:"kdepsPath"`
 }
 

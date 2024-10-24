@@ -1,16 +1,40 @@
+/// Abstractions for Kdeps Security Settings
+///
+/// This module defines the security settings for the Kdeps framework, allowing for the enforcement
+/// of security rules and the configuration of allowed headers, URLs, executable commands, external workflows,
+/// models, and PPA (Personal Package Archive). These settings are crucial for ensuring secure
+/// operations within the Kdeps environment.
+@ModuleInfo { minPklVersion = "0.26.1" }
+
 @go.Package { name = "github.com/kdeps/schema/gen/security" }
 
-module org.kdeps.pkl.Security
+open module org.kdeps.pkl.Security
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
+/// Class representing the security settings for the Kdeps framework.
 class Settings {
-        enforceSecurityRules: Boolean? = false
-        allowedHttpServerHeaders: Listing<String>?
-        allowedHttpClientHeaders: Listing<String>?
-        allowedHttpClientUrl: Listing<Uri>?
-        allowedCmdExecutable: Listing<String>?
-        allowedExternalWorkflow: Listing<String>?
-        allowedModels: Listing<String>?
-        allowedPPA: Listing<String>?
+    /// A flag indicating whether to enforce security rules. Defaults to `false`.
+    enforceSecurityRules: Boolean? = false
+
+    /// A listing of allowed HTTP server headers.
+    allowedHttpServerHeaders: Listing<String>?
+
+    /// A listing of allowed HTTP client headers.
+    allowedHttpClientHeaders: Listing<String>?
+
+    /// A listing of allowed HTTP client URLs.
+    allowedHttpClientUrl: Listing<Uri>?
+
+    /// A listing of allowed executable commands.
+    allowedCmdExecutable: Listing<String>?
+
+    /// A listing of allowed external workflows.
+    allowedExternalWorkflow: Listing<String>?
+
+    /// A listing of allowed models.
+    allowedModels: Listing<String>?
+
+    /// A listing of allowed Personal Package Archives (PPA).
+    allowedPPA: Listing<String>?
 }

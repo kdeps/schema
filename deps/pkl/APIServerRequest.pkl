@@ -1,53 +1,156 @@
+/// Abstractions for Kdeps API Server Requests
+///
+/// This module provides functionality to handle and validate HTTP requests to the Kdeps API Server, including methods
+/// for parsing HTTP methods, request data, parameters, headers, and file uploads.
+///
+/// Supported features:
+/// - Validation of HTTP methods.
+/// - Handling request body data, parameters, headers, and file uploads.
+/// - Functions to decode Base64 encoded request data.
+/// - File management utilities like retrieving file types and paths.
+/// - Filtering files by MIME type.
+@ModuleInfo { minPklVersion = "0.26.1" }
+
 @go.Package { name = "github.com/kdeps/schema/gen/api_server_request" }
 
 open module org.kdeps.pkl.APIServerRequest
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
+/// Regex for allowed HTTP Methods.
+///
+/// Matches HTTP methods in a case-insensitive manner. Allowed methods are: GET, POST, PUT, PATCH, OPTIONS, DELETE, and HEAD.
 hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
-hidden isValidHTTPMethod = (str) ->
-if (str.matches(apiMethodRegex))
-true
-else
-throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
 
+/// Validates if the provided HTTP method [str] is supported.
+///
+/// Returns `true` if the method is valid; otherwise, throws an error with a descriptive message.
+///
+/// ### Example usage:
+///
+/// isValidHTTPMethod("POST") // true
+/// isValidHTTPMethod("INVALID") // Error: Invalid HTTP method.
+///
+///
+/// [str]: The HTTP method string to validate.
+/// [bool]: True if the HTTP method is valid, otherwise throws an error.
+hidden isValidHTTPMethod = (str) -> if (str.matches(apiMethodRegex)) true else throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
+
+/// Represents the request URI path.
 path: Uri
+/// The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
 method: String(isValidHTTPMethod)
+/// The body data of the request, which is optional.
 data: String?
+/// Query parameters sent with the request.
 params: Mapping<String, String>?
+/// Headers sent with the request.
 headers: Mapping<String, String>?
+/// Files uploaded with the request, represented as a mapping of file keys to upload metadata.
 files: Mapping<String, APIServerRequestUploads>?
 
+/// Retrieves the keys of the uploaded files.
 hidden fileKeys = files.keys
+/// Retrieves the first key of the uploaded files or null if no files are uploaded.
 hidden firstFileKey = fileKeys.firstOrNull
 
+/// Represents metadata for an uploaded file, including its file path and MIME type.
 class APIServerRequestUploads {
-        filepath: String
-        filetype: String
+    /// The file path where the uploaded file is stored.
+    filepath: String
+    /// The MIME type of the uploaded file.
+    filetype: String
 }
 
+/// Retrieves the Base64-decoded body data of the request.
+///
+/// Returns an empty string if no body data is provided or if the data is already decoded.
+///
+/// [str]: The Base64-decoded request body.
 function data(): String = if (data != "") data.base64Decoded else ""
+
+/// Retrieves the decoded value of the query parameter [name].
+///
+/// Returns an empty string if the parameter does not exist.
+///
+/// [name]: The query parameter to retrieve.
+/// [str]: The Base64-decoded value of the query parameter.
 function param(name: String): String =
         if (params.getOrNull(name) != null) params[name].base64Decoded else ""
+
+/// Retrieves the decoded value of the header [name].
+///
+/// Returns an empty string if the header does not exist.
+///
+/// [name]: The header name to retrieve.
+/// [str]: The Base64-decoded value of the header.
 function header(name: String): String =
         if (headers.getOrNull(name) != null) headers[name].base64Decoded else ""
+
+/// Retrieves metadata for the uploaded file with the key [name].
+///
+/// If the file with the specified key does not exist, returns metadata for the first available file,
+/// or returns an empty file metadata object if no files are uploaded.
+///
+/// [name]: The key of the file to retrieve.
+/// [APIServerRequestUploads]: The metadata for the requested file.
 function file(name: String): APIServerRequestUploads =
         if (!files.isEmpty) if (files.getOrNull(name) != null) files[name] else files[firstFileKey] else new APIServerRequestUploads {
                 filepath = ""
                 filetype = ""
         }
+
+/// Retrieves the MIME type of the uploaded file with the key [name].
+///
+/// [name]: The key of the file to retrieve the MIME type for.
+/// [str]: The MIME type of the file.
 function filetype(name: String): String = file(name).filetype
+
+/// Retrieves the file path of the uploaded file with the key [name].
+///
+/// [name]: The key of the file to retrieve the file path for.
+/// [str]: The file path of the file.
 function filepath(name: String): String = file(name).filepath
+
+/// Retrieves the Base64-encoded content of the uploaded file with the key [name].
+///
+/// If the file path is empty, returns an empty string.
+///
+/// [name]: The key of the file to retrieve the Base64-encoded content for.
+/// [str]: The Base64-encoded content of the file.
 function base64file(name: String): String =
         if (filepath(name) != "") read("file:\(filepath(name))").base64 else ""
+
+/// Returns the total number of uploaded files.
+///
+/// [str]: The number of uploaded files as a string.
 function filecount(): String = files.length
-function allFiles(): Listing =
+
+/// Retrieves a list of file paths for all uploaded files.
+///
+/// [Listing]: A list of file paths for uploaded files.
+function files(): Listing =
         files.toMap().flatMap((_, v) ->  Map(v.filepath, null)).keys.filter((v) -> v != null).toListing()
-function allFiletypes(): Listing =
+
+/// Retrieves a list of MIME types for all uploaded files.
+///
+/// [Listing]: A list of MIME types for uploaded files.
+function filetypes(): Listing =
         files.toMap().flatMap((_, v) ->  Map(v.filetype, null)).keys.filter((v) -> v != null).toListing()
-function getFilesByType(mimeType: String): Listing =
+
+/// Retrieves a list of file paths for uploaded files that match the given MIME type [mimeType].
+///
+/// [mimeType]: The MIME type to filter files by.
+/// [Listing]: A list of file paths for files that match the specified MIME type.
+function filesByType(mimeType: String): Listing =
         files.toMap().flatMap((_, v) ->  if (v.filetype == mimeType) Map(v.filepath, null) else Map(null, null)).keys.filter((v) -> v != null).toListing()
 
-// For consistency
+/// Retrieves the URI path of the request.
+///
+/// [str]: The URI path of the request.
 function path(): String = path
+
+/// Retrieves the HTTP method of the request.
+///
+/// [str]: The HTTP method of the request.
 function method(): String = method

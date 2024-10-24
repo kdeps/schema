@@ -7,6 +7,10 @@ import (
 	"github.com/apple/pkl-go/pkl"
 )
 
+// This module defines the settings and configurations for Docker-related
+// resources within the KDEPS framework. It allows for the specification
+// of package management, including additional package repositories (PPAs)
+// and models to be used within Docker containers.
 type Docker struct {
 }
 

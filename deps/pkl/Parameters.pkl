@@ -1,14 +1,34 @@
+/// Abstractions for Kdeps Parameters
+///
+/// This module defines the structure and validation for parameters used in Kdeps workflows.
+/// It includes a mapping of parameter IDs to their corresponding argument definitions,
+/// allowing for clear documentation and validation of input arguments in the system.
+@ModuleInfo { minPklVersion = "0.26.1" }
+
 @go.Package { name = "github.com/kdeps/schema/gen/parameters" }
 
-module org.kdeps.pkl.Parameters
+open module org.kdeps.pkl.Parameters
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-class Args {
-        hidden idStringRegex = Regex(#"(^\w+$)"#)
-        hidden isValidARG = (str) -> if (str.matches(idStringRegex)) true else throw("Error: Invalid Argument: The argument contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+/// Regex pattern for validating argument param.
+hidden paramStringRegex = Regex(#"(^\w+$)"#)
 
-        name: String(isValidARG)
-        required: Boolean = true
-        description: String?
+/// Validates the argument param according to the specified regex pattern.
+///
+/// Throws an error if the argument param contains invalid characters.
+///
+/// [str]: The argument param to validate.
+hidden isValidARG = (str) -> if (str.matches(paramStringRegex)) true else throw("Error: Invalid Argument: The argument contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+
+/// A mapping of parameter IDs to their corresponding [Args] objects.
+tags: Mapping<String(isValidARG), Args>?
+
+/// Class representing the definition of a parameter argument.
+class Args {
+    /// A flag indicating whether this parameter is required. Defaults to `true`.
+    required: Boolean = true
+
+    /// A description of the parameter, providing additional context or usage information.
+    description: String?
 }

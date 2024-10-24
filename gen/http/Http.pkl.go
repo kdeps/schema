@@ -13,10 +13,17 @@ type Http interface {
 
 var _ Http = (*HttpImpl)(nil)
 
+// This module defines the settings and configurations for HTTP client
+// resources within the KDEPS framework. It enables the management of
+// HTTP requests, including method specifications, request data, headers,
+// and handling of responses. This module provides functionalities to
+// retrieve and manage HTTP client resources based on their identifiers.
 type HttpImpl struct {
+	// A mapping of resource IDs to their associated [ResourceHTTPClient] objects.
 	Resources *map[string]*ResourceHTTPClient `pkl:"resources"`
 }
 
+// A mapping of resource IDs to their associated [ResourceHTTPClient] objects.
 func (rcv *HttpImpl) GetResources() *map[string]*ResourceHTTPClient {
 	return rcv.Resources
 }

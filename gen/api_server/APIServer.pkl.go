@@ -7,11 +7,22 @@ import (
 	"github.com/apple/pkl-go/pkl"
 )
 
-type APIServer struct {
+type APIServer interface {
+}
+
+var _ APIServer = (*APIServerImpl)(nil)
+
+// Abstractions for Kdeps API Server Configuration
+//
+// This module defines the settings and routes for configuring the Kdeps API Server. It includes
+// server settings such as host IP and port number, as well as route definitions. The API server
+// is designed to handle incoming requests and route them to the appropriate handlers, ensuring
+// proper management of HTTP methods and deferred processing.
+type APIServerImpl struct {
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a APIServer
-func LoadFromPath(ctx context.Context, path string) (ret *APIServer, err error) {
+func LoadFromPath(ctx context.Context, path string) (ret APIServer, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
 		return nil, err
@@ -27,8 +38,8 @@ func LoadFromPath(ctx context.Context, path string) (ret *APIServer, err error) 
 }
 
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a APIServer
-func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (*APIServer, error) {
-	var ret APIServer
+func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (APIServer, error) {
+	var ret APIServerImpl
 	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
 		return nil, err
 	}

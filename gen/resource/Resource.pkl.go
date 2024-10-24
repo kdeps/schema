@@ -7,17 +7,29 @@ import (
 	"github.com/apple/pkl-go/pkl"
 )
 
+// Abstractions for Kdeps Resources
+//
+// This module defines the structure for resources used within the Kdeps framework,
+// including actions that can be performed on these resources, validation checks,
+// and error handling mechanisms. Each resource can define its ID, name, description,
+// category, dependencies, and how it runs.
 type Resource struct {
+	// The unique identifier for the resource, validated against [isValidId].
 	Id string `pkl:"id"`
 
+	// The name of the resource.
 	Name string `pkl:"name"`
 
+	// A description of the resource, providing additional context.
 	Description string `pkl:"description"`
 
+	// The category to which the resource belongs.
 	Category string `pkl:"category"`
 
+	// A listing of dependencies required by the resource, validated against [isValidDependency].
 	Requires *[]string `pkl:"requires"`
 
+	// Defines the action to be taken for the resource.
 	Run *ResourceAction `pkl:"run"`
 }
 

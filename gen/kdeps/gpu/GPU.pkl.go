@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// Defines the types of GPU available for Kdeps configurations.
 type GPU string
 
 const (

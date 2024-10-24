@@ -4,6 +4,5 @@ package tag
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Tag", Tag{})
-	pkl.RegisterMapping("org.kdeps.pkl.Tag#ResourceTag", ResourceTag{})
+	pkl.RegisterMapping("org.kdeps.pkl.Tag", TagImpl{})
 }

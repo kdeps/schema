@@ -1,3 +1,11 @@
+/// Abstractions for Kdeps Resources
+///
+/// This module defines the structure for resources used within the Kdeps framework,
+/// including actions that can be performed on these resources, validation checks,
+/// and error handling mechanisms. Each resource can define its ID, name, description,
+/// category, dependencies, and how it runs.
+@ModuleInfo { minPklVersion = "0.26.1" }
+
 @go.Package { name = "github.com/kdeps/schema/gen/resource" }
 
 module org.kdeps.pkl.Resource
@@ -11,33 +19,79 @@ import "LLM.pkl"
 import "Exec.pkl"
 import "Http.pkl"
 
+/// Regex pattern for validating resource IDs and dependencies.
 hidden actionStringRegex = Regex(#"^(\w+|@\w+(/[\w-]+)(:[\w.]+)?)$"#)
+
+/// Validates the resource ID according to the specified regex pattern.
+///
+/// Throws an error if the resource ID contains invalid characters.
+///
+/// [str]: The resource ID to validate.
 hidden isValidId = (str) -> if (str.matches(actionStringRegex)) true else throw("Error: Invalid id name: The id contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+
+/// Validates the dependency ID according to the specified regex pattern.
+///
+/// Throws an error if the dependency ID contains invalid characters.
+///
+/// [str]: The dependency ID to validate.
 hidden isValidDependency = (str) -> if (str.matches(actionStringRegex)) true else throw("Action must be either a simple alphanumeric string or start with `@`, followed by `/action` and an optional `:version` (e.g., `@agent/action:1.0.0`).")
 
+/// The unique identifier for the resource, validated against [isValidId].
 id: String(isValidId)
+
+/// The name of the resource.
 name: String
+
+/// A description of the resource, providing additional context.
 description: String
+
+/// The category to which the resource belongs.
 category: String
+
+/// A listing of dependencies required by the resource, validated against [isValidDependency].
 requires: Listing<String(isValidDependency)>?
+
+/// Defines the action to be taken for the resource.
 run: ResourceAction
 
+/// Class representing an action that can be executed on a resource.
 class ResourceAction {
-        exec: Exec.ResourceExec?
-        chat: LLM.ResourceChat?
-        skipCondition: Listing<Boolean>?
-        preflightCheck: ValidationCheck?
-        postflightCheck: ValidationCheck?
-        httpClient: Http.ResourceHTTPClient?
-        apiResponse: APIServerResponse?
+    /// Configuration for executing commands.
+    exec: Exec.ResourceExec?
+
+    /// Configuration for chat interactions with an LLM.
+    chat: LLM.ResourceChat?
+
+    /// A listing of conditions that determine if the action should be skipped.
+    skipCondition: Listing<Boolean>?
+
+    /// A pre-flight validation check to be performed before executing the action.
+    preflightCheck: ValidationCheck?
+
+    /// A post-flight validation check to be performed after executing the action.
+    postflightCheck: ValidationCheck?
+
+    /// Configuration for HTTP client interactions.
+    httpClient: Http.ResourceHTTPClient?
+
+    /// Configuration for handling API responses.
+    apiResponse: APIServerResponse?
 }
 
+/// Class representing validation checks that can be performed on actions.
 class ValidationCheck {
-        validations: Listing<Boolean>?
-        error: APIError?
+    /// A listing of validation conditions.
+    validations: Listing<Boolean>?
+
+    /// An error associated with the validation check, if any.
+    error: APIError?
 }
 
+/// Class representing an error returned from an API validation check.
 class APIError {
-        code: Int
-        message: String
+    /// The error code associated with the API error.
+    code: Int
+
+    /// A message providing details about the error.
+    message: String
 }

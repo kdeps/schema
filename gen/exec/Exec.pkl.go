@@ -13,10 +13,17 @@ type Exec interface {
 
 var _ Exec = (*ExecImpl)(nil)
 
+// This module defines the execution resources for the KDEPS framework.
+// It allows for the management and execution of commands, capturing their
+// standard output and error, as well as handling environment variables and
+// exit codes. The module provides functionalities to retrieve and manage
+// executable resources based on their identifiers.
 type ExecImpl struct {
+	// A mapping of resource IDs to their associated [ResourceExec] objects.
 	Resources *map[string]*ResourceExec `pkl:"resources"`
 }
 
+// A mapping of resource IDs to their associated [ResourceExec] objects.
 func (rcv *ExecImpl) GetResources() *map[string]*ResourceExec {
 	return rcv.Resources
 }

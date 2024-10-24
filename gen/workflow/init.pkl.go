@@ -4,5 +4,5 @@ package workflow
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Workflow", Workflow{})
+	pkl.RegisterMapping("org.kdeps.pkl.Workflow", WorkflowImpl{})
 }

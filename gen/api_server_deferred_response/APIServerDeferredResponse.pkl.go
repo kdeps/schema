@@ -13,10 +13,13 @@ type APIServerDeferredResponse interface {
 
 var _ APIServerDeferredResponse = (*APIServerDeferredResponseImpl)(nil)
 
+// Abstractions for Kdeps API Server Deferred Responses
 type APIServerDeferredResponseImpl struct {
+	// A mapping of resource IDs to their associated [APIServerDeferred] objects.
 	Resources map[uint32]*APIServerDeferred `pkl:"resources"`
 }
 
+// A mapping of resource IDs to their associated [APIServerDeferred] objects.
 func (rcv *APIServerDeferredResponseImpl) GetResources() map[uint32]*APIServerDeferred {
 	return rcv.Resources
 }

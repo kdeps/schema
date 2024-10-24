@@ -7,12 +7,31 @@ import (
 	"github.com/kdeps/schema/gen/security"
 )
 
+// Class representing the settings and configurations for a project.
 type Settings struct {
+	// Boolean flag to enable or disable API server mode for the project.
+	//
+	// - `true`: The project runs in API server mode.
+	// - `false`: The project does not run in API server mode. Default is `false`.
 	ApiServerMode bool `pkl:"apiServerMode"`
 
+	// Settings for configuring the API server, which is optional.
+	//
+	// If API server mode is enabled, these settings provide additional configuration for the API server.
+	// [APIServer.APIServerSettings]: Defines the structure and properties for API server settings.
 	ApiServer *apiserver.APIServerSettings `pkl:"apiServer"`
 
+	// Docker-related settings for the project's agent.
+	//
+	// These settings define how the Docker agent should be configured for the project.
+	// [Docker.DockerSettings]: Includes properties such as Docker image, container settings, and other
+	// Docker-specific configurations.
 	AgentSettings *docker.DockerSettings `pkl:"agentSettings"`
 
+	// Security-related settings for the project, which are optional.
+	//
+	// If security settings are provided, they define the authentication, authorization, and other
+	// security-related configurations for the project.
+	// [Security.Settings]: Includes security settings such as authentication methods and encryption policies.
 	SecuritySettings *security.Settings `pkl:"securitySettings"`
 }

@@ -5,5 +5,5 @@ import "github.com/apple/pkl-go/pkl"
 
 func init() {
 	pkl.RegisterMapping("org.kdeps.pkl.Parameters#Args", Args{})
-	pkl.RegisterMapping("org.kdeps.pkl.Parameters", Parameters{})
+	pkl.RegisterMapping("org.kdeps.pkl.Parameters", ParametersImpl{})
 }

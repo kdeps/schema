@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// Defines the paths where Kdeps configurations can be stored.
 type Path string
 
 const (

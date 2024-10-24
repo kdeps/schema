@@ -5,5 +5,5 @@ import "github.com/apple/pkl-go/pkl"
 
 func init() {
 	pkl.RegisterMapping("org.kdeps.pkl.Security#Settings", Settings{})
-	pkl.RegisterMapping("org.kdeps.pkl.Security", Security{})
+	pkl.RegisterMapping("org.kdeps.pkl.Security", SecurityImpl{})
 }
