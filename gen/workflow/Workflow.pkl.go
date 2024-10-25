@@ -9,32 +9,6 @@ import (
 	"github.com/kdeps/schema/gen/project"
 )
 
-type Workflow interface {
-	GetName() string
-
-	GetDescription() string
-
-	GetWebsite() *string
-
-	GetAuthors() *[]string
-
-	GetDocumentation() *string
-
-	GetRepository() *string
-
-	GetVersion() string
-
-	GetAction() string
-
-	GetWorkflows() []string
-
-	GetSettings() *project.Settings
-
-	GetArgs() *[]*parameters.Args
-}
-
-var _ Workflow = (*WorkflowImpl)(nil)
-
 // Abstractions for Kdeps Workflow Management
 //
 // This module provides functionality for defining and managing workflows within the Kdeps system.
@@ -44,9 +18,7 @@ var _ Workflow = (*WorkflowImpl)(nil)
 //
 // This module also ensures the proper structure of workflows using validation checks for names,
 // workflow references, action formats, and versioning patterns.
-//
-// This module requires `pkl-lang` version 0.26.1 or higher.
-type WorkflowImpl struct {
+type Workflow struct {
 	// The name of the workflow, validated to contain only alphanumeric characters.
 	Name string `pkl:"name"`
 
@@ -81,63 +53,8 @@ type WorkflowImpl struct {
 	Args *[]*parameters.Args `pkl:"args"`
 }
 
-// The name of the workflow, validated to contain only alphanumeric characters.
-func (rcv *WorkflowImpl) GetName() string {
-	return rcv.Name
-}
-
-// A description of the workflow, providing details about its purpose and behavior.
-func (rcv *WorkflowImpl) GetDescription() string {
-	return rcv.Description
-}
-
-// A URI pointing to the website or landing page for the workflow, if available.
-func (rcv *WorkflowImpl) GetWebsite() *string {
-	return rcv.Website
-}
-
-// A listing of the authors or contributors to the workflow.
-func (rcv *WorkflowImpl) GetAuthors() *[]string {
-	return rcv.Authors
-}
-
-// A URI pointing to the documentation for the workflow, if available.
-func (rcv *WorkflowImpl) GetDocumentation() *string {
-	return rcv.Documentation
-}
-
-// A URI pointing to the repository where the workflow's code or configuration can be found.
-func (rcv *WorkflowImpl) GetRepository() *string {
-	return rcv.Repository
-}
-
-// The version of the workflow, following semantic versioning rules (e.g., 1.0.0).
-func (rcv *WorkflowImpl) GetVersion() string {
-	return rcv.Version
-}
-
-// The default action to be performed by the workflow, validated to ensure proper formatting.
-func (rcv *WorkflowImpl) GetAction() string {
-	return rcv.Action
-}
-
-// A listing of external workflows referenced by this workflow, validated by format.
-func (rcv *WorkflowImpl) GetWorkflows() []string {
-	return rcv.Workflows
-}
-
-// The project settings that this workflow depends on.
-func (rcv *WorkflowImpl) GetSettings() *project.Settings {
-	return rcv.Settings
-}
-
-// The parameters or arguments that this workflow accepts.
-func (rcv *WorkflowImpl) GetArgs() *[]*parameters.Args {
-	return rcv.Args
-}
-
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Workflow
-func LoadFromPath(ctx context.Context, path string) (ret Workflow, err error) {
+func LoadFromPath(ctx context.Context, path string) (ret *Workflow, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
 		return nil, err
@@ -153,8 +70,8 @@ func LoadFromPath(ctx context.Context, path string) (ret Workflow, err error) {
 }
 
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Workflow
-func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Workflow, error) {
-	var ret WorkflowImpl
+func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (*Workflow, error) {
+	var ret Workflow
 	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
 		return nil, err
 	}

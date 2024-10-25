@@ -22,9 +22,6 @@ type ResourceAction struct {
 	// A pre-flight validation check to be performed before executing the action.
 	PreflightCheck *ValidationCheck `pkl:"preflightCheck"`
 
-	// A post-flight validation check to be performed after executing the action.
-	PostflightCheck *ValidationCheck `pkl:"postflightCheck"`
-
 	// Configuration for HTTP client interactions.
 	HttpClient *http.ResourceHTTPClient `pkl:"httpClient"`
 

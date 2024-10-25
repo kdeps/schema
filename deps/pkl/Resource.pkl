@@ -68,9 +68,6 @@ class ResourceAction {
     /// A pre-flight validation check to be performed before executing the action.
     preflightCheck: ValidationCheck?
 
-    /// A post-flight validation check to be performed after executing the action.
-    postflightCheck: ValidationCheck?
-
     /// Configuration for HTTP client interactions.
     httpClient: Http.ResourceHTTPClient?
 
