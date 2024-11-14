@@ -13,8 +13,8 @@ type DockerSettings struct {
 	// A list of packages to be installed in the Docker container.
 	Packages *[]string `pkl:"packages"`
 
-	// A list of Personal Package Archives (PPAs) to be added.
-	Ppa *[]string `pkl:"ppa"`
+	// A list of APT or PPA repos to be added.
+	Repositories *[]string `pkl:"repositories"`
 
 	// A mandatory list of models to be used in the Docker environment.
 	Models []string `pkl:"models"`
