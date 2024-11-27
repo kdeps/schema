@@ -1,0 +1,94 @@
+/// This module defines the execution resources for the KDEPS framework.
+/// It facilitates the management and execution of Python-based commands,
+/// capturing their standard output, standard error, and handling environment
+/// variables as well as exit codes. The module provides utilities for retrieving
+/// and managing executable resources identified by unique resource IDs.
+@ModuleInfo { minPklVersion = "0.26.1" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/python" }
+
+open module org.kdeps.pkl.Python
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+
+/// A mapping of resource IDs to their corresponding [ResourcePython] objects.
+resources: Mapping<String, ResourcePython>?
+
+/// Represents an executable Python resource, including its associated script,
+/// environment variables, and execution details such as outputs and exit codes.
+class ResourcePython {
+        /// Regular expression used to validate environment variable names.
+        hidden envStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
+
+        /// Validates the name of an environment variable.
+        /// Throws an error if the name contains invalid characters, starts with a number,
+        /// or is empty.
+        hidden isValidEnv = (str) ->
+        if (str.matches(envStringRegex))
+        true
+        else
+        throw("Error: Invalid environment variable name. Ensure it includes only alphanumeric characters or underscores, starts with a letter or underscore, and is not empty.")
+
+        /// A mapping of environment variable names to their values.
+        env: Mapping<String(isValidEnv), String>?
+
+        /// The Python script to be executed.
+        script: String
+
+        /// Captures the standard error output from the execution.
+        stderr: String?
+
+        /// Captures the standard output from the execution.
+        stdout: String?
+
+        /// The exit code of the executed command. Defaults to 0.
+        exitCode: Int? = 0
+
+        /// A timestamp indicating when the command was executed, as an unsigned 32-bit integer.
+        timestamp: UInt32?
+
+        /// The maximum duration (in seconds) allowed for the command execution. Defaults to 60 seconds.
+        timeoutSeconds: Int? = 60
+}
+
+/// Retrieves the [ResourcePython] associated with the specified [id].
+///
+/// If no resource is found for the given ID, returns a new [ResourcePython]
+/// object with default values.
+///
+/// - [id]: The ID of the resource to retrieve.
+/// - Returns: The [ResourcePython] object associated with the specified ID.
+function resource(id: String): ResourcePython =
+        if (resources.getOrNull(id) != null) resources[id] else new ResourcePython {
+                script = ""
+                stderr = ""
+                stdout = ""
+                exitCode = 0
+        }
+
+/// Retrieves the standard error output for the specified resource [id].
+///
+/// - [id]: The ID of the resource.
+/// - Returns: The standard error output of the executed command.
+function stderr(id: String): String = resource(id).stderr
+
+/// Retrieves the standard output for the specified resource [id].
+///
+/// - [id]: The ID of the resource.
+/// - Returns: The standard output of the executed command.
+function stdout(id: String): String = resource(id).stdout
+
+/// Retrieves the exit code for the specified resource [id].
+///
+/// - [id]: The ID of the resource.
+/// - Returns: The exit code of the executed command.
+function exitCode(id: String): Int = resource(id).exitCode
+
+/// Retrieves the value of an environment variable for the specified resource [id].
+///
+/// - [id]: The ID of the resource.
+/// - [envName]: The name of the environment variable to retrieve.
+/// - Returns: The value of the environment variable, or an empty string if the
+///            variable is not set.
+function env(id: String, envName: String): String =
+        if (!resource(id).env.isEmpty) if (resource(id).env.containsKey(envName)) resource(id).env[envName] else "" else ""
