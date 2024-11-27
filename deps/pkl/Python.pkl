@@ -3,7 +3,7 @@
 /// capturing their standard output, standard error, and handling environment
 /// variables as well as exit codes. The module provides utilities for retrieving
 /// and managing executable resources identified by unique resource IDs.
-@ModuleInfo { minPklVersion = "0.26.1" }
+@ModuleInfo { minPklVersion = "0.27.0" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/python" }
 

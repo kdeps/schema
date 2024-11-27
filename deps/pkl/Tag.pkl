@@ -3,7 +3,7 @@
 /// This module provides definitions and validations for tagging resources within the Kdeps framework.
 /// Tags are used to categorize and identify resources using alphanumeric names. Each tag is associated
 /// with a value and an optional timestamp, allowing for organized resource management and retrieval.
-@ModuleInfo { minPklVersion = "0.26.1" }
+@ModuleInfo { minPklVersion = "0.27.0" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/tag" }
 

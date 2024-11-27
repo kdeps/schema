@@ -4,7 +4,7 @@
 /// of security rules and the configuration of allowed headers, URLs, executable commands, external workflows,
 /// models, and PPA (Personal Package Archive). These settings are crucial for ensuring secure
 /// operations within the Kdeps environment.
-@ModuleInfo { minPklVersion = "0.26.1" }
+@ModuleInfo { minPklVersion = "0.27.0" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/security" }
 

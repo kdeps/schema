@@ -1,5 +1,5 @@
 plugins {
-  id("org.pkl-lang") version "0.26.1"
+  id("org.pkl-lang") version "0.27.0"
 }
 
 val maybeVersion = System.getenv("VERSION")

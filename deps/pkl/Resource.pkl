@@ -4,7 +4,7 @@
 /// including actions that can be performed on these resources, validation checks,
 /// and error handling mechanisms. Each resource can define its ID, name, description,
 /// category, dependencies, and how it runs.
-@ModuleInfo { minPklVersion = "0.26.1" }
+@ModuleInfo { minPklVersion = "0.27.0" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/resource" }
 
@@ -17,6 +17,7 @@ import "APIServer.pkl"
 import "APIServerResponse.pkl"
 import "LLM.pkl"
 import "Exec.pkl"
+import "Python.pkl"
 import "Http.pkl"
 
 /// Regex pattern for validating resource IDs and dependencies.
@@ -58,6 +59,9 @@ run: ResourceAction
 class ResourceAction {
     /// Configuration for executing commands.
     exec: Exec.ResourceExec?
+
+    /// Configuration for python scripts.
+    python: Python.ResourcePython?
 
     /// Configuration for chat interactions with an LLM.
     chat: LLM.ResourceChat?

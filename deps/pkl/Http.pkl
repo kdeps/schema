@@ -3,7 +3,7 @@
 /// HTTP requests, including method specifications, request data, headers,
 /// and handling of responses. This module provides functionalities to
 /// retrieve and manage HTTP client resources based on their identifiers.
-@ModuleInfo { minPklVersion = "0.26.1" }
+@ModuleInfo { minPklVersion = "0.27.0" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/http" }
 
