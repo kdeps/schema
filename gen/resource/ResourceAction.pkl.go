@@ -6,16 +6,12 @@ import (
 	"github.com/kdeps/schema/gen/exec"
 	"github.com/kdeps/schema/gen/http"
 	"github.com/kdeps/schema/gen/llm"
-	"github.com/kdeps/schema/gen/python"
 )
 
 // Class representing an action that can be executed on a resource.
 type ResourceAction struct {
 	// Configuration for executing commands.
 	Exec *exec.ResourceExec `pkl:"exec"`
-
-	// Configuration for python scripts.
-	Python *python.ResourcePython `pkl:"python"`
 
 	// Configuration for chat interactions with an LLM.
 	Chat *llm.ResourceChat `pkl:"chat"`

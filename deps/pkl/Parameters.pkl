@@ -3,7 +3,7 @@
 /// This module defines the structure and validation for parameters used in Kdeps workflows.
 /// It includes a mapping of parameter IDs to their corresponding argument definitions,
 /// allowing for clear documentation and validation of input arguments in the system.
-@ModuleInfo { minPklVersion = "0.27.0" }
+@ModuleInfo { minPklVersion = "0.26.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/parameters" }
 

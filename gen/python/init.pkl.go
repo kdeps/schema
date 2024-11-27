@@ -4,6 +4,6 @@ package python
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Python#ResourcePython", ResourcePython{})
 	pkl.RegisterMapping("org.kdeps.pkl.Python", PythonImpl{})
+	pkl.RegisterMapping("org.kdeps.pkl.Python#ResourcePython", ResourcePython{})
 }

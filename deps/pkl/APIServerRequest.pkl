@@ -9,7 +9,7 @@
 /// - Functions to decode Base64 encoded request data.
 /// - File management utilities like retrieving file types and paths.
 /// - Filtering files by MIME type.
-@ModuleInfo { minPklVersion = "0.27.0" }
+@ModuleInfo { minPklVersion = "0.26.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/api_server_request" }
 

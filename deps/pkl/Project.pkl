@@ -4,7 +4,7 @@
 /// configurations related to the API server, Docker agent settings, and security settings. These
 /// settings allow customization of the project's environment, such as enabling API server mode or
 /// configuring Docker and security parameters.
-@ModuleInfo { minPklVersion = "0.27.0" }
+@ModuleInfo { minPklVersion = "0.26.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/project" }
 

@@ -1,5 +1,5 @@
 /// Abstractions for Kdeps API Server Deferred Responses
-@ModuleInfo { minPklVersion = "0.27.0" }
+@ModuleInfo { minPklVersion = "0.26.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/api_server_deferred_response" }
 
