@@ -16,8 +16,15 @@ class DockerSettings {
         /// Sets if Anaconda3 will be pre-installed in the Image
         installAnaconda: Boolean = false
 
-        /// Conda packages to be installed if installAnaconda is true
-        condaPackages: Mapping<String, String>?
+        /// Conda packages to install when `installAnaconda` is set to true.
+        ///
+        /// Example:
+        /// condaPackages {
+        ///   ["base"] { // The name of the Anaconda environment
+        ///     ["main"] = "diffuser"  // Package "diffuser" from the "main" channel
+        ///   }
+        /// }
+        condaPackages: Mapping<String, Mapping<String, String>>?
 
         /// Python packages that will be pre-installed.
         pythonPackages: Listing<String>?

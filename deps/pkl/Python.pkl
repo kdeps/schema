@@ -23,14 +23,14 @@ class ResourcePython {
         /// Validates the name of an environment variable.
         /// Throws an error if the name contains invalid characters, starts with a number,
         /// or is empty.
-        hidden isValidEnv = (str) ->
-        if (str.matches(envStringRegex))
-        true
-        else
-        throw("Error: Invalid environment variable name. Ensure it includes only alphanumeric characters or underscores, starts with a letter or underscore, and is not empty.")
+        hidden isValidEnv = (str) -> if (str.matches(envStringRegex)) true else throw("Error: Invalid environment variable name. Ensure it includes only alphanumeric characters or underscores, starts with a letter or underscore, and is not empty.")
 
         /// A mapping of environment variable names to their values.
         env: Mapping<String(isValidEnv), String>?
+
+        /// Specifies the conda environment in which this Python script will execute, if Anaconda is
+        /// installed.
+        condaEnvironment: String?
 
         /// The Python script to be executed.
         script: String
@@ -60,6 +60,7 @@ class ResourcePython {
 /// - Returns: The [ResourcePython] object associated with the specified ID.
 function resource(id: String): ResourcePython =
         if (resources.getOrNull(id) != null) resources[id] else new ResourcePython {
+                condaEnvironment = ""
                 script = ""
                 stderr = ""
                 stdout = ""

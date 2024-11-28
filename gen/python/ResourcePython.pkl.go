@@ -7,6 +7,10 @@ type ResourcePython struct {
 	// A mapping of environment variable names to their values.
 	Env *map[string]string `pkl:"env"`
 
+	// Specifies the conda environment in which this Python script will execute, if Anaconda is
+	// installed.
+	CondaEnvironment *string `pkl:"condaEnvironment"`
+
 	// The Python script to be executed.
 	Script string `pkl:"script"`
 

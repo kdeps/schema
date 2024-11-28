@@ -7,8 +7,15 @@ type DockerSettings struct {
 	// Sets if Anaconda3 will be pre-installed in the Image
 	InstallAnaconda bool `pkl:"installAnaconda"`
 
-	// Conda packages to be installed if installAnaconda is true
-	CondaPackages *map[string]string `pkl:"condaPackages"`
+	// Conda packages to install when `installAnaconda` is set to true.
+	//
+	// Example:
+	// condaPackages {
+	//   ["base"] { // The name of the Anaconda environment
+	//     ["main"] = "diffuser"  // Package "diffuser" from the "main" channel
+	//   }
+	// }
+	CondaPackages *map[string]map[string]string `pkl:"condaPackages"`
 
 	// Python packages that will be pre-installed.
 	PythonPackages *[]string `pkl:"pythonPackages"`
