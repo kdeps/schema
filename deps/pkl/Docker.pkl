@@ -16,7 +16,10 @@ class DockerSettings {
         /// Sets if Anaconda3 will be pre-installed in the Image
         installAnaconda: Boolean = false
 
-        /// Python packages that will be pre-installed using Anaconda3.
+        /// Conda packages to be installed if installAnaconda is true
+        condaPackages: Mapping<String, String>?
+
+        /// Python packages that will be pre-installed.
         pythonPackages: Listing<String>?
 
         /// A list of packages to be installed in the Docker container.

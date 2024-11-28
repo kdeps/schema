@@ -7,7 +7,10 @@ type DockerSettings struct {
 	// Sets if Anaconda3 will be pre-installed in the Image
 	InstallAnaconda bool `pkl:"installAnaconda"`
 
-	// Python packages that will be pre-installed using Anaconda3.
+	// Conda packages to be installed if installAnaconda is true
+	CondaPackages *map[string]string `pkl:"condaPackages"`
+
+	// Python packages that will be pre-installed.
 	PythonPackages *[]string `pkl:"pythonPackages"`
 
 	// A list of packages to be installed in the Docker container.
