@@ -14,7 +14,7 @@ type APIServerResponse interface {
 
 	GetFile() *string
 
-	GetErrors() *APIServerErrorsBlock
+	GetErrors() *[]*APIServerErrorsBlock
 }
 
 var _ APIServerResponse = (*APIServerResponseImpl)(nil)
@@ -57,7 +57,7 @@ type APIServerResponseImpl struct {
 	// If the request was unsuccessful, this block contains the error code and error message
 	// returned by the server.
 	// [APIServerErrorsBlock]: Contains the error code and message explaining the issue.
-	Errors *APIServerErrorsBlock `pkl:"errors"`
+	Errors *[]*APIServerErrorsBlock `pkl:"errors"`
 }
 
 // A Boolean flag indicating whether the API request was successful.
@@ -88,7 +88,7 @@ func (rcv *APIServerResponseImpl) GetFile() *string {
 // If the request was unsuccessful, this block contains the error code and error message
 // returned by the server.
 // [APIServerErrorsBlock]: Contains the error code and message explaining the issue.
-func (rcv *APIServerResponseImpl) GetErrors() *APIServerErrorsBlock {
+func (rcv *APIServerResponseImpl) GetErrors() *[]*APIServerErrorsBlock {
 	return rcv.Errors
 }
 

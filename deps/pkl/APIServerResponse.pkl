@@ -55,4 +55,4 @@ file: Uri?
 /// If the request was unsuccessful, this block contains the error code and error message
 /// returned by the server.
 /// [APIServerErrorsBlock]: Contains the error code and message explaining the issue.
-errors: APIServerErrorsBlock?
+errors: Listing<APIServerErrorsBlock>?
