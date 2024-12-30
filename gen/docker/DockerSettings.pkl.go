@@ -28,4 +28,7 @@ type DockerSettings struct {
 
 	// A mandatory list of models to be used in the Docker environment.
 	Models []string `pkl:"models"`
+
+	// Sets the Ollama Docker version to be use as the base image
+	OllamaImageTag string `pkl:"ollamaImageTag"`
 }
