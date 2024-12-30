@@ -22,6 +22,10 @@ type Workflow interface {
 
 	GetRepository() *string
 
+	GetHeroImage() *string
+
+	GetAgentIcon() *string
+
 	GetVersion() string
 
 	GetAction() string
@@ -62,6 +66,12 @@ type WorkflowImpl struct {
 
 	// A URI pointing to the repository where the workflow's code or configuration can be found.
 	Repository *string `pkl:"repository"`
+
+	// Hero image to be used on this AI Agent.
+	HeroImage *string `pkl:"heroImage"`
+
+	// The icon to be used on this AI agent.
+	AgentIcon *string `pkl:"agentIcon"`
 
 	// The version of the workflow, following semantic versioning rules (e.g., 1.0.0).
 	Version string `pkl:"version"`
@@ -107,6 +117,16 @@ func (rcv *WorkflowImpl) GetDocumentation() *string {
 // A URI pointing to the repository where the workflow's code or configuration can be found.
 func (rcv *WorkflowImpl) GetRepository() *string {
 	return rcv.Repository
+}
+
+// Hero image to be used on this AI Agent.
+func (rcv *WorkflowImpl) GetHeroImage() *string {
+	return rcv.HeroImage
+}
+
+// The icon to be used on this AI agent.
+func (rcv *WorkflowImpl) GetAgentIcon() *string {
+	return rcv.AgentIcon
 }
 
 // The version of the workflow, following semantic versioning rules (e.g., 1.0.0).

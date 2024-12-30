@@ -68,6 +68,12 @@ documentation: Uri?
 /// A URI pointing to the repository where the workflow's code or configuration can be found.
 repository: Uri?
 
+/// Hero image to be used on this AI Agent.
+heroImage: String?
+
+/// The icon to be used on this AI agent.
+agentIcon: String?
+
 /// The version of the workflow, following semantic versioning rules (e.g., 1.0.0).
 version: String(isValidVersion) = "1.0.0"
 
