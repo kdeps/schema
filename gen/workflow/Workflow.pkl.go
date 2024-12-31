@@ -5,7 +5,6 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
-	"github.com/kdeps/schema/gen/parameters"
 	"github.com/kdeps/schema/gen/project"
 )
 
@@ -33,8 +32,6 @@ type Workflow interface {
 	GetWorkflows() []string
 
 	GetSettings() *project.Settings
-
-	GetArgs() *[]*parameters.Args
 }
 
 var _ Workflow = (*WorkflowImpl)(nil)
@@ -84,9 +81,6 @@ type WorkflowImpl struct {
 
 	// The project settings that this workflow depends on.
 	Settings *project.Settings `pkl:"settings"`
-
-	// The parameters or arguments that this workflow accepts.
-	Args *[]*parameters.Args `pkl:"args"`
 }
 
 // The name of the workflow, validated to contain only alphanumeric characters.
@@ -147,11 +141,6 @@ func (rcv *WorkflowImpl) GetWorkflows() []string {
 // The project settings that this workflow depends on.
 func (rcv *WorkflowImpl) GetSettings() *project.Settings {
 	return rcv.Settings
-}
-
-// The parameters or arguments that this workflow accepts.
-func (rcv *WorkflowImpl) GetArgs() *[]*parameters.Args {
-	return rcv.Args
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Workflow

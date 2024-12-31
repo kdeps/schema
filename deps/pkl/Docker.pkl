@@ -13,6 +13,12 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 /// Class representing the settings for Docker configurations.
 /// It includes options for specifying packages, PPAs, and models.
 class DockerSettings {
+        /// Regular expression for validating params variable names.
+        hidden paramStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
+
+        /// Function to check if a given params variable name is valid.
+        hidden isValidParams = (str) -> if (str.matches(paramStringRegex)) true else throw("Error: Invalid params name: The params name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
+
         /// Sets if Anaconda3 will be pre-installed in the Image
         installAnaconda: Boolean = false
 
@@ -40,4 +46,7 @@ class DockerSettings {
 
         /// Sets the Ollama Docker version to be use as the base image
         ollamaImageTag: String = "0.5.4"
+
+        /// A listing of params variable names
+        parameters: Listing<String(isValidParams)>?
 }

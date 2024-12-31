@@ -45,11 +45,6 @@ success: Boolean = true
 /// [APIServerResponseBlock]: Contains a listing of the returned data items.
 response: APIServerResponseBlock?
 
-/// A URI pointing to a file returned by the server, if applicable.
-///
-/// If the server returned a file as part of the response, this holds the URI of the file.
-file: Uri?
-
 /// The error block containing details of any error encountered during the API request.
 ///
 /// If the request was unsuccessful, this block contains the error code and error message

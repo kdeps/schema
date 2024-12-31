@@ -36,11 +36,4 @@ class Settings {
         /// [Docker.DockerSettings]: Includes properties such as Docker image, container settings, and other
         /// Docker-specific configurations.
         agentSettings: Docker.DockerSettings
-
-        /// Security-related settings for the project, which are optional.
-        ///
-        /// If security settings are provided, they define the authentication, authorization, and other
-        /// security-related configurations for the project.
-        /// [Security.Settings]: Includes security settings such as authentication methods and encryption policies.
-        securitySettings: Security.Settings?
 }

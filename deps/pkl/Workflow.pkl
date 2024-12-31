@@ -85,6 +85,3 @@ workflows: Listing<String(isValidWorkflow)>
 
 /// The project settings that this workflow depends on.
 settings: Project.Settings
-
-/// The parameters or arguments that this workflow accepts.
-args: Listing<Parameters.Args>?

@@ -4,7 +4,6 @@ package project
 import (
 	"github.com/kdeps/schema/gen/api_server"
 	"github.com/kdeps/schema/gen/docker"
-	"github.com/kdeps/schema/gen/security"
 )
 
 // Class representing the settings and configurations for a project.
@@ -27,11 +26,4 @@ type Settings struct {
 	// [Docker.DockerSettings]: Includes properties such as Docker image, container settings, and other
 	// Docker-specific configurations.
 	AgentSettings *docker.DockerSettings `pkl:"agentSettings"`
-
-	// Security-related settings for the project, which are optional.
-	//
-	// If security settings are provided, they define the authentication, authorization, and other
-	// security-related configurations for the project.
-	// [Security.Settings]: Includes security settings such as authentication methods and encryption policies.
-	SecuritySettings *security.Settings `pkl:"securitySettings"`
 }

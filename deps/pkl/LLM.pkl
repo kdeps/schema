@@ -33,10 +33,6 @@ class ResourceChat {
     prompt: String
     /// A listing of file paths or identifiers associated with the chat.
     files: Listing<String>?
-    /// Whether the chat involves image generation. Defaults to `false`.
-    imageGeneration: Boolean? = false
-    /// The file path of a generated file from the LLM interaction.
-    generatedFile: String?
     /// Whether the LLM's response is in JSON format. Defaults to `false`.
     jsonResponse: Boolean? = false
     /// A listing of keys expected in the JSON response from the LLM model.
@@ -86,15 +82,3 @@ function jsonResponse(id: String): Boolean = resource(id).jsonResponse
 /// [id]: The ID of the resource to retrieve the JSON response keys for.
 /// [Listing<String>]: A listing of expected JSON keys in the response.
 function jsonResponseKeys(id: String): Listing<String> = resource(id).jsonResponseKeys
-
-/// Retrieves whether the resource [id] involves image generation.
-///
-/// [id]: The ID of the resource to check for image generation.
-/// [bool]: True if the chat involves image generation, otherwise False.
-function imageGeneration(id: String): Boolean = resource(id).imageGeneration
-
-/// Retrieves the file path of a generated file for the resource [id].
-///
-/// [id]: The ID of the resource to retrieve the generated file path for.
-/// [str]: The file path of the generated file.
-function generatedFile(id: String): String = resource(id).generatedFile

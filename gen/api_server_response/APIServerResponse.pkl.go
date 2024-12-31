@@ -12,8 +12,6 @@ type APIServerResponse interface {
 
 	GetResponse() *APIServerResponseBlock
 
-	GetFile() *string
-
 	GetErrors() *[]*APIServerErrorsBlock
 }
 
@@ -47,11 +45,6 @@ type APIServerResponseImpl struct {
 	// [APIServerResponseBlock]: Contains a listing of the returned data items.
 	Response *APIServerResponseBlock `pkl:"response"`
 
-	// A URI pointing to a file returned by the server, if applicable.
-	//
-	// If the server returned a file as part of the response, this holds the URI of the file.
-	File *string `pkl:"file"`
-
 	// The error block containing details of any error encountered during the API request.
 	//
 	// If the request was unsuccessful, this block contains the error code and error message
@@ -74,13 +67,6 @@ func (rcv *APIServerResponseImpl) GetSuccess() bool {
 // [APIServerResponseBlock]: Contains a listing of the returned data items.
 func (rcv *APIServerResponseImpl) GetResponse() *APIServerResponseBlock {
 	return rcv.Response
-}
-
-// A URI pointing to a file returned by the server, if applicable.
-//
-// If the server returned a file as part of the response, this holds the URI of the file.
-func (rcv *APIServerResponseImpl) GetFile() *string {
-	return rcv.File
 }
 
 // The error block containing details of any error encountered during the API request.

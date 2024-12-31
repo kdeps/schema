@@ -13,12 +13,6 @@ type ResourceChat struct {
 	// A listing of file paths or identifiers associated with the chat.
 	Files *[]string `pkl:"files"`
 
-	// Whether the chat involves image generation. Defaults to `false`.
-	ImageGeneration *bool `pkl:"imageGeneration"`
-
-	// The file path of a generated file from the LLM interaction.
-	GeneratedFile *string `pkl:"generatedFile"`
-
 	// Whether the LLM's response is in JSON format. Defaults to `false`.
 	JsonResponse *bool `pkl:"jsonResponse"`
 
