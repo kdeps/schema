@@ -32,6 +32,9 @@ type DockerSettings struct {
 	// Sets the Ollama Docker version to be use as the base image
 	OllamaImageTag string `pkl:"ollamaImageTag"`
 
-	// A listing of params variable names
-	Parameters *[]string `pkl:"parameters"`
+	// A mapping of build arguments variable name
+	Args *map[string]string `pkl:"args"`
+
+	// A mapping of build env variable names that persist in the image and container
+	Env *map[string]string `pkl:"env"`
 }
