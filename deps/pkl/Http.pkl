@@ -35,6 +35,9 @@ class ResourceHTTPClient {
         /// A mapping of headers to be included in the request.
         headers: Mapping<String, String>?
 
+        /// A mapping of parameters to be included in the request.
+        params: Mapping<String, String>?
+
         /// The response received from the HTTP request.
         response: ResponseBlock?
 
@@ -67,6 +70,7 @@ function resource(id: String): ResourceHTTPClient =
                 url = ""
                 data {}
                 headers {}
+                params {}
                 response {}
         }
 
