@@ -16,6 +16,9 @@ type ResourceHTTPClient struct {
 	// A mapping of headers to be included in the request.
 	Headers *map[string]string `pkl:"headers"`
 
+	// A mapping of parameters to be included in the request.
+	Params *map[string]string `pkl:"params"`
+
 	// The response received from the HTTP request.
 	Response *ResponseBlock `pkl:"response"`
 
