@@ -5,9 +5,12 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/utils"
 )
 
 type Exec interface {
+	utils.Utils
+
 	GetResources() *map[string]*ResourceExec
 }
 
@@ -19,6 +22,8 @@ var _ Exec = (*ExecImpl)(nil)
 // exit codes. The module provides functionalities to retrieve and manage
 // executable resources based on their identifiers.
 type ExecImpl struct {
+	*utils.UtilsImpl
+
 	// A mapping of resource IDs to their associated [ResourceExec] objects.
 	Resources *map[string]*ResourceExec `pkl:"resources"`
 }

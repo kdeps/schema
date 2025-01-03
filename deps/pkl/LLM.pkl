@@ -19,6 +19,7 @@
 
 open module org.kdeps.pkl.LLM
 
+extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 /// A mapping of resource IDs to their associated [ResourceChat] objects.
@@ -27,22 +28,22 @@ resources: Mapping<String, ResourceChat>?
 /// Class representing the details of a chat interaction with an LLM model, including prompts, responses,
 /// file generation, and additional metadata.
 class ResourceChat {
-    /// The name of the LLM model used for the chat.
-    model: String = "llama3.2"
-    /// The prompt text sent to the LLM model.
-    prompt: String
-    /// A listing of file paths or identifiers associated with the chat.
-    files: Listing<String>?
-    /// Whether the LLM's response is in JSON format. Defaults to `false`.
-    jsonResponse: Boolean? = false
-    /// A listing of keys expected in the JSON response from the LLM model.
-    jsonResponseKeys: Listing<String>?
-    /// The actual response returned from the LLM model.
-    response: String?
-    /// A timestamp of when the response was generated, represented as an unsigned 32-bit integer.
-    timestamp: UInt32?
-    /// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
-    timeoutSeconds: Int? = 60
+        /// The name of the LLM model used for the chat.
+        model: String = "llama3.2"
+        /// The prompt text sent to the LLM model.
+        prompt: String
+        /// A listing of file paths or identifiers associated with the chat.
+        files: Listing<String>?
+        /// Whether the LLM's response is in JSON format. Defaults to `false`.
+        jsonResponse: Boolean? = false
+        /// A listing of keys expected in the JSON response from the LLM model.
+        jsonResponseKeys: Listing<String>?
+        /// The actual response returned from the LLM model.
+        response: String?
+        /// A timestamp of when the response was generated, represented as an unsigned 32-bit integer.
+        timestamp: UInt32?
+        /// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
+        timeoutSeconds: Int? = 60
 }
 
 /// Retrieves the [ResourceChat] associated with the given [id].
@@ -63,22 +64,22 @@ function resource(id: String): ResourceChat =
 ///
 /// [id]: The ID of the resource to retrieve the response for.
 /// [str]: The response text returned by the LLM model.
-function response(id: String): String = resource(id).response
+function response(id: String): String = if (isBase64(resource(id).response)) resource(id).response.base64Decoded else resource(id).response
 
 /// Retrieves the prompt text associated with the resource [id].
 ///
 /// [id]: The ID of the resource to retrieve the prompt for.
 /// [str]: The prompt text sent to the LLM model.
-function prompt(id: String): String = resource(id).prompt
+function prompt(id: String): String = if (isBase64(resource(id).prompt)) resource(id).prompt.base64Decoded else resource(id).prompt
 
 /// Retrieves whether the LLM's response for the resource [id] is in JSON format.
 ///
 /// [id]: The ID of the resource to check for JSON response.
 /// [bool]: True if the response is in JSON format, otherwise False.
-function jsonResponse(id: String): Boolean = resource(id).jsonResponse
+function jsonResponse(id: String): Boolean = if (isBase64(resource(id).jsonResponse)) resource(id).jsonResponse.base64Decoded else resource(id).jsonResponse
 
 /// Retrieves the JSON response keys for the resource [id].
 ///
 /// [id]: The ID of the resource to retrieve the JSON response keys for.
 /// [Listing<String>]: A listing of expected JSON keys in the response.
-function jsonResponseKeys(id: String): Listing<String> = resource(id).jsonResponseKeys
+function jsonResponseKeys(id: String): Listing<String> = if (isBase64(resource(id).jsonResponseKeys)) resource(id).jsonResponseKeys.base64Decoded else resource(id).jsonResponseKeys

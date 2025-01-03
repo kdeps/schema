@@ -5,9 +5,12 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/utils"
 )
 
 type Python interface {
+	utils.Utils
+
 	GetResources() *map[string]*ResourcePython
 }
 
@@ -19,6 +22,8 @@ var _ Python = (*PythonImpl)(nil)
 // variables as well as exit codes. The module provides utilities for retrieving
 // and managing executable resources identified by unique resource IDs.
 type PythonImpl struct {
+	*utils.UtilsImpl
+
 	// A mapping of resource IDs to their corresponding [ResourcePython] objects.
 	Resources *map[string]*ResourcePython `pkl:"resources"`
 }

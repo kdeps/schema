@@ -9,6 +9,7 @@
 
 open module org.kdeps.pkl.Exec
 
+extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 /// A mapping of resource IDs to their associated [ResourceExec] objects.
@@ -63,19 +64,19 @@ function resource(id: String): ResourceExec =
 ///
 /// [id]: The ID of the resource to retrieve the standard error output for.
 /// [str]: The standard error output from the executed command.
-function stderr(id: String): String = resource(id).stderr
+function stderr(id: String): String = if (isBase64(resource(id).stderr)) resource(id).stderr.base64Decoded else resource(id).stderr
 
 /// Retrieves the standard output associated with the resource [id].
 ///
 /// [id]: The ID of the resource to retrieve the standard output for.
 /// [str]: The standard output from the executed command.
-function stdout(id: String): String = resource(id).stdout
+function stdout(id: String): String = if (isBase64(resource(id).stdout)) resource(id).stdout.base64Decoded else resource(id).stdout
 
 /// Retrieves the exit code associated with the resource [id].
 ///
 /// [id]: The ID of the resource to retrieve the exit code for.
 /// [int]: The exit code of the executed command.
-function exitCode(id: String): Int = resource(id).exitCode
+function exitCode(id: String): Int = if (isBase64(resource(id).exitCode)) resource(id).exitCode.base64Decoded else resource(id).exitCode
 
 /// Retrieves the value of the specified environment variable for the resource [id].
 ///
@@ -83,4 +84,13 @@ function exitCode(id: String): Int = resource(id).exitCode
 /// [envName]: The name of the environment variable to retrieve.
 /// [str]: The value of the specified environment variable, or an empty string if not found.
 function env(id: String, envName: String): String =
-        if (!resource(id).env.isEmpty) if (resource(id).env.containsKey(envName)) resource(id).env[envName] else "" else ""
+if (!resource(id).env.isEmpty)
+  if (resource(id).env.containsKey(envName))
+    if (isBase64(resource(id).env[envName]))
+      resource(id).env[envName].base64Decoded
+    else
+      resource(id).env[envName]
+  else
+    ""
+else
+  ""

@@ -15,7 +15,6 @@ var _ Utils = (*UtilsImpl)(nil)
 // Tools for Kdeps Resources
 //
 // This module includes tools for interacting with Kdeps
-// base64
 type UtilsImpl struct {
 }
 

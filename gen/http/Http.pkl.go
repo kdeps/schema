@@ -5,9 +5,12 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/utils"
 )
 
 type Http interface {
+	utils.Utils
+
 	GetResources() *map[string]*ResourceHTTPClient
 }
 
@@ -19,6 +22,8 @@ var _ Http = (*HttpImpl)(nil)
 // and handling of responses. This module provides functionalities to
 // retrieve and manage HTTP client resources based on their identifiers.
 type HttpImpl struct {
+	*utils.UtilsImpl
+
 	// A mapping of resource IDs to their associated [ResourceHTTPClient] objects.
 	Resources *map[string]*ResourceHTTPClient `pkl:"resources"`
 }

@@ -9,6 +9,7 @@
 
 open module org.kdeps.pkl.Python
 
+extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 /// A mapping of resource IDs to their corresponding [ResourcePython] objects.
@@ -71,19 +72,19 @@ function resource(id: String): ResourcePython =
 ///
 /// - [id]: The ID of the resource.
 /// - Returns: The standard error output of the executed command.
-function stderr(id: String): String = resource(id).stderr
+function stderr(id: String): String = if (isBase64(resource(id).stderr)) resource(id).stderr.base64Decoded else resource(id).stderr
 
 /// Retrieves the standard output for the specified resource [id].
 ///
 /// - [id]: The ID of the resource.
 /// - Returns: The standard output of the executed command.
-function stdout(id: String): String = resource(id).stdout
+function stdout(id: String): String = if (isBase64(resource(id).stdout)) resource(id).stdout.base64Decoded else resource(id).stdout
 
 /// Retrieves the exit code for the specified resource [id].
 ///
 /// - [id]: The ID of the resource.
 /// - Returns: The exit code of the executed command.
-function exitCode(id: String): Int = resource(id).exitCode
+function exitCode(id: String): Int = if (isBase64(resource(id).exitCode)) resource(id).exitCode.base64Decoded else resource(id).exitCode
 
 /// Retrieves the value of an environment variable for the specified resource [id].
 ///
@@ -92,4 +93,13 @@ function exitCode(id: String): Int = resource(id).exitCode
 /// - Returns: The value of the environment variable, or an empty string if the
 ///            variable is not set.
 function env(id: String, envName: String): String =
-        if (!resource(id).env.isEmpty) if (resource(id).env.containsKey(envName)) resource(id).env[envName] else "" else ""
+if (!resource(id).env.isEmpty)
+  if (resource(id).env.containsKey(envName))
+    if (isBase64(resource(id).env[envName]))
+      resource(id).env[envName].base64Decoded
+    else
+      resource(id).env[envName]
+  else
+    ""
+else
+  ""

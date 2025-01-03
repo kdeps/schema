@@ -5,9 +5,12 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/utils"
 )
 
 type LLM interface {
+	utils.Utils
+
 	GetResources() *map[string]*ResourceChat
 }
 
@@ -29,6 +32,8 @@ var _ LLM = (*LLMImpl)(nil)
 // such as the prompt text, response text, file paths, JSON keys, and whether image generation was
 // involved.
 type LLMImpl struct {
+	*utils.UtilsImpl
+
 	// A mapping of resource IDs to their associated [ResourceChat] objects.
 	Resources *map[string]*ResourceChat `pkl:"resources"`
 }
