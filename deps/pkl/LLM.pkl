@@ -30,18 +30,28 @@ resources: Mapping<String, ResourceChat>?
 class ResourceChat {
         /// The name of the LLM model used for the chat.
         model: String = "llama3.2"
+
         /// The prompt text sent to the LLM model.
         prompt: String
+
         /// A listing of file paths or identifiers associated with the chat.
         files: Listing<String>?
+
         /// Whether the LLM's response is in JSON format. Defaults to `false`.
         jsonResponse: Boolean? = false
+
         /// A listing of keys expected in the JSON response from the LLM model.
         jsonResponseKeys: Listing<String>?
+
         /// The actual response returned from the LLM model.
         response: String?
+
+        /// The file path where the LLM response of this resource is saved
+        file: String?
+
         /// A timestamp of when the response was generated, represented as an unsigned 32-bit integer.
         timestamp: UInt32?
+
         /// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
         timeoutSeconds: Int? = 60
 }
@@ -83,3 +93,9 @@ function jsonResponse(id: String): Boolean = if (isBase64(resource(id).jsonRespo
 /// [id]: The ID of the resource to retrieve the JSON response keys for.
 /// [Listing<String>]: A listing of expected JSON keys in the response.
 function jsonResponseKeys(id: String): Listing<String> = if (isBase64(resource(id).jsonResponseKeys)) resource(id).jsonResponseKeys.base64Decoded else resource(id).jsonResponseKeys
+
+/// Retrieves the file path containing the LLM response associated with the specified resource [id].
+///
+/// [id]: The ID of the resource to retrieve the response for.
+/// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
+function file(id: String): String = if (isBase64(resource(id).file)) resource(id).file.base64Decoded else resource(id).file

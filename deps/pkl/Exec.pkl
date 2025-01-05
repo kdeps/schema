@@ -18,32 +18,35 @@ resources: Mapping<String, ResourceExec>?
 /// Class representing an executable resource, which includes the command to be executed,
 /// its environment variables, and various output/error properties.
 class ResourceExec {
-    /// Regular expression for validating environment variable names.
-    hidden envStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
+        /// Regular expression for validating environment variable names.
+        hidden envStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
 
-    /// Function to check if a given environment variable name is valid.
-    hidden isValidEnv = (str) -> if (str.matches(envStringRegex)) true else throw("Error: Invalid env name: The env name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
+        /// Function to check if a given environment variable name is valid.
+        hidden isValidEnv = (str) -> if (str.matches(envStringRegex)) true else throw("Error: Invalid env name: The env name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
 
-    /// A mapping of environment variable names to their values.
-    env: Mapping<String(isValidEnv), String>?
+        /// A mapping of environment variable names to their values.
+        env: Mapping<String(isValidEnv), String>?
 
-    /// The command to be executed.
-    command: String
+        /// The command to be executed.
+        command: String
 
-    /// The standard error output from the execution.
-    stderr: String?
+        /// The standard error output from the execution.
+        stderr: String?
 
-    /// The standard output from the execution.
-    stdout: String?
+        /// The standard output from the execution.
+        stdout: String?
 
-    /// The exit code of the executed command. Defaults to 0.
-    exitCode: Int? = 0
+        /// The exit code of the executed command. Defaults to 0.
+        exitCode: Int? = 0
 
-    /// A timestamp of when the command was executed, represented as an unsigned 32-bit integer.
-    timestamp: UInt32?
+        /// The file path where the stdout value of this resource is saved
+        file: String?
 
-    /// The timeout duration (in seconds) for the command execution. Defaults to 60 seconds.
-    timeoutSeconds: Int? = 60
+        /// A timestamp of when the command was executed, represented as an unsigned 32-bit integer.
+        timestamp: UInt32?
+
+        /// The timeout duration (in seconds) for the command execution. Defaults to 60 seconds.
+        timeoutSeconds: Int? = 60
 }
 
 /// Retrieves the [ResourceExec] associated with the given [id].
@@ -58,6 +61,7 @@ function resource(id: String): ResourceExec =
                 stderr = ""
                 stdout = ""
                 exitCode = 0
+                file = ""
         }
 
 /// Retrieves the standard error output associated with the resource [id].
@@ -77,6 +81,12 @@ function stdout(id: String): String = if (isBase64(resource(id).stdout)) resourc
 /// [id]: The ID of the resource to retrieve the exit code for.
 /// [int]: The exit code of the executed command.
 function exitCode(id: String): Int = if (isBase64(resource(id).exitCode)) resource(id).exitCode.base64Decoded else resource(id).exitCode
+
+/// Retrieves the file path containing the standard output associated with the specified resource [id].
+///
+/// [id]: The ID of the resource to retrieve the standard output for.
+/// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
+function file(id: String): String = if (isBase64(resource(id).file)) resource(id).file.base64Decoded else resource(id).file
 
 /// Retrieves the value of the specified environment variable for the resource [id].
 ///

@@ -45,6 +45,9 @@ class ResourcePython {
         /// The exit code of the executed command. Defaults to 0.
         exitCode: Int? = 0
 
+        /// The file path where the Python stdout of this resource is saved
+        file: String?
+
         /// A timestamp indicating when the command was executed, as an unsigned 32-bit integer.
         timestamp: UInt32?
 
@@ -85,6 +88,12 @@ function stdout(id: String): String = if (isBase64(resource(id).stdout)) resourc
 /// - [id]: The ID of the resource.
 /// - Returns: The exit code of the executed command.
 function exitCode(id: String): Int = if (isBase64(resource(id).exitCode)) resource(id).exitCode.base64Decoded else resource(id).exitCode
+
+/// Retrieves the file path containing the python stdout value associated with the specified resource [id].
+///
+/// [id]: The ID of the resource to retrieve the stdout for.
+/// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
+function file(id: String): String = if (isBase64(resource(id).file)) resource(id).file.base64Decoded else resource(id).file
 
 /// Retrieves the value of an environment variable for the specified resource [id].
 ///

@@ -19,6 +19,9 @@ type ResourceExec struct {
 	// The exit code of the executed command. Defaults to 0.
 	ExitCode *int `pkl:"exitCode"`
 
+	// The file path where the stdout value of this resource is saved
+	File *string `pkl:"file"`
+
 	// A timestamp of when the command was executed, represented as an unsigned 32-bit integer.
 	Timestamp *uint32 `pkl:"timestamp"`
 

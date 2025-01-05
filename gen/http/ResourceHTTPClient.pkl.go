@@ -22,6 +22,9 @@ type ResourceHTTPClient struct {
 	// The response received from the HTTP request.
 	Response *ResponseBlock `pkl:"response"`
 
+	// The file path where the response body value of this resource is saved
+	File *string `pkl:"file"`
+
 	// A timestamp of when the request was made, represented as an unsigned 32-bit integer.
 	Timestamp *uint32 `pkl:"timestamp"`
 

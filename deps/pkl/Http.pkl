@@ -42,6 +42,9 @@ class ResourceHTTPClient {
         /// The response received from the HTTP request.
         response: ResponseBlock?
 
+        /// The file path where the response body value of this resource is saved
+        file: String?
+
         /// A timestamp of when the request was made, represented as an unsigned 32-bit integer.
         timestamp: UInt32?
 
@@ -73,6 +76,7 @@ function resource(id: String): ResourceHTTPClient =
                 headers {}
                 params {}
                 response {}
+                file = ""
         }
 
 /// Retrieves the body of the response associated with the resource [id].
@@ -80,6 +84,12 @@ function resource(id: String): ResourceHTTPClient =
 /// [id]: The ID of the resource to retrieve the response body for.
 /// [str]: The body of the response from the HTTP request.
 function responseBody(id: String): String = if (isBase64(resource(id).response.body)) resource(id).response.body.base64Decoded else resource(id).response.body
+
+/// Retrieves the file path containing the response body associated with the specified resource [id].
+///
+/// [id]: The ID of the resource to retrieve the response body for.
+/// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
+function file(id: String): String = if (isBase64(resource(id).file)) resource(id).file.base64Decoded else resource(id).file
 
 /// Retrieves the specified response header associated with the resource [id].
 ///

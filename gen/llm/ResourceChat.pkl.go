@@ -22,6 +22,9 @@ type ResourceChat struct {
 	// The actual response returned from the LLM model.
 	Response *string `pkl:"response"`
 
+	// The file path where the LLM response of this resource is saved
+	File *string `pkl:"file"`
+
 	// A timestamp of when the response was generated, represented as an unsigned 32-bit integer.
 	Timestamp *uint32 `pkl:"timestamp"`
 
