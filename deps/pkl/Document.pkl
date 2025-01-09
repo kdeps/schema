@@ -37,39 +37,39 @@ function jsonRenderDocument(value: Any) =
   if (test.catchOrNull(() -> (new JsonRenderer {}).renderDocument(value)) == null)
     (new JsonRenderer {}).renderDocument(value)
   else
-    ""
+    null
 
 /// Renders a single JSON value.
 function jsonRenderValue(value: Any) =
   if (test.catchOrNull(() -> (new JsonRenderer {}).renderValue(value)) == null)
     (new JsonRenderer {}).renderValue(value)
   else
-    ""
+    null
 
 /// Renders a YAML document.
 function yamlRenderDocument(value: Any) =
   if (test.catchOrNull(() -> (new YamlRenderer {}).renderDocument(value)) == null)
     (new YamlRenderer {}).renderDocument(value)
   else
-    ""
+    null
 
 /// Renders a single YAML value.
 function yamlRenderValue(value: Any) =
   if (test.catchOrNull(() -> (new YamlRenderer {}).renderValue(value)) == null)
     (new YamlRenderer {}).renderValue(value)
   else
-    ""
+    null
 
 /// Renders an XML document.
 function xmlRenderDocument(value: Any) =
   if (test.catchOrNull(() -> (new PListRenderer {}).renderDocument(value)) == null)
     (new PListRenderer {}).renderDocument(value)
   else
-    ""
+    null
 
 /// Renders a single XML value.
 function xmlRenderValue(value: Any) =
   if (test.catchOrNull(() -> (new PListRenderer {}).renderValue(value)) == null)
     (new PListRenderer {}).renderValue(value)
   else
-    ""
+    null
