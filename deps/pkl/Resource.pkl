@@ -12,6 +12,17 @@ module org.kdeps.pkl.Resource
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
+import "pkl:json"
+import "pkl:test"
+import "pkl:math"
+import "pkl:platform"
+import "pkl:semver"
+import "pkl:shell"
+import "pkl:xml"
+import "pkl:yaml"
+import "Document.pkl" as document
+import "Utils.pkl" as utils
+
 import "Project.pkl"
 import "APIServer.pkl"
 import "APIServerResponse.pkl"

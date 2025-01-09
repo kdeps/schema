@@ -19,6 +19,17 @@ open module org.kdeps.pkl.APIServerResponse
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
+import "pkl:json"
+import "pkl:test"
+import "pkl:math"
+import "pkl:platform"
+import "pkl:semver"
+import "pkl:shell"
+import "pkl:xml"
+import "pkl:yaml"
+import "Document.pkl" as document
+import "Utils.pkl" as utils
+
 /// Class representing a block of data returned in a successful API response.
 class APIServerResponseBlock {
     /// The data returned by the API server, stored as a listing of arbitrary items.
