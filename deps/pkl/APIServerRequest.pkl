@@ -75,7 +75,7 @@ function data(): String = if (data != "") data.base64Decoded else ""
 ///
 /// [name]: The query parameter to retrieve.
 /// [str]: The Base64-decoded value of the query parameter.
-function param(name: String): String =
+function params(name: String): String =
         if (params.getOrNull(name) != null) params[name].base64Decoded else ""
 
 /// Retrieves the decoded value of the header [name].
