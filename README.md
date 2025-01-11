@@ -1,11 +1,15 @@
 ## Release Notes
 
-### Latest Release: v0.1.42
-  - upgrade minimum pkl version to 0.26.3. added minor fixes on the relnote generator.
+### Latest Release: v0.1.43
+  - updated README.md
+    
+    bump pkl to 0.27.1
+
+### Previous Highlights
+- **v0.1.42**:   - upgrade minimum pkl version to 0.26.3. added minor fixes on the relnote generator.
     
     Added skip validation helper functions
 
-### Previous Highlights
 - **v0.1.41**:   - return stderr if not empty on stdout function
     
     added README.md and relnote generator

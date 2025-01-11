@@ -78,7 +78,7 @@ class ResourceAction {
     chat: LLM.ResourceChat?
 
     /// A listing of conditions that determine if the action should be skipped.
-    skipCondition: Listing<Boolean>?
+    skipCondition: Listing<Any>?
 
     /// A pre-flight validation check to be performed before executing the action.
     preflightCheck: ValidationCheck?
@@ -93,7 +93,7 @@ class ResourceAction {
 /// Class representing validation checks that can be performed on actions.
 class ValidationCheck {
     /// A listing of validation conditions.
-    validations: Listing<Boolean>?
+    validations: Listing<Any>?
 
     /// An error associated with the validation check, if any.
     error: APIError?

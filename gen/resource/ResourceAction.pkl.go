@@ -21,7 +21,7 @@ type ResourceAction struct {
 	Chat *llm.ResourceChat `pkl:"chat"`
 
 	// A listing of conditions that determine if the action should be skipped.
-	SkipCondition *[]bool `pkl:"skipCondition"`
+	SkipCondition *[]any `pkl:"skipCondition"`
 
 	// A pre-flight validation check to be performed before executing the action.
 	PreflightCheck *ValidationCheck `pkl:"preflightCheck"`
