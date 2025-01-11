@@ -23,7 +23,28 @@ get_all_tags() {
 get_commits_between_tags() {
     local previous_tag=$1
     local current_tag=$2
-    git --no-pager log --pretty=format:"- %s" ${previous_tag}..${current_tag}
+    git --no-pager log --pretty=format:"%s%n%b" ${previous_tag}..${current_tag}
+}
+
+format_commits() {
+    local commits=$1
+    echo "${commits}" | awk '
+    BEGIN { in_subitem = 0 }
+    {
+        if ($1 == "-") {
+            # New commit message
+            in_subitem = 0
+            print $0
+        } else {
+            # Continuation of a previous commit
+            if (!in_subitem) {
+                in_subitem = 1
+                print "  - " $0
+            } else {
+                print "    " $0
+            }
+        }
+    }'
 }
 
 output_release_notes() {
@@ -34,13 +55,15 @@ output_release_notes() {
     if [[ ${#all_tags[@]} -gt 0 ]]; then
         local latest_tag=${all_tags[0]}
         echo -e "\n### Latest Release: ${latest_tag}"
-        get_commits_between_tags ${all_tags[1]} ${latest_tag} | sed 's/^/  /' || echo "No commits found."
+        local latest_commits=$(get_commits_between_tags ${all_tags[1]} ${latest_tag})
+        format_commits "${latest_commits}" || echo "  No commits found."
 
         if [[ ${#all_tags[@]} -gt 1 ]]; then
             echo -e "\n### Previous Highlights"
             for ((i=1; i<${#all_tags[@]}-1; i++)); do
                 echo -n "- **${all_tags[$i]}**: "
-                get_commits_between_tags ${all_tags[$((i+1))]} ${all_tags[$i]} | sed -e '1!b' -e 's/^/  /' -e 's/$/./' || echo "  No commits found."
+                local tag_commits=$(get_commits_between_tags ${all_tags[$((i+1))]} ${all_tags[$i]})
+                format_commits "${tag_commits}" || echo "  No commits found."
                 echo # Add a blank line between versions
             done
         fi
