@@ -1,11 +1,15 @@
 ## Release Notes
 
-### Latest Release: v0.1.41
-  - return stderr if not empty on stdout function
+### Latest Release: v0.1.42
+  - upgrade minimum pkl version to 0.26.3. added minor fixes on the relnote generator.
+    
+    Added skip validation helper functions
+
+### Previous Highlights
+- **v0.1.41**:   - return stderr if not empty on stdout function
     
     added README.md and relnote generator
 
-### Previous Highlights
 - **v0.1.40**:   - change request function from param("..") -> params("..")
 
 - **v0.1.39**:   - import upstream PKL modules and KDEPS PKL helpers in resource & api response
