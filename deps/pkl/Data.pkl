@@ -1,5 +1,5 @@
 /// Abstractions for Data folder
-@ModuleInfo { minPklVersion = "0.26.3" }
+@ModuleInfo { minPklVersion = "0.27.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/data" }
 
