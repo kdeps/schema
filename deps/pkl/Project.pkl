@@ -14,7 +14,6 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 import "APIServer.pkl"
 import "Docker.pkl"
-import "Security.pkl"
 
 /// Class representing the settings and configurations for a project.
 class Settings {

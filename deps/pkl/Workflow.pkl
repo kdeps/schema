@@ -16,7 +16,6 @@ open module org.kdeps.pkl.Workflow
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
 import "Project.pkl"
-import "Parameters.pkl"
 
 /// Regex pattern for validating workflow names (alphanumeric characters only).
 hidden nameStringRegex = Regex(#"(^\w+$)"#)
