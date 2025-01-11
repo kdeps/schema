@@ -74,7 +74,7 @@ function stderr(id: String): String = if (isBase64(resource(id).stderr)) resourc
 ///
 /// [id]: The ID of the resource to retrieve the standard output for.
 /// [str]: The standard output from the executed command.
-function stdout(id: String): String = if (isBase64(resource(id).stdout)) resource(id).stdout.base64Decoded else resource(id).stdout
+function stdout(id: String): String = if (!stderr(id).isEmpty) stderr(id) else if (isBase64(resource(id).stdout)) resource(id).stdout.base64Decoded else resource(id).stdout
 
 /// Retrieves the exit code associated with the resource [id].
 ///
