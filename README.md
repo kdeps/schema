@@ -1,11 +1,15 @@
 ## Release Notes
 
-### Latest Release: v0.1.43
-  - updated README.md
+### Latest Release: v0.1.45
+  - removed all deprecated imports
+
+### Previous Highlights
+- **v0.1.44**:   - skip & validation is now a listing of any types
+
+- **v0.1.43**:   - updated README.md
     
     bump pkl to 0.27.1
 
-### Previous Highlights
 - **v0.1.42**:   - upgrade minimum pkl version to 0.26.3. added minor fixes on the relnote generator.
     
     Added skip validation helper functions

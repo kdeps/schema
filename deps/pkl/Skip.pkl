@@ -8,7 +8,6 @@
 open module org.kdeps.pkl.Skip
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
-import "APIServerRequest.pkl" as request
 
 /// Checks if a file exists.
 ///
@@ -27,15 +26,3 @@ function ifFolderExists(it: String) = read*(it).keys.length > 0
 /// [it]: The path of the file to check.
 /// [bool]: Returns true if the file exists and is empty; false otherwise.
 function ifFileIsEmpty(it: String) = ifFileExists(it) && read?(it).base64Decoded.isEmpty
-
-/// Checks if the HTTP request method matches a given method.
-///
-/// [it]: The HTTP method to compare (e.g., "GET", "POST").
-/// [bool]: Returns true if the current request method matches the provided method; false otherwise.
-function ifRequestMethodIs(it: String) = request.method() == it
-
-/// Checks if the HTTP request path matches a given path.
-///
-/// [it]: The HTTP path to compare (e.g., "/api/resource").
-/// [bool]: Returns true if the current request path matches the provided path; false otherwise.
-function ifRequestPathIs(it: String) = request.path() == it
