@@ -31,12 +31,12 @@ class APIServerSettings {
 /// Class representing a route in the API server configuration.
 class APIServerRoutes {
     /// Regex pattern for validating supported HTTP methods.
-    hidden apiServerMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
+    hidden APIServerMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
 
     /// Validates the HTTP method used in the route.
     ///
     /// Throws an error if the provided method is not supported.
-    hidden isValidHTTPMethod = (str) -> if (str.matches(apiServerMethodRegex)) true else throw("Error: Unsupported HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
+    hidden isValidHTTPMethod = (str) -> if (str.matches(APIServerMethodRegex)) true else throw("Error: Unsupported HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
 
     /// The path for the route in the API server.
     path: String

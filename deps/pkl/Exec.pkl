@@ -49,14 +49,14 @@ class ResourceExec {
         timeoutSeconds: Int? = 60
 }
 
-/// Retrieves the [ResourceExec] associated with the given [id].
+/// Retrieves the [ResourceExec] associated with the given [ID].
 ///
 /// If the resource is not found, returns a new [ResourceExec] with default values.
 ///
-/// [id]: The ID of the resource to retrieve.
+/// [ID]: The ID of the resource to retrieve.
 /// [ResourceExec]: The [ResourceExec] object associated with the resource ID.
-function resource(id: String): ResourceExec =
-        if (resources.getOrNull(id) != null) resources[id] else new ResourceExec {
+function resource(ID: String): ResourceExec =
+        if (resources.getOrNull(ID) != null) resources[ID] else new ResourceExec {
                 command = ""
                 stderr = ""
                 stdout = ""
@@ -64,42 +64,42 @@ function resource(id: String): ResourceExec =
                 file = ""
         }
 
-/// Retrieves the standard error output associated with the resource [id].
+/// Retrieves the standard error output associated with the resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the standard error output for.
+/// [ID]: The ID of the resource to retrieve the standard error output for.
 /// [str]: The standard error output from the executed command.
-function stderr(id: String): String = if (isBase64(resource(id).stderr)) resource(id).stderr.base64Decoded else resource(id).stderr
+function stderr(ID: String): String = if (isBase64(resource(ID).stderr)) resource(ID).stderr.base64Decoded else resource(ID).stderr
 
-/// Retrieves the standard output associated with the resource [id].
+/// Retrieves the standard output associated with the resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the standard output for.
+/// [ID]: The ID of the resource to retrieve the standard output for.
 /// [str]: The standard output from the executed command.
-function stdout(id: String): String = if (!stderr(id).isEmpty) stderr(id) else if (isBase64(resource(id).stdout)) resource(id).stdout.base64Decoded else resource(id).stdout
+function stdout(ID: String): String = if (!stderr(ID).isEmpty) stderr(ID) else if (isBase64(resource(ID).stdout)) resource(ID).stdout.base64Decoded else resource(ID).stdout
 
-/// Retrieves the exit code associated with the resource [id].
+/// Retrieves the exit code associated with the resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the exit code for.
+/// [ID]: The ID of the resource to retrieve the exit code for.
 /// [int]: The exit code of the executed command.
-function exitCode(id: String): Int = if (isBase64(resource(id).exitCode)) resource(id).exitCode.base64Decoded else resource(id).exitCode
+function exitCode(ID: String): Int = if (isBase64(resource(ID).exitCode)) resource(ID).exitCode.base64Decoded else resource(ID).exitCode
 
-/// Retrieves the file path containing the standard output associated with the specified resource [id].
+/// Retrieves the file path containing the standard output associated with the specified resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the standard output for.
+/// [ID]: The ID of the resource to retrieve the standard output for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(id: String): String = if (isBase64(resource(id).file)) resource(id).file.base64Decoded else resource(id).file
+function file(ID: String): String = if (isBase64(resource(ID).file)) resource(ID).file.base64Decoded else resource(ID).file
 
-/// Retrieves the value of the specified environment variable for the resource [id].
+/// Retrieves the value of the specified environment variable for the resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the environment variable for.
+/// [ID]: The ID of the resource to retrieve the environment variable for.
 /// [envName]: The name of the environment variable to retrieve.
 /// [str]: The value of the specified environment variable, or an empty string if not found.
-function env(id: String, envName: String): String =
-if (!resource(id).env.isEmpty)
-  if (resource(id).env.containsKey(envName))
-    if (isBase64(resource(id).env[envName]))
-      resource(id).env[envName].base64Decoded
+function env(ID: String, envName: String): String =
+if (!resource(ID).env.isEmpty)
+  if (resource(ID).env.containsKey(envName))
+    if (isBase64(resource(ID).env[envName]))
+      resource(ID).env[envName].base64Decoded
     else
-      resource(id).env[envName]
+      resource(ID).env[envName]
   else
     ""
 else

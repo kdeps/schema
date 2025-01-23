@@ -29,7 +29,7 @@ import "APIServerResponse.pkl"
 import "LLM.pkl"
 import "Exec.pkl"
 import "Python.pkl"
-import "Http.pkl"
+import "HTTP.pkl"
 
 /// Regex pattern for validating resource IDs and dependencies.
 hidden actionStringRegex = Regex(#"^(\w+|@\w+(/[\w-]+)(:[\w.]+)?)$"#)
@@ -39,7 +39,7 @@ hidden actionStringRegex = Regex(#"^(\w+|@\w+(/[\w-]+)(:[\w.]+)?)$"#)
 /// Throws an error if the resource ID contains invalid characters.
 ///
 /// [str]: The resource ID to validate.
-hidden isValidId = (str) -> if (str.matches(actionStringRegex)) true else throw("Error: Invalid id name: The id contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+hidden isValidID = (str) -> if (str.matches(actionStringRegex)) true else throw("Error: Invalid id name: The id contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
 
 /// Validates the dependency ID according to the specified regex pattern.
 ///
@@ -48,8 +48,8 @@ hidden isValidId = (str) -> if (str.matches(actionStringRegex)) true else throw(
 /// [str]: The dependency ID to validate.
 hidden isValidDependency = (str) -> if (str.matches(actionStringRegex)) true else throw("Action must be either a simple alphanumeric string or start with `@`, followed by `/action` and an optional `:version` (e.g., `@agent/action:1.0.0`).")
 
-/// The unique identifier for the resource, validated against [isValidId].
-id: String(isValidId)
+/// The unique identifier for the resource, validated against [isValidID].
+ID: String(isValidID)
 
 /// The name of the resource.
 name: String
@@ -84,10 +84,10 @@ class ResourceAction {
     preflightCheck: ValidationCheck?
 
     /// Configuration for HTTP client interactions.
-    httpClient: Http.ResourceHTTPClient?
+    HTTPClient: HTTP.ResourceHTTPClient?
 
     /// Configuration for handling API responses.
-    apiResponse: APIServerResponse?
+    APIResponse: APIServerResponse?
 }
 
 /// Class representing validation checks that can be performed on actions.

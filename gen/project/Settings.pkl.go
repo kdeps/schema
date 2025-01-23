@@ -12,13 +12,13 @@ type Settings struct {
 	//
 	// - `true`: The project runs in API server mode.
 	// - `false`: The project does not run in API server mode. Default is `false`.
-	ApiServerMode bool `pkl:"apiServerMode"`
+	APIServerMode bool `pkl:"APIServerMode"`
 
 	// Settings for configuring the API server, which is optional.
 	//
 	// If API server mode is enabled, these settings provide additional configuration for the API server.
 	// [APIServer.APIServerSettings]: Defines the structure and properties for API server settings.
-	ApiServer *apiserver.APIServerSettings `pkl:"apiServer"`
+	APIServer *apiserver.APIServerSettings `pkl:"APIServer"`
 
 	// Docker-related settings for the project's agent.
 	//

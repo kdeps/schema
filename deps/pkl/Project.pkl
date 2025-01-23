@@ -21,13 +21,13 @@ class Settings {
         ///
         /// - `true`: The project runs in API server mode.
         /// - `false`: The project does not run in API server mode. Default is `false`.
-        apiServerMode: Boolean = false
+        APIServerMode: Boolean = false
 
         /// Settings for configuring the API server, which is optional.
         ///
         /// If API server mode is enabled, these settings provide additional configuration for the API server.
         /// [APIServer.APIServerSettings]: Defines the structure and properties for API server settings.
-        apiServer: APIServer.APIServerSettings?
+        APIServer: APIServer.APIServerSettings?
 
         /// Docker-related settings for the project's agent.
         ///

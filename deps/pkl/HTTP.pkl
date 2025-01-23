@@ -7,7 +7,7 @@
 
 @go.Package { name = "github.com/kdeps/schema/gen/http" }
 
-open module org.kdeps.pkl.Http
+open module org.kdeps.pkl.HTTP
 
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
@@ -62,14 +62,14 @@ class ResponseBlock {
         headers: Mapping<String, String>?
 }
 
-/// Retrieves the [ResourceHTTPClient] associated with the given [id].
+/// Retrieves the [ResourceHTTPClient] associated with the given [ID].
 ///
 /// If the resource is not found, returns a new [ResourceHTTPClient] with default values.
 ///
-/// [id]: The ID of the resource to retrieve.
+/// [ID]: The ID of the resource to retrieve.
 /// [ResourceHTTPClient]: The [ResourceHTTPClient] object associated with the resource ID.
-function resource(id: String): ResourceHTTPClient =
-        if (resources.getOrNull(id) != null) resources[id] else new ResourceHTTPClient {
+function resource(ID: String): ResourceHTTPClient =
+        if (resources.getOrNull(ID) != null) resources[ID] else new ResourceHTTPClient {
                 method = "GET"
                 url = ""
                 data {}
@@ -79,30 +79,30 @@ function resource(id: String): ResourceHTTPClient =
                 file = ""
         }
 
-/// Retrieves the body of the response associated with the resource [id].
+/// Retrieves the body of the response associated with the resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the response body for.
+/// [ID]: The ID of the resource to retrieve the response body for.
 /// [str]: The body of the response from the HTTP request.
-function responseBody(id: String): String = if (isBase64(resource(id).response.body)) resource(id).response.body.base64Decoded else resource(id).response.body
+function responseBody(ID: String): String = if (isBase64(resource(ID).response.body)) resource(ID).response.body.base64Decoded else resource(ID).response.body
 
-/// Retrieves the file path containing the response body associated with the specified resource [id].
+/// Retrieves the file path containing the response body associated with the specified resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the response body for.
+/// [ID]: The ID of the resource to retrieve the response body for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(id: String): String = if (isBase64(resource(id).file)) resource(id).file.base64Decoded else resource(id).file
+function file(ID: String): String = if (isBase64(resource(ID).file)) resource(ID).file.base64Decoded else resource(ID).file
 
-/// Retrieves the specified response header associated with the resource [id].
+/// Retrieves the specified response header associated with the resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the response header for.
-/// [headerId]: The name of the header to retrieve.
+/// [ID]: The ID of the resource to retrieve the response header for.
+/// [headerID]: The name of the header to retrieve.
 /// [str]: The value of the specified response header, or an empty string if not found.
-function responseHeader(id: String, headerId: String): String =
-if (!resource(id).response.headers.isEmpty)
-  if (resource(id).response.headers.containsKey(headerId))
-    if (isBase64(resource(id).response.headers[headerId]))
-      resource(id).response.headers[headerId].base64Decoded
+function responseHeader(ID: String, headerID: String): String =
+if (!resource(ID).response.headers.isEmpty)
+  if (resource(ID).response.headers.containsKey(headerID))
+    if (isBase64(resource(ID).response.headers[headerID]))
+      resource(ID).response.headers[headerID].base64Decoded
     else
-      resource(id).response.headers[headerId]
+      resource(ID).response.headers[headerID]
   else
     ""
 else

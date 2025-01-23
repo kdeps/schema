@@ -38,10 +38,10 @@ class ResourceChat {
         files: Listing<String>?
 
         /// Whether the LLM's response is in JSON format. Defaults to `false`.
-        jsonResponse: Boolean? = false
+        JSONResponse: Boolean? = false
 
         /// A listing of keys expected in the JSON response from the LLM model.
-        jsonResponseKeys: Listing<String>?
+        JSONResponseKeys: Listing<String>?
 
         /// The actual response returned from the LLM model.
         response: String?
@@ -56,46 +56,46 @@ class ResourceChat {
         timeoutSeconds: Int? = 60
 }
 
-/// Retrieves the [ResourceChat] associated with the given [id].
+/// Retrieves the [ResourceChat] associated with the given [ID].
 ///
 /// If the resource is not found, returns a new [ResourceChat] with default values.
 ///
-/// [id]: The ID of the resource to retrieve.
+/// [ID]: The ID of the resource to retrieve.
 /// [ResourceChat]: The [ResourceChat] object associated with the resource ID.
-function resource(id: String): ResourceChat =
-        if (resources.getOrNull(id) != null) resources[id] else new ResourceChat {
+function resource(ID: String): ResourceChat =
+        if (resources.getOrNull(ID) != null) resources[ID] else new ResourceChat {
                 prompt = ""
                 response = ""
-                jsonResponse = false
-                jsonResponseKeys {}
+                JSONResponse = false
+                JSONResponseKeys {}
         }
 
-/// Retrieves the response text associated with the resource [id].
+/// Retrieves the response text associated with the resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the response for.
+/// [ID]: The ID of the resource to retrieve the response for.
 /// [str]: The response text returned by the LLM model.
-function response(id: String): String = if (isBase64(resource(id).response)) resource(id).response.base64Decoded else resource(id).response
+function response(ID: String): String = if (isBase64(resource(ID).response)) resource(ID).response.base64Decoded else resource(ID).response
 
-/// Retrieves the prompt text associated with the resource [id].
+/// Retrieves the prompt text associated with the resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the prompt for.
+/// [ID]: The ID of the resource to retrieve the prompt for.
 /// [str]: The prompt text sent to the LLM model.
-function prompt(id: String): String = if (isBase64(resource(id).prompt)) resource(id).prompt.base64Decoded else resource(id).prompt
+function prompt(ID: String): String = if (isBase64(resource(ID).prompt)) resource(ID).prompt.base64Decoded else resource(ID).prompt
 
-/// Retrieves whether the LLM's response for the resource [id] is in JSON format.
+/// Retrieves whether the LLM's response for the resource [ID] is in JSON format.
 ///
-/// [id]: The ID of the resource to check for JSON response.
+/// [ID]: The ID of the resource to check for JSON response.
 /// [bool]: True if the response is in JSON format, otherwise False.
-function jsonResponse(id: String): Boolean = if (isBase64(resource(id).jsonResponse)) resource(id).jsonResponse.base64Decoded else resource(id).jsonResponse
+function JSONResponse(ID: String): Boolean = if (isBase64(resource(ID).JSONResponse)) resource(ID).JSONResponse.base64Decoded else resource(ID).JSONResponse
 
-/// Retrieves the JSON response keys for the resource [id].
+/// Retrieves the JSON response keys for the resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the JSON response keys for.
+/// [ID]: The ID of the resource to retrieve the JSON response keys for.
 /// [Listing<String>]: A listing of expected JSON keys in the response.
-function jsonResponseKeys(id: String): Listing<String> = if (isBase64(resource(id).jsonResponseKeys)) resource(id).jsonResponseKeys.base64Decoded else resource(id).jsonResponseKeys
+function JSONResponseKeys(ID: String): Listing<String> = if (isBase64(resource(ID).JSONResponseKeys)) resource(ID).JSONResponseKeys.base64Decoded else resource(ID).JSONResponseKeys
 
-/// Retrieves the file path containing the LLM response associated with the specified resource [id].
+/// Retrieves the file path containing the LLM response associated with the specified resource [ID].
 ///
-/// [id]: The ID of the resource to retrieve the response for.
+/// [ID]: The ID of the resource to retrieve the response for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(id: String): String = if (isBase64(resource(id).file)) resource(id).file.base64Decoded else resource(id).file
+function file(ID: String): String = if (isBase64(resource(ID).file)) resource(ID).file.base64Decoded else resource(ID).file

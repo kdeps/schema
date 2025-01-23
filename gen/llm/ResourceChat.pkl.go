@@ -14,10 +14,10 @@ type ResourceChat struct {
 	Files *[]string `pkl:"files"`
 
 	// Whether the LLM's response is in JSON format. Defaults to `false`.
-	JsonResponse *bool `pkl:"jsonResponse"`
+	JSONResponse *bool `pkl:"JSONResponse"`
 
 	// A listing of keys expected in the JSON response from the LLM model.
-	JsonResponseKeys *[]string `pkl:"jsonResponseKeys"`
+	JSONResponseKeys *[]string `pkl:"JSONResponseKeys"`
 
 	// The actual response returned from the LLM model.
 	Response *string `pkl:"response"`

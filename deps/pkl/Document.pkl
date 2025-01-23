@@ -19,28 +19,28 @@ import "pkl:xml"
 import "pkl:yaml"
 
 /// Parses JSON data and returns a Dynamic type.
-function jsonParser(data: String) =
+function JSONParser(data: String) =
   if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)) == null)
     (new json.Parser { useMapping = false }).parse(data)
   else
     null
 
 /// Parses JSON data and returns a Mapping type.
-function jsonParserMapping(data: String) =
+function JSONParserMapping(data: String) =
   if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)) == null)
     (new json.Parser { useMapping = true }).parse(data)
   else
     null
 
 /// Renders a JSON document.
-function jsonRenderDocument(value: Any) =
+function JSONRenderDocument(value: Any) =
   if (test.catchOrNull(() -> (new JsonRenderer {}).renderDocument(value)) == null)
     (new JsonRenderer {}).renderDocument(value)
   else
     null
 
 /// Renders a single JSON value.
-function jsonRenderValue(value: Any) =
+function JSONRenderValue(value: Any) =
   if (test.catchOrNull(() -> (new JsonRenderer {}).renderValue(value)) == null)
     (new JsonRenderer {}).renderValue(value)
   else

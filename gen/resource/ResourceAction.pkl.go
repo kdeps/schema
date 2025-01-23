@@ -27,8 +27,8 @@ type ResourceAction struct {
 	PreflightCheck *ValidationCheck `pkl:"preflightCheck"`
 
 	// Configuration for HTTP client interactions.
-	HttpClient *http.ResourceHTTPClient `pkl:"httpClient"`
+	HTTPClient *http.ResourceHTTPClient `pkl:"HTTPClient"`
 
 	// Configuration for handling API responses.
-	ApiResponse *apiserverresponse.APIServerResponse `pkl:"apiResponse"`
+	APIResponse *apiserverresponse.APIServerResponse `pkl:"APIResponse"`
 }

@@ -1,9 +1,11 @@
 ## Release Notes
 
-### Latest Release: v0.1.45
-  - removed all deprecated imports
+### Latest Release: v0.1.46
+  - reprioritize request skip validations
 
 ### Previous Highlights
+- **v0.1.45**:   - removed all deprecated imports
+
 - **v0.1.44**:   - skip & validation is now a listing of any types
 
 - **v0.1.43**:   - updated README.md

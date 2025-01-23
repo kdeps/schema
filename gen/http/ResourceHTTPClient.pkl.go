@@ -1,4 +1,4 @@
-// Code generated from Pkl module `org.kdeps.pkl.Http`. DO NOT EDIT.
+// Code generated from Pkl module `org.kdeps.pkl.HTTP`. DO NOT EDIT.
 package http
 
 // Class representing an HTTP client resource, which includes details

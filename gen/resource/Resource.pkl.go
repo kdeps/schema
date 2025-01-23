@@ -14,8 +14,8 @@ import (
 // and error handling mechanisms. Each resource can define its ID, name, description,
 // category, dependencies, and how it runs.
 type Resource struct {
-	// The unique identifier for the resource, validated against [isValidId].
-	Id string `pkl:"id"`
+	// The unique identifier for the resource, validated against [isValidID].
+	ID string `pkl:"ID"`
 
 	// The name of the resource.
 	Name string `pkl:"name"`
