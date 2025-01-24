@@ -1,7 +1,7 @@
 /// Common parser and document renderer functions used across all resources.
 ///
 /// Tools for Parsing and Generating JSON, YAML and XML documents
-@ModuleInfo { minPklVersion = "0.27.1" }
+@ModuleInfo { minPklVersion = "0.27.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/document" }
 

@@ -13,7 +13,7 @@
 /// - Providing methods to retrieve various pieces of information related to the LLM interaction,
 /// such as the prompt text, response text, file paths, JSON keys, and whether image generation was
 /// involved.
-@ModuleInfo { minPklVersion = "0.27.1" }
+@ModuleInfo { minPklVersion = "0.27.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/llm" }
 
