@@ -52,7 +52,7 @@ class ResourcePython {
         timestamp: UInt32?
 
         /// The maximum duration (in seconds) allowed for the command execution. Defaults to 60 seconds.
-        timeoutSeconds: Int? = 60
+        timeoutDuration: Int? = 60
 }
 
 /// Retrieves the [ResourcePython] associated with the specified [ID].

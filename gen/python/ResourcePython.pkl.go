@@ -30,5 +30,5 @@ type ResourcePython struct {
 	Timestamp *uint32 `pkl:"timestamp"`
 
 	// The maximum duration (in seconds) allowed for the command execution. Defaults to 60 seconds.
-	TimeoutSeconds *int `pkl:"timeoutSeconds"`
+	TimeoutDuration *int `pkl:"timeoutDuration"`
 }

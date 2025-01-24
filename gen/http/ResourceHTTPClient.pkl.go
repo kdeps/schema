@@ -29,5 +29,5 @@ type ResourceHTTPClient struct {
 	Timestamp *uint32 `pkl:"timestamp"`
 
 	// The timeout duration (in seconds) for the HTTP request. Defaults to 60 seconds.
-	TimeoutSeconds *int `pkl:"timeoutSeconds"`
+	TimeoutDuration *int `pkl:"timeoutDuration"`
 }

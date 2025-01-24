@@ -46,7 +46,7 @@ class ResourceExec {
         timestamp: UInt32?
 
         /// The timeout duration (in seconds) for the command execution. Defaults to 60 seconds.
-        timeoutSeconds: Int? = 60
+        timeoutDuration: Int? = 60
 }
 
 /// Retrieves the [ResourceExec] associated with the given [ID].

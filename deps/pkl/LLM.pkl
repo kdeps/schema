@@ -53,7 +53,7 @@ class ResourceChat {
         timestamp: UInt32?
 
         /// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
-        timeoutSeconds: Int? = 60
+        timeoutDuration: Int? = 60
 }
 
 /// Retrieves the [ResourceChat] associated with the given [ID].

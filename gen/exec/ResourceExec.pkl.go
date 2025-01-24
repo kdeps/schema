@@ -26,5 +26,5 @@ type ResourceExec struct {
 	Timestamp *uint32 `pkl:"timestamp"`
 
 	// The timeout duration (in seconds) for the command execution. Defaults to 60 seconds.
-	TimeoutSeconds *int `pkl:"timeoutSeconds"`
+	TimeoutDuration *int `pkl:"timeoutDuration"`
 }

@@ -49,7 +49,7 @@ class ResourceHTTPClient {
         timestamp: UInt32?
 
         /// The timeout duration (in seconds) for the HTTP request. Defaults to 60 seconds.
-        timeoutSeconds: Int? = 60
+        timeoutDuration: Int? = 60
 }
 
 /// Class representing the response block of an HTTP request.

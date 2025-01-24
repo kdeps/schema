@@ -1,9 +1,13 @@
 ## Release Notes
 
-### Latest Release: v0.1.46
-  - reprioritize request skip validations
+### Latest Release: v0.2.0
+  - Use uniform naming convention for {Http,Api,Id,Json} -> {HTTP,API,ID,JSON}
+    
+    updated .gitattributes
 
 ### Previous Highlights
+- **v0.1.46**:   - reprioritize request skip validations
+
 - **v0.1.45**:   - removed all deprecated imports
 
 - **v0.1.44**:   - skip & validation is now a listing of any types
