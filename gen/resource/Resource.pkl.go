@@ -11,11 +11,11 @@ import (
 //
 // This module defines the structure for resources used within the Kdeps framework,
 // including actions that can be performed on these resources, validation checks,
-// and error handling mechanisms. Each resource can define its ID, name, description,
+// and error handling mechanisms. Each resource can define its actionID, name, description,
 // category, dependencies, and how it runs.
 type Resource struct {
-	// The unique identifier for the resource, validated against [isValidID].
-	ID string `pkl:"ID"`
+	// The unique identifier for the resource, validated against [isValidActionID].
+	ActionID string `pkl:"actionID"`
 
 	// The name of the resource.
 	Name string `pkl:"name"`

@@ -77,7 +77,7 @@ agentIcon: String?
 version: String(isValidVersion) = "1.0.0"
 
 /// The default action to be performed by the workflow, validated to ensure proper formatting.
-action: String(isValidAction)
+targetActionID: String(isValidAction)
 
 /// A listing of external workflows referenced by this workflow, validated by format.
 workflows: Listing<String(isValidWorkflow)>

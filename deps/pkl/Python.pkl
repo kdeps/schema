@@ -2,7 +2,7 @@
 /// It facilitates the management and execution of Python-based commands,
 /// capturing their standard output, standard error, and handling environment
 /// variables as well as exit codes. The module provides utilities for retrieving
-/// and managing executable resources identified by unique resource IDs.
+/// and managing executable resources identified by unique resource actionIDs.
 @ModuleInfo { minPklVersion = "0.27.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/python" }
@@ -12,7 +12,7 @@ open module org.kdeps.pkl.Python
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-/// A mapping of resource IDs to their corresponding [ResourcePython] objects.
+/// A mapping of resource actionIDs to their corresponding [ResourcePython] objects.
 resources: Mapping<String, ResourcePython>?
 
 /// Represents an executable Python resource, including its associated script,
@@ -55,15 +55,15 @@ class ResourcePython {
         timeoutDuration: Int? = 60
 }
 
-/// Retrieves the [ResourcePython] associated with the specified [ID].
+/// Retrieves the [ResourcePython] associated with the specified [actionID].
 ///
-/// If no resource is found for the given ID, returns a new [ResourcePython]
+/// If no resource is found for the given actionID, returns a new [ResourcePython]
 /// object with default values.
 ///
-/// - [ID]: The ID of the resource to retrieve.
-/// - Returns: The [ResourcePython] object associated with the specified ID.
-function resource(ID: String): ResourcePython =
-        if (resources.getOrNull(ID) != null) resources[ID] else new ResourcePython {
+/// - [actionID]: The actionID of the resource to retrieve.
+/// - Returns: The [ResourcePython] object associated with the specified actionID.
+function resource(actionID: String): ResourcePython =
+        if (resources.getOrNull(actionID) != null) resources[actionID] else new ResourcePython {
                 condaEnvironment = ""
                 script = ""
                 stderr = ""
@@ -71,43 +71,43 @@ function resource(ID: String): ResourcePython =
                 exitCode = 0
         }
 
-/// Retrieves the standard error output for the specified resource [ID].
+/// Retrieves the standard error output for the specified resource [actionID].
 ///
-/// - [ID]: The ID of the resource.
+/// - [actionID]: The actionID of the resource.
 /// - Returns: The standard error output of the executed command.
-function stderr(ID: String): String = if (isBase64(resource(ID).stderr)) resource(ID).stderr.base64Decoded else resource(ID).stderr
+function stderr(actionID: String): String = if (isBase64(resource(actionID).stderr)) resource(actionID).stderr.base64Decoded else resource(actionID).stderr
 
-/// Retrieves the standard output for the specified resource [ID].
+/// Retrieves the standard output for the specified resource [actionID].
 ///
-/// - [ID]: The ID of the resource.
+/// - [actionID]: The actionID of the resource.
 /// - Returns: The standard output of the executed command.
-function stdout(ID: String): String = if (!stderr(ID).isEmpty) stderr(ID) else if (isBase64(resource(ID).stdout)) resource(ID).stdout.base64Decoded else resource(ID).stdout
+function stdout(actionID: String): String = if (!stderr(actionID).isEmpty) stderr(actionID) else if (isBase64(resource(actionID).stdout)) resource(actionID).stdout.base64Decoded else resource(actionID).stdout
 
-/// Retrieves the exit code for the specified resource [ID].
+/// Retrieves the exit code for the specified resource [actionID].
 ///
-/// - [ID]: The ID of the resource.
+/// - [actionID]: The actionID of the resource.
 /// - Returns: The exit code of the executed command.
-function exitCode(ID: String): Int = if (isBase64(resource(ID).exitCode)) resource(ID).exitCode.base64Decoded else resource(ID).exitCode
+function exitCode(actionID: String): Int = if (isBase64(resource(actionID).exitCode)) resource(actionID).exitCode.base64Decoded else resource(actionID).exitCode
 
-/// Retrieves the file path containing the python stdout value associated with the specified resource [ID].
+/// Retrieves the file path containing the python stdout value associated with the specified resource [actionID].
 ///
-/// [ID]: The ID of the resource to retrieve the stdout for.
+/// [actionID]: The actionID of the resource to retrieve the stdout for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(ID: String): String = if (isBase64(resource(ID).file)) resource(ID).file.base64Decoded else resource(ID).file
+function file(actionID: String): String = if (isBase64(resource(actionID).file)) resource(actionID).file.base64Decoded else resource(actionID).file
 
-/// Retrieves the value of an environment variable for the specified resource [ID].
+/// Retrieves the value of an environment variable for the specified resource [actionID].
 ///
-/// - [ID]: The ID of the resource.
+/// - [actionID]: The actionID of the resource.
 /// - [envName]: The name of the environment variable to retrieve.
 /// - Returns: The value of the environment variable, or an empty string if the
 ///            variable is not set.
-function env(ID: String, envName: String): String =
-if (!resource(ID).env.isEmpty)
-  if (resource(ID).env.containsKey(envName))
-    if (isBase64(resource(ID).env[envName]))
-      resource(ID).env[envName].base64Decoded
+function env(actionID: String, envName: String): String =
+if (!resource(actionID).env.isEmpty)
+  if (resource(actionID).env.containsKey(envName))
+    if (isBase64(resource(actionID).env[envName]))
+      resource(actionID).env[envName].base64Decoded
     else
-      resource(ID).env[envName]
+      resource(actionID).env[envName]
   else
     ""
 else

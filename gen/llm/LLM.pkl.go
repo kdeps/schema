@@ -27,18 +27,18 @@ var _ LLM = (*LLMImpl)(nil)
 //
 // Key functionalities include:
 // - Managing a collection of resources that represent LLM interactions through a mapping of unique
-// resource IDs to [ResourceChat] objects.
+// resource actionIDs to [ResourceChat] objects.
 // - Providing methods to retrieve various pieces of information related to the LLM interaction,
 // such as the prompt text, response text, file paths, JSON keys, and whether image generation was
 // involved.
 type LLMImpl struct {
 	*utils.UtilsImpl
 
-	// A mapping of resource IDs to their associated [ResourceChat] objects.
+	// A mapping of resource actionIDs to their associated [ResourceChat] objects.
 	Resources *map[string]*ResourceChat `pkl:"resources"`
 }
 
-// A mapping of resource IDs to their associated [ResourceChat] objects.
+// A mapping of resource actionIDs to their associated [ResourceChat] objects.
 func (rcv *LLMImpl) GetResources() *map[string]*ResourceChat {
 	return rcv.Resources
 }

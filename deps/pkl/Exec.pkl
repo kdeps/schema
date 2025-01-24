@@ -12,7 +12,7 @@ open module org.kdeps.pkl.Exec
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-/// A mapping of resource IDs to their associated [ResourceExec] objects.
+/// A mapping of resource actionIDs to their associated [ResourceExec] objects.
 resources: Mapping<String, ResourceExec>?
 
 /// Class representing an executable resource, which includes the command to be executed,
@@ -49,14 +49,14 @@ class ResourceExec {
         timeoutDuration: Int? = 60
 }
 
-/// Retrieves the [ResourceExec] associated with the given [ID].
+/// Retrieves the [ResourceExec] associated with the given [actionID].
 ///
 /// If the resource is not found, returns a new [ResourceExec] with default values.
 ///
-/// [ID]: The ID of the resource to retrieve.
-/// [ResourceExec]: The [ResourceExec] object associated with the resource ID.
-function resource(ID: String): ResourceExec =
-        if (resources.getOrNull(ID) != null) resources[ID] else new ResourceExec {
+/// [actionID]: The actionID of the resource to retrieve.
+/// [ResourceExec]: The [ResourceExec] object associated with the resource actionID.
+function resource(actionID: String): ResourceExec =
+        if (resources.getOrNull(actionID) != null) resources[actionID] else new ResourceExec {
                 command = ""
                 stderr = ""
                 stdout = ""
@@ -64,42 +64,42 @@ function resource(ID: String): ResourceExec =
                 file = ""
         }
 
-/// Retrieves the standard error output associated with the resource [ID].
+/// Retrieves the standard error output associated with the resource [actionID].
 ///
-/// [ID]: The ID of the resource to retrieve the standard error output for.
+/// [actionID]: The actionID of the resource to retrieve the standard error output for.
 /// [str]: The standard error output from the executed command.
-function stderr(ID: String): String = if (isBase64(resource(ID).stderr)) resource(ID).stderr.base64Decoded else resource(ID).stderr
+function stderr(actionID: String): String = if (isBase64(resource(actionID).stderr)) resource(actionID).stderr.base64Decoded else resource(actionID).stderr
 
-/// Retrieves the standard output associated with the resource [ID].
+/// Retrieves the standard output associated with the resource [actionID].
 ///
-/// [ID]: The ID of the resource to retrieve the standard output for.
+/// [actionID]: The actionID of the resource to retrieve the standard output for.
 /// [str]: The standard output from the executed command.
-function stdout(ID: String): String = if (!stderr(ID).isEmpty) stderr(ID) else if (isBase64(resource(ID).stdout)) resource(ID).stdout.base64Decoded else resource(ID).stdout
+function stdout(actionID: String): String = if (!stderr(actionID).isEmpty) stderr(actionID) else if (isBase64(resource(actionID).stdout)) resource(actionID).stdout.base64Decoded else resource(actionID).stdout
 
-/// Retrieves the exit code associated with the resource [ID].
+/// Retrieves the exit code associated with the resource [actionID].
 ///
-/// [ID]: The ID of the resource to retrieve the exit code for.
+/// [actionID]: The actionID of the resource to retrieve the exit code for.
 /// [int]: The exit code of the executed command.
-function exitCode(ID: String): Int = if (isBase64(resource(ID).exitCode)) resource(ID).exitCode.base64Decoded else resource(ID).exitCode
+function exitCode(actionID: String): Int = if (isBase64(resource(actionID).exitCode)) resource(actionID).exitCode.base64Decoded else resource(actionID).exitCode
 
-/// Retrieves the file path containing the standard output associated with the specified resource [ID].
+/// Retrieves the file path containing the standard output associated with the specified resource [actionID].
 ///
-/// [ID]: The ID of the resource to retrieve the standard output for.
+/// [actionID]: The actionID of the resource to retrieve the standard output for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(ID: String): String = if (isBase64(resource(ID).file)) resource(ID).file.base64Decoded else resource(ID).file
+function file(actionID: String): String = if (isBase64(resource(actionID).file)) resource(actionID).file.base64Decoded else resource(actionID).file
 
-/// Retrieves the value of the specified environment variable for the resource [ID].
+/// Retrieves the value of the specified environment variable for the resource [actionID].
 ///
-/// [ID]: The ID of the resource to retrieve the environment variable for.
+/// [actionID]: The actionID of the resource to retrieve the environment variable for.
 /// [envName]: The name of the environment variable to retrieve.
 /// [str]: The value of the specified environment variable, or an empty string if not found.
-function env(ID: String, envName: String): String =
-if (!resource(ID).env.isEmpty)
-  if (resource(ID).env.containsKey(envName))
-    if (isBase64(resource(ID).env[envName]))
-      resource(ID).env[envName].base64Decoded
+function env(actionID: String, envName: String): String =
+if (!resource(actionID).env.isEmpty)
+  if (resource(actionID).env.containsKey(envName))
+    if (isBase64(resource(actionID).env[envName]))
+      resource(actionID).env[envName].base64Decoded
     else
-      resource(ID).env[envName]
+      resource(actionID).env[envName]
   else
     ""
 else

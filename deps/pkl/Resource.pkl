@@ -2,7 +2,7 @@
 ///
 /// This module defines the structure for resources used within the Kdeps framework,
 /// including actions that can be performed on these resources, validation checks,
-/// and error handling mechanisms. Each resource can define its ID, name, description,
+/// and error handling mechanisms. Each resource can define its actionID, name, description,
 /// category, dependencies, and how it runs.
 @ModuleInfo { minPklVersion = "0.27.2" }
 
@@ -31,25 +31,25 @@ import "Exec.pkl"
 import "Python.pkl"
 import "HTTP.pkl"
 
-/// Regex pattern for validating resource IDs and dependencies.
+/// Regex pattern for validating resource actionIDs and dependencies.
 hidden actionStringRegex = Regex(#"^(\w+|@\w+(/[\w-]+)(:[\w.]+)?)$"#)
 
-/// Validates the resource ID according to the specified regex pattern.
+/// Validates the resource actionID according to the specified regex pattern.
 ///
-/// Throws an error if the resource ID contains invalid characters.
+/// Throws an error if the resource actionID contains invalid characters.
 ///
-/// [str]: The resource ID to validate.
-hidden isValidID = (str) -> if (str.matches(actionStringRegex)) true else throw("Error: Invalid id name: The id contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+/// [str]: The resource actionID to validate.
+hidden isValidActionID = (str) -> if (str.matches(actionStringRegex)) true else throw("Error: Invalid id name: The id contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
 
-/// Validates the dependency ID according to the specified regex pattern.
+/// Validates the dependency actionID according to the specified regex pattern.
 ///
-/// Throws an error if the dependency ID contains invalid characters.
+/// Throws an error if the dependency actionID contains invalid characters.
 ///
-/// [str]: The dependency ID to validate.
+/// [str]: The dependency actionID to validate.
 hidden isValidDependency = (str) -> if (str.matches(actionStringRegex)) true else throw("Action must be either a simple alphanumeric string or start with `@`, followed by `/action` and an optional `:version` (e.g., `@agent/action:1.0.0`).")
 
-/// The unique identifier for the resource, validated against [isValidID].
-ID: String(isValidID)
+/// The unique identifier for the resource, validated against [isValidActionID].
+actionID: String(isValidActionID)
 
 /// The name of the resource.
 name: String

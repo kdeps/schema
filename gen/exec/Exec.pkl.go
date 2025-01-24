@@ -24,11 +24,11 @@ var _ Exec = (*ExecImpl)(nil)
 type ExecImpl struct {
 	*utils.UtilsImpl
 
-	// A mapping of resource IDs to their associated [ResourceExec] objects.
+	// A mapping of resource actionIDs to their associated [ResourceExec] objects.
 	Resources *map[string]*ResourceExec `pkl:"resources"`
 }
 
-// A mapping of resource IDs to their associated [ResourceExec] objects.
+// A mapping of resource actionIDs to their associated [ResourceExec] objects.
 func (rcv *ExecImpl) GetResources() *map[string]*ResourceExec {
 	return rcv.Resources
 }

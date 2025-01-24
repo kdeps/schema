@@ -24,11 +24,11 @@ var _ HTTP = (*HTTPImpl)(nil)
 type HTTPImpl struct {
 	*utils.UtilsImpl
 
-	// A mapping of resource IDs to their associated [ResourceHTTPClient] objects.
+	// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
 	Resources *map[string]*ResourceHTTPClient `pkl:"resources"`
 }
 
-// A mapping of resource IDs to their associated [ResourceHTTPClient] objects.
+// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
 func (rcv *HTTPImpl) GetResources() *map[string]*ResourceHTTPClient {
 	return rcv.Resources
 }

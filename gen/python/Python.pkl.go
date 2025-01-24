@@ -20,15 +20,15 @@ var _ Python = (*PythonImpl)(nil)
 // It facilitates the management and execution of Python-based commands,
 // capturing their standard output, standard error, and handling environment
 // variables as well as exit codes. The module provides utilities for retrieving
-// and managing executable resources identified by unique resource IDs.
+// and managing executable resources identified by unique resource actionIDs.
 type PythonImpl struct {
 	*utils.UtilsImpl
 
-	// A mapping of resource IDs to their corresponding [ResourcePython] objects.
+	// A mapping of resource actionIDs to their corresponding [ResourcePython] objects.
 	Resources *map[string]*ResourcePython `pkl:"resources"`
 }
 
-// A mapping of resource IDs to their corresponding [ResourcePython] objects.
+// A mapping of resource actionIDs to their corresponding [ResourcePython] objects.
 func (rcv *PythonImpl) GetResources() *map[string]*ResourcePython {
 	return rcv.Resources
 }

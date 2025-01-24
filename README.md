@@ -1,11 +1,15 @@
 ## Release Notes
 
-### Latest Release: v0.2.0
-  - Use uniform naming convention for {Http,Api,Id,Json} -> {HTTP,API,ID,JSON}
+### Latest Release: v0.2.1
+  - bump pkl to 0.27.2
+    
+    changed timeoutSeconds -> timeoutDuration
+
+### Previous Highlights
+- **v0.2.0**:   - Use uniform naming convention for {Http,Api,Id,Json} -> {HTTP,API,ID,JSON}
     
     updated .gitattributes
 
-### Previous Highlights
 - **v0.1.46**:   - reprioritize request skip validations
 
 - **v0.1.45**:   - removed all deprecated imports

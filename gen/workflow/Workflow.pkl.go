@@ -27,7 +27,7 @@ type Workflow interface {
 
 	GetVersion() string
 
-	GetAction() string
+	GetTargetActionID() string
 
 	GetWorkflows() []string
 
@@ -74,7 +74,7 @@ type WorkflowImpl struct {
 	Version string `pkl:"version"`
 
 	// The default action to be performed by the workflow, validated to ensure proper formatting.
-	Action string `pkl:"action"`
+	TargetActionID string `pkl:"targetActionID"`
 
 	// A listing of external workflows referenced by this workflow, validated by format.
 	Workflows []string `pkl:"workflows"`
@@ -129,8 +129,8 @@ func (rcv *WorkflowImpl) GetVersion() string {
 }
 
 // The default action to be performed by the workflow, validated to ensure proper formatting.
-func (rcv *WorkflowImpl) GetAction() string {
-	return rcv.Action
+func (rcv *WorkflowImpl) GetTargetActionID() string {
+	return rcv.TargetActionID
 }
 
 // A listing of external workflows referenced by this workflow, validated by format.

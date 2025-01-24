@@ -12,7 +12,7 @@ open module org.kdeps.pkl.HTTP
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
 
-/// A mapping of resource IDs to their associated [ResourceHTTPClient] objects.
+/// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
 resources: Mapping<String, ResourceHTTPClient>?
 
 /// Class representing an HTTP client resource, which includes details
@@ -62,14 +62,14 @@ class ResponseBlock {
         headers: Mapping<String, String>?
 }
 
-/// Retrieves the [ResourceHTTPClient] associated with the given [ID].
+/// Retrieves the [ResourceHTTPClient] associated with the given [actionID].
 ///
 /// If the resource is not found, returns a new [ResourceHTTPClient] with default values.
 ///
-/// [ID]: The ID of the resource to retrieve.
-/// [ResourceHTTPClient]: The [ResourceHTTPClient] object associated with the resource ID.
-function resource(ID: String): ResourceHTTPClient =
-        if (resources.getOrNull(ID) != null) resources[ID] else new ResourceHTTPClient {
+/// [actionID]: The actionID of the resource to retrieve.
+/// [ResourceHTTPClient]: The [ResourceHTTPClient] object associated with the resource actionID.
+function resource(actionID: String): ResourceHTTPClient =
+        if (resources.getOrNull(actionID) != null) resources[actionID] else new ResourceHTTPClient {
                 method = "GET"
                 url = ""
                 data {}
@@ -79,30 +79,30 @@ function resource(ID: String): ResourceHTTPClient =
                 file = ""
         }
 
-/// Retrieves the body of the response associated with the resource [ID].
+/// Retrieves the body of the response associated with the resource [actionID].
 ///
-/// [ID]: The ID of the resource to retrieve the response body for.
+/// [actionID]: The actionID of the resource to retrieve the response body for.
 /// [str]: The body of the response from the HTTP request.
-function responseBody(ID: String): String = if (isBase64(resource(ID).response.body)) resource(ID).response.body.base64Decoded else resource(ID).response.body
+function responseBody(actionID: String): String = if (isBase64(resource(actionID).response.body)) resource(actionID).response.body.base64Decoded else resource(actionID).response.body
 
-/// Retrieves the file path containing the response body associated with the specified resource [ID].
+/// Retrieves the file path containing the response body associated with the specified resource [actionID].
 ///
-/// [ID]: The ID of the resource to retrieve the response body for.
+/// [actionID]: The actionID of the resource to retrieve the response body for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(ID: String): String = if (isBase64(resource(ID).file)) resource(ID).file.base64Decoded else resource(ID).file
+function file(actionID: String): String = if (isBase64(resource(actionID).file)) resource(actionID).file.base64Decoded else resource(actionID).file
 
-/// Retrieves the specified response header associated with the resource [ID].
+/// Retrieves the specified response header associated with the resource [actionID].
 ///
-/// [ID]: The ID of the resource to retrieve the response header for.
-/// [headerID]: The name of the header to retrieve.
+/// [actionID]: The actionID of the resource to retrieve the response header for.
+/// [headeractionID]: The name of the header to retrieve.
 /// [str]: The value of the specified response header, or an empty string if not found.
-function responseHeader(ID: String, headerID: String): String =
-if (!resource(ID).response.headers.isEmpty)
-  if (resource(ID).response.headers.containsKey(headerID))
-    if (isBase64(resource(ID).response.headers[headerID]))
-      resource(ID).response.headers[headerID].base64Decoded
+function responseHeader(actionID: String, headeractionID: String): String =
+if (!resource(actionID).response.headers.isEmpty)
+  if (resource(actionID).response.headers.containsKey(headeractionID))
+    if (isBase64(resource(actionID).response.headers[headeractionID]))
+      resource(actionID).response.headers[headeractionID].base64Decoded
     else
-      resource(ID).response.headers[headerID]
+      resource(actionID).response.headers[headeractionID]
   else
     ""
 else
