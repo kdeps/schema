@@ -50,7 +50,18 @@ format_commits() {
 output_release_notes() {
     local all_tags=( $(get_all_tags) )
     
-    echo "## Release Notes"
+    cat <<EOF
+# Kdeps Schema
+
+This is the schema definitions used by [kdeps](https://kdeps.com).
+See the [schema documentation](https://kdeps.github.io/schema).
+
+## What is Kdeps?
+
+Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by open-source LLMs.
+
+## Release Notes
+EOF
 
     if [[ ${#all_tags[@]} -gt 0 ]]; then
         local latest_tag=${all_tags[0]}

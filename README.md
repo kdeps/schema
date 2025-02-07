@@ -1,3 +1,12 @@
+# Kdeps Schema
+
+This is the schema definitions used by [kdeps](https://kdeps.com).
+See the [schema documentation](https://kdeps.github.io/schema).
+
+## What is Kdeps?
+
+Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by open-source LLMs.
+
 ## Release Notes
 
 ### Latest Release: v0.2.3
