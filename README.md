@@ -1,11 +1,15 @@
 ## Release Notes
 
-### Latest Release: v0.2.1
-  - bump pkl to 0.27.2
+### Latest Release: v0.2.3
+  - added trustedProxies settings to API server
+
+### Previous Highlights
+- **v0.2.2**:   - Change resource ID to actionID, and Workflow action to targetActionID
+
+- **v0.2.1**:   - bump pkl to 0.27.2
     
     changed timeoutSeconds -> timeoutDuration
 
-### Previous Highlights
 - **v0.2.0**:   - Use uniform naming convention for {Http,Api,Id,Json} -> {HTTP,API,ID,JSON}
     
     updated .gitattributes
