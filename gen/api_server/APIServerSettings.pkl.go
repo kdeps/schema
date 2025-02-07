@@ -9,6 +9,13 @@ type APIServerSettings struct {
 	// The port number the API server will listen on. Defaults to 3000.
 	PortNum uint16 `pkl:"portNum"`
 
+	// A list of trusted proxies (IPv4, IPv6, or CIDR ranges).
+	// If set, only requests passing through these proxies will have their `X-Forwarded-For`
+	// header trusted.
+	// If unset, all proxies—including potentially malicious ones—are considered trusted,
+	// which may expose the server to IP spoofing and other attacks.
+	TrustedProxies *[]string `pkl:"trustedProxies"`
+
 	// A listing of routes configured for the API server.
 	//
 	// Each route defines a path and the allowed HTTP methods for that path.
