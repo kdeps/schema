@@ -38,6 +38,10 @@ hidden isValidHTTPMethod = (str) -> if (str.matches(apiMethodRegex)) true else t
 
 /// Represents the request URI path.
 path: Uri
+/// Represents the Client IP.
+IP: String
+/// Represents the Request ID.
+ID: String
 /// The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
 method: String(isValidHTTPMethod)
 /// The body data of the request, which is optional.
@@ -145,3 +149,13 @@ function path(): String = path
 ///
 /// [str]: The HTTP method of the request.
 function method(): String = method
+
+/// Retrieves the Client IP of the request.
+///
+/// [str]: The Client IP of the request.
+function IP(): String = IP
+
+/// Retrieves the Request ID of the request.
+///
+/// [str]: The Request ID of the request.
+function ID(): String = ID

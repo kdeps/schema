@@ -10,6 +10,10 @@ import (
 type APIServerRequest interface {
 	GetPath() string
 
+	GetIP() string
+
+	GetID() string
+
 	GetMethod() string
 
 	GetData() *string
@@ -38,6 +42,12 @@ type APIServerRequestImpl struct {
 	// Represents the request URI path.
 	Path string `pkl:"path"`
 
+	// Represents the Client IP.
+	IP string `pkl:"IP"`
+
+	// Represents the Request ID.
+	ID string `pkl:"ID"`
+
 	// The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
 	Method string `pkl:"method"`
 
@@ -57,6 +67,16 @@ type APIServerRequestImpl struct {
 // Represents the request URI path.
 func (rcv *APIServerRequestImpl) GetPath() string {
 	return rcv.Path
+}
+
+// Represents the Client IP.
+func (rcv *APIServerRequestImpl) GetIP() string {
+	return rcv.IP
+}
+
+// Represents the Request ID.
+func (rcv *APIServerRequestImpl) GetID() string {
+	return rcv.ID
 }
 
 // The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
