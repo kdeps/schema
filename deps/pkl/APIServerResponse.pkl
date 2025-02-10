@@ -32,16 +32,37 @@ import "Utils.pkl" as utils
 
 /// Class representing a block of data returned in a successful API response.
 class APIServerResponseBlock {
-    /// The data returned by the API server, stored as a listing of arbitrary items.
-    data: Listing<Any>
+        /// The data returned by the API server, stored as a listing of arbitrary items.
+        data: Listing<Any>
+}
+
+/// Contains metadata related to an API response.
+///
+/// This block includes essential details such as the request ID, response headers,
+/// and custom properties, providing additional context for API interactions.
+class APIServerResponseMetaBlock {
+        /// A unique identifier (UUID) for the request.
+        ///
+        /// This ID helps track and correlate API requests.
+        requestID: String
+
+        /// HTTP headers included in the API response.
+        ///
+        /// Contains key-value pairs representing response headers.
+        headers: Mapping<String, String>?
+
+        /// Custom key-value properties included in the JSON response.
+        ///
+        /// Used to store additional metadata or context-specific details.
+        properties: Mapping<String, String>?
 }
 
 /// Class representing error details returned in an API response when an error occurs.
 class APIServerErrorsBlock {
-    /// The error code returned by the API server, typically an HTTP status code.
-    code: Int
-    /// A descriptive message explaining the error.
-    message: String
+        /// The error code returned by the API server, typically an HTTP status code.
+        code: Int
+        /// A descriptive message explaining the error.
+        message: String
 }
 
 /// A Boolean flag indicating whether the API request was successful.
@@ -50,14 +71,16 @@ class APIServerErrorsBlock {
 /// - `false`: The request encountered an error.
 success: Boolean = true
 
+/// Additional metadata related to the API request.
+///
+/// Provides request-specific details such as headers, properties, and tracking information.
+meta: APIServerResponseMetaBlock
+
 /// The response block containing data returned by the API server in a successful request, if any.
 ///
 /// If the request was successful, this block contains the data associated with the response.
 /// [APIServerResponseBlock]: Contains a listing of the returned data items.
 response: APIServerResponseBlock?
-
-/// Headers sent with the response.
-headers: Mapping<String, String>?
 
 /// The error block containing details of any error encountered during the API request.
 ///

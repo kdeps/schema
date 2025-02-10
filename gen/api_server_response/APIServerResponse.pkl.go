@@ -10,9 +10,9 @@ import (
 type APIServerResponse interface {
 	GetSuccess() bool
 
-	GetResponse() *APIServerResponseBlock
+	GetMeta() *APIServerResponseMetaBlock
 
-	GetHeaders() *map[string]string
+	GetResponse() *APIServerResponseBlock
 
 	GetErrors() *[]*APIServerErrorsBlock
 }
@@ -41,14 +41,16 @@ type APIServerResponseImpl struct {
 	// - `false`: The request encountered an error.
 	Success bool `pkl:"success"`
 
+	// Additional metadata related to the API request.
+	//
+	// Provides request-specific details such as headers, properties, and tracking information.
+	Meta *APIServerResponseMetaBlock `pkl:"meta"`
+
 	// The response block containing data returned by the API server in a successful request, if any.
 	//
 	// If the request was successful, this block contains the data associated with the response.
 	// [APIServerResponseBlock]: Contains a listing of the returned data items.
 	Response *APIServerResponseBlock `pkl:"response"`
-
-	// Headers sent with the response.
-	Headers *map[string]string `pkl:"headers"`
 
 	// The error block containing details of any error encountered during the API request.
 	//
@@ -66,17 +68,19 @@ func (rcv *APIServerResponseImpl) GetSuccess() bool {
 	return rcv.Success
 }
 
+// Additional metadata related to the API request.
+//
+// Provides request-specific details such as headers, properties, and tracking information.
+func (rcv *APIServerResponseImpl) GetMeta() *APIServerResponseMetaBlock {
+	return rcv.Meta
+}
+
 // The response block containing data returned by the API server in a successful request, if any.
 //
 // If the request was successful, this block contains the data associated with the response.
 // [APIServerResponseBlock]: Contains a listing of the returned data items.
 func (rcv *APIServerResponseImpl) GetResponse() *APIServerResponseBlock {
 	return rcv.Response
-}
-
-// Headers sent with the response.
-func (rcv *APIServerResponseImpl) GetHeaders() *map[string]string {
-	return rcv.Headers
 }
 
 // The error block containing details of any error encountered during the API request.

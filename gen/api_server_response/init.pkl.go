@@ -5,6 +5,7 @@ import "github.com/apple/pkl-go/pkl"
 
 func init() {
 	pkl.RegisterMapping("org.kdeps.pkl.APIServerResponse", APIServerResponseImpl{})
+	pkl.RegisterMapping("org.kdeps.pkl.APIServerResponse#APIServerResponseMetaBlock", APIServerResponseMetaBlock{})
 	pkl.RegisterMapping("org.kdeps.pkl.APIServerResponse#APIServerResponseBlock", APIServerResponseBlock{})
 	pkl.RegisterMapping("org.kdeps.pkl.APIServerResponse#APIServerErrorsBlock", APIServerErrorsBlock{})
 }
