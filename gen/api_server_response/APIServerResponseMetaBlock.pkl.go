@@ -9,7 +9,7 @@ type APIServerResponseMetaBlock struct {
 	// A unique identifier (UUID) for the request.
 	//
 	// This ID helps track and correlate API requests.
-	RequestID string `pkl:"requestID"`
+	RequestID *string `pkl:"requestID"`
 
 	// HTTP headers included in the API response.
 	//
