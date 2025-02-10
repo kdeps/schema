@@ -12,6 +12,8 @@ type APIServerResponse interface {
 
 	GetResponse() *APIServerResponseBlock
 
+	GetHeaders() *map[string]string
+
 	GetErrors() *[]*APIServerErrorsBlock
 }
 
@@ -45,6 +47,9 @@ type APIServerResponseImpl struct {
 	// [APIServerResponseBlock]: Contains a listing of the returned data items.
 	Response *APIServerResponseBlock `pkl:"response"`
 
+	// Headers sent with the response.
+	Headers *map[string]string `pkl:"headers"`
+
 	// The error block containing details of any error encountered during the API request.
 	//
 	// If the request was unsuccessful, this block contains the error code and error message
@@ -67,6 +72,11 @@ func (rcv *APIServerResponseImpl) GetSuccess() bool {
 // [APIServerResponseBlock]: Contains a listing of the returned data items.
 func (rcv *APIServerResponseImpl) GetResponse() *APIServerResponseBlock {
 	return rcv.Response
+}
+
+// Headers sent with the response.
+func (rcv *APIServerResponseImpl) GetHeaders() *map[string]string {
+	return rcv.Headers
 }
 
 // The error block containing details of any error encountered during the API request.

@@ -56,6 +56,9 @@ success: Boolean = true
 /// [APIServerResponseBlock]: Contains a listing of the returned data items.
 response: APIServerResponseBlock?
 
+/// Headers sent with the response.
+headers: Mapping<String, String>?
+
 /// The error block containing details of any error encountered during the API request.
 ///
 /// If the request was unsuccessful, this block contains the error code and error message
