@@ -9,10 +9,14 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.5
-  - allow sending headers to response
+### Latest Release: v0.2.6
+  - added api response meta info for other additional information sent over the JSON response
+    
+    updated release notes
 
 ### Previous Highlights
+- **v0.2.5**:   - allow sending headers to response
+
 - **v0.2.4**:   - allow access to client IP and request ID
     
     added new schema documentation info
