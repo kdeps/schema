@@ -9,12 +9,20 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.6
-  - added api response meta info for other additional information sent over the JSON response
+### Latest Release: v0.2.9
+  - change timeoutDuration to Duration and use PKL semantics for duration seconds
+
+### Previous Highlights
+- **v0.2.8**:   - Use DurationUnit for Timestamps; Upgrade pkl-go to 0.9.0
+
+- **v0.2.7**:   - api response meta blocks can be optional
+    
+    updated release info
+
+- **v0.2.6**:   - added api response meta info for other additional information sent over the JSON response
     
     updated release notes
 
-### Previous Highlights
 - **v0.2.5**:   - allow sending headers to response
 
 - **v0.2.4**:   - allow access to client IP and request ID
