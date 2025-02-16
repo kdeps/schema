@@ -43,7 +43,7 @@ class ResourceExec {
         file: String?
 
         /// A timestamp of when the command was executed, represented as an unsigned 64-bit integer.
-        timestamp: DurationUnit?
+        timestamp: Duration?
 
         /// The timeout duration (in seconds) for the command execution. Defaults to 60 seconds.
         timeoutDuration: Duration? = 60.s

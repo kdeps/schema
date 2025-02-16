@@ -28,7 +28,7 @@ type ResourceChat struct {
 	File *string `pkl:"file"`
 
 	// A timestamp of when the response was generated, represented as an unsigned 64-bit integer.
-	Timestamp *pkl.DurationUnit `pkl:"timestamp"`
+	Timestamp *pkl.Duration `pkl:"timestamp"`
 
 	// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
 	TimeoutDuration *pkl.Duration `pkl:"timeoutDuration"`

@@ -49,7 +49,7 @@ class ResourcePython {
         file: String?
 
         /// A timestamp indicating when the command was executed, as an unsigned 64-bit integer.
-        timestamp: DurationUnit?
+        timestamp: Duration?
 
         /// The maximum duration (in seconds) allowed for the command execution. Defaults to 60 seconds.
         timeoutDuration: Duration? = 60.s

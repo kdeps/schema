@@ -25,7 +25,7 @@ type ResourceExec struct {
 	File *string `pkl:"file"`
 
 	// A timestamp of when the command was executed, represented as an unsigned 64-bit integer.
-	Timestamp *pkl.DurationUnit `pkl:"timestamp"`
+	Timestamp *pkl.Duration `pkl:"timestamp"`
 
 	// The timeout duration (in seconds) for the command execution. Defaults to 60 seconds.
 	TimeoutDuration *pkl.Duration `pkl:"timeoutDuration"`

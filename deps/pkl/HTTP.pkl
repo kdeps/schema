@@ -46,7 +46,7 @@ class ResourceHTTPClient {
         file: String?
 
         /// A timestamp of when the request was made, represented as an unsigned 64-bit integer.
-        timestamp: DurationUnit?
+        timestamp: Duration?
 
         /// The timeout duration (in seconds) for the HTTP request. Defaults to 60 seconds.
         timeoutDuration: Duration? = 60.s

@@ -50,7 +50,7 @@ class ResourceChat {
         file: String?
 
         /// A timestamp of when the response was generated, represented as an unsigned 64-bit integer.
-        timestamp: DurationUnit?
+        timestamp: Duration?
 
         /// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
         timeoutDuration: Duration? = 60.s

@@ -29,7 +29,7 @@ type ResourcePython struct {
 	File *string `pkl:"file"`
 
 	// A timestamp indicating when the command was executed, as an unsigned 64-bit integer.
-	Timestamp *pkl.DurationUnit `pkl:"timestamp"`
+	Timestamp *pkl.Duration `pkl:"timestamp"`
 
 	// The maximum duration (in seconds) allowed for the command execution. Defaults to 60 seconds.
 	TimeoutDuration *pkl.Duration `pkl:"timeoutDuration"`
