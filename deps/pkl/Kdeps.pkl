@@ -5,7 +5,7 @@
 
 module org.kdeps.pkl.Kdeps
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
 
 /// Defines the types of GPU available for Kdeps configurations.
 typealias GPU = "nvidia" | "amd" | "cpu"

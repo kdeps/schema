@@ -1,6 +1,8 @@
 // Code generated from Pkl module `org.kdeps.pkl.HTTP`. DO NOT EDIT.
 package http
 
+import "github.com/apple/pkl-go/pkl"
+
 // Class representing an HTTP client resource, which includes details
 // about the HTTP method, URL, request data, headers, and response.
 type ResourceHTTPClient struct {
@@ -26,7 +28,7 @@ type ResourceHTTPClient struct {
 	File *string `pkl:"file"`
 
 	// A timestamp of when the request was made, represented as an unsigned 32-bit integer.
-	Timestamp *uint32 `pkl:"timestamp"`
+	Timestamp *pkl.DurationUnit `pkl:"timestamp"`
 
 	// The timeout duration (in seconds) for the HTTP request. Defaults to 60 seconds.
 	TimeoutDuration *int `pkl:"timeoutDuration"`

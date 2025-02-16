@@ -20,7 +20,7 @@
 open module org.kdeps.pkl.LLM
 
 extends "Utils.pkl"
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
 
 /// A mapping of resource actionIDs to their associated [ResourceChat] objects.
 resources: Mapping<String, ResourceChat>?
@@ -50,7 +50,7 @@ class ResourceChat {
         file: String?
 
         /// A timestamp of when the response was generated, represented as an unsigned 32-bit integer.
-        timestamp: UInt32?
+        timestamp: DurationUnit?
 
         /// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
         timeoutDuration: Int? = 60

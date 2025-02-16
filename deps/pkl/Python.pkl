@@ -10,7 +10,7 @@
 open module org.kdeps.pkl.Python
 
 extends "Utils.pkl"
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
 
 /// A mapping of resource actionIDs to their corresponding [ResourcePython] objects.
 resources: Mapping<String, ResourcePython>?
@@ -49,7 +49,7 @@ class ResourcePython {
         file: String?
 
         /// A timestamp indicating when the command was executed, as an unsigned 32-bit integer.
-        timestamp: UInt32?
+        timestamp: DurationUnit?
 
         /// The maximum duration (in seconds) allowed for the command execution. Defaults to 60 seconds.
         timeoutDuration: Int? = 60

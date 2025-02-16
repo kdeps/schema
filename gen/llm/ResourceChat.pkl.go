@@ -1,6 +1,8 @@
 // Code generated from Pkl module `org.kdeps.pkl.LLM`. DO NOT EDIT.
 package llm
 
+import "github.com/apple/pkl-go/pkl"
+
 // Class representing the details of a chat interaction with an LLM model, including prompts, responses,
 // file generation, and additional metadata.
 type ResourceChat struct {
@@ -26,7 +28,7 @@ type ResourceChat struct {
 	File *string `pkl:"file"`
 
 	// A timestamp of when the response was generated, represented as an unsigned 32-bit integer.
-	Timestamp *uint32 `pkl:"timestamp"`
+	Timestamp *pkl.DurationUnit `pkl:"timestamp"`
 
 	// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
 	TimeoutDuration *int `pkl:"timeoutDuration"`

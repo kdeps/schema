@@ -1,6 +1,8 @@
 // Code generated from Pkl module `org.kdeps.pkl.Python`. DO NOT EDIT.
 package python
 
+import "github.com/apple/pkl-go/pkl"
+
 // Represents an executable Python resource, including its associated script,
 // environment variables, and execution details such as outputs and exit codes.
 type ResourcePython struct {
@@ -27,7 +29,7 @@ type ResourcePython struct {
 	File *string `pkl:"file"`
 
 	// A timestamp indicating when the command was executed, as an unsigned 32-bit integer.
-	Timestamp *uint32 `pkl:"timestamp"`
+	Timestamp *pkl.DurationUnit `pkl:"timestamp"`
 
 	// The maximum duration (in seconds) allowed for the command execution. Defaults to 60 seconds.
 	TimeoutDuration *int `pkl:"timeoutDuration"`
