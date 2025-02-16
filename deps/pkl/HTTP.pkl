@@ -45,11 +45,11 @@ class ResourceHTTPClient {
         /// The file path where the response body value of this resource is saved
         file: String?
 
-        /// A timestamp of when the request was made, represented as an unsigned 32-bit integer.
+        /// A timestamp of when the request was made, represented as an unsigned 64-bit integer.
         timestamp: DurationUnit?
 
         /// The timeout duration (in seconds) for the HTTP request. Defaults to 60 seconds.
-        timeoutDuration: Int? = 60
+        timeoutDuration: Duration? = 60.s
 }
 
 /// Class representing the response block of an HTTP request.

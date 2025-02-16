@@ -42,11 +42,11 @@ class ResourceExec {
         /// The file path where the stdout value of this resource is saved
         file: String?
 
-        /// A timestamp of when the command was executed, represented as an unsigned 32-bit integer.
+        /// A timestamp of when the command was executed, represented as an unsigned 64-bit integer.
         timestamp: DurationUnit?
 
         /// The timeout duration (in seconds) for the command execution. Defaults to 60 seconds.
-        timeoutDuration: Int? = 60
+        timeoutDuration: Duration? = 60.s
 }
 
 /// Retrieves the [ResourceExec] associated with the given [actionID].

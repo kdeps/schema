@@ -27,9 +27,9 @@ type ResourceHTTPClient struct {
 	// The file path where the response body value of this resource is saved
 	File *string `pkl:"file"`
 
-	// A timestamp of when the request was made, represented as an unsigned 32-bit integer.
+	// A timestamp of when the request was made, represented as an unsigned 64-bit integer.
 	Timestamp *pkl.DurationUnit `pkl:"timestamp"`
 
 	// The timeout duration (in seconds) for the HTTP request. Defaults to 60 seconds.
-	TimeoutDuration *int `pkl:"timeoutDuration"`
+	TimeoutDuration *pkl.Duration `pkl:"timeoutDuration"`
 }

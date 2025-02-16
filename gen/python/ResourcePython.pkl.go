@@ -28,9 +28,9 @@ type ResourcePython struct {
 	// The file path where the Python stdout of this resource is saved
 	File *string `pkl:"file"`
 
-	// A timestamp indicating when the command was executed, as an unsigned 32-bit integer.
+	// A timestamp indicating when the command was executed, as an unsigned 64-bit integer.
 	Timestamp *pkl.DurationUnit `pkl:"timestamp"`
 
 	// The maximum duration (in seconds) allowed for the command execution. Defaults to 60 seconds.
-	TimeoutDuration *int `pkl:"timeoutDuration"`
+	TimeoutDuration *pkl.Duration `pkl:"timeoutDuration"`
 }

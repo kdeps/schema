@@ -49,11 +49,11 @@ class ResourceChat {
         /// The file path where the LLM response of this resource is saved
         file: String?
 
-        /// A timestamp of when the response was generated, represented as an unsigned 32-bit integer.
+        /// A timestamp of when the response was generated, represented as an unsigned 64-bit integer.
         timestamp: DurationUnit?
 
         /// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
-        timeoutDuration: Int? = 60
+        timeoutDuration: Duration? = 60.s
 }
 
 /// Retrieves the [ResourceChat] associated with the given [actionID].
