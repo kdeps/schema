@@ -3,7 +3,7 @@
 /// standard output and error, as well as handling environment variables and
 /// exit codes. The module provides functionalities to retrieve and manage
 /// executable resources based on their identifiers.
-@ModuleInfo { minPklVersion = "0.27.2" }
+@ModuleInfo { minPklVersion = "0.28.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/exec" }
 
