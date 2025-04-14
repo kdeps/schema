@@ -4,7 +4,7 @@
 /// including actions that can be performed on these resources, validation checks,
 /// and error handling mechanisms. Each resource can define its actionID, name, description,
 /// category, dependencies, and how it runs.
-@ModuleInfo { minPklVersion = "0.27.2" }
+@ModuleInfo { minPklVersion = "0.28.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/resource" }
 
