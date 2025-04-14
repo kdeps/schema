@@ -1,5 +1,5 @@
 /// Abstractions for Kdeps Configuration
-@ModuleInfo { minPklVersion = "0.27.2" }
+@ModuleInfo { minPklVersion = "0.28.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/kdeps" }
 
