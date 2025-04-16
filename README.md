@@ -9,10 +9,14 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.12
-  - add ability to set tz identifier timezone (#2)
+### Latest Release: v0.2.13
+  - allow setting permitted HTTP values (headers, params, methods, routes) on resource (#3)
+    
+    updated release notes
 
 ### Previous Highlights
+- **v0.2.12**:   - add ability to set tz identifier timezone (#2)
+
 - **v0.2.11**:   - Merge pull request #1 from kdeps/bump_versions_04_2025
     upgrade lowest pkl version to 0.28.1
     Merge branch 'bump_versions_04_2025' of https://github.com/kdeps/schema into bump_versions_04_2025
