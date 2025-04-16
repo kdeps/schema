@@ -16,6 +16,7 @@ get_latest_tag() {
 
 # Function to list tags in descending order
 get_all_tags() {
+    git fetch --all
     git tag --sort=-v:refname
 }
 

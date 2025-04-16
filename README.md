@@ -9,12 +9,22 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.10
-  - changed timestamp to duration from durationunit
+### Latest Release: v0.2.12
+  - add ability to set tz identifier timezone (#2)
+
+### Previous Highlights
+- **v0.2.11**:   - Merge pull request #1 from kdeps/bump_versions_04_2025
+    upgrade lowest pkl version to 0.28.1
+    Merge branch 'bump_versions_04_2025' of https://github.com/kdeps/schema into bump_versions_04_2025
+    
+    upgrade lowest pkl version to 0.28.1
+    
+    upgrade lowest pkl version to 0.28.1
+
+- **v0.2.10**:   - changed timestamp to duration from durationunit
     
     updated relnotes / readme
 
-### Previous Highlights
 - **v0.2.9**:   - change timeoutDuration to Duration and use PKL semantics for duration seconds
 
 - **v0.2.8**:   - Use DurationUnit for Timestamps; Upgrade pkl-go to 0.9.0
