@@ -32,11 +32,11 @@ type ResourceAction struct {
 	// A listing of allowed HTTP params
 	AllowedParams *[]string `pkl:"allowedParams"`
 
-	// A listing of allowed HTTP methods
-	AllowedHTTPMethods *[]string `pkl:"allowedHTTPMethods"`
+	// A listing of targeted HTTP methods
+	RestrictToHTTPMethods *[]string `pkl:"restrictToHTTPMethods"`
 
-	// A listing of allowed HTTP routes
-	AllowedRoutes *[]string `pkl:"allowedRoutes"`
+	// A listing of targeted HTTP routes
+	RestrictToRoutes *[]string `pkl:"restrictToRoutes"`
 
 	// Configuration for HTTP client interactions.
 	HTTPClient *http.ResourceHTTPClient `pkl:"HTTPClient"`
