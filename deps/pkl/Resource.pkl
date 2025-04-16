@@ -89,11 +89,11 @@ class ResourceAction {
     /// A listing of allowed HTTP params
     allowedParams: Listing<String>?
 
-    /// A listing of allowed HTTP methods
-    allowedHTTPMethods: Listing<String>?
+    /// A listing of targeted HTTP methods
+    restrictToHTTPMethods: Listing<String>?
 
-    /// A listing of allowed HTTP routes
-    allowedRoutes: Listing<String>?
+    /// A listing of targeted HTTP routes
+    restrictToRoutes: Listing<String>?
 
     /// Configuration for HTTP client interactions.
     HTTPClient: HTTP.ResourceHTTPClient?
