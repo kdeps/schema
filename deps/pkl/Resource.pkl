@@ -83,6 +83,18 @@ class ResourceAction {
     /// A pre-flight validation check to be performed before executing the action.
     preflightCheck: ValidationCheck?
 
+    /// A listing of allowed HTTP headers
+    allowedHeaders: Listing<String>?
+
+    /// A listing of allowed HTTP params
+    allowedParams: Listing<String>?
+
+    /// A listing of allowed HTTP methods
+    allowedHTTPMethods: Listing<String>?
+
+    /// A listing of allowed HTTP routes
+    allowedRoutes: Listing<String>?
+
     /// Configuration for HTTP client interactions.
     HTTPClient: HTTP.ResourceHTTPClient?
 
