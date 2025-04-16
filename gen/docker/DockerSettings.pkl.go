@@ -4,6 +4,9 @@ package docker
 // Class representing the settings for Docker configurations.
 // It includes options for specifying packages, PPAs, and models.
 type DockerSettings struct {
+	// Sets the timezone (see the TZ Identifier here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+	Timezone string `pkl:"timezone"`
+
 	// Sets if Anaconda3 will be pre-installed in the Image
 	InstallAnaconda bool `pkl:"installAnaconda"`
 
