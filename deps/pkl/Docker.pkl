@@ -19,6 +19,9 @@ class DockerSettings {
         /// Function to check if a given params variable name is valid.
         hidden isValidParams = (str) -> if (str.matches(paramStringRegex)) true else throw("Error: Invalid params name: The params name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
 
+        /// Sets the timezone (see the TZ Identifier here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+        timezone: String = "Etc/UTC"
+
         /// Sets if Anaconda3 will be pre-installed in the Image
         installAnaconda: Boolean = false
 
