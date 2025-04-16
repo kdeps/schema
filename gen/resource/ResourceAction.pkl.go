@@ -26,6 +26,18 @@ type ResourceAction struct {
 	// A pre-flight validation check to be performed before executing the action.
 	PreflightCheck *ValidationCheck `pkl:"preflightCheck"`
 
+	// A listing of allowed HTTP headers
+	AllowedHeaders *[]string `pkl:"allowedHeaders"`
+
+	// A listing of allowed HTTP params
+	AllowedParams *[]string `pkl:"allowedParams"`
+
+	// A listing of allowed HTTP methods
+	AllowedHTTPMethods *[]string `pkl:"allowedHTTPMethods"`
+
+	// A listing of allowed HTTP routes
+	AllowedRoutes *[]string `pkl:"allowedRoutes"`
+
 	// Configuration for HTTP client interactions.
 	HTTPClient *http.ResourceHTTPClient `pkl:"HTTPClient"`
 
