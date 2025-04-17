@@ -4,6 +4,7 @@ package project
 import (
 	"github.com/kdeps/schema/gen/api_server"
 	"github.com/kdeps/schema/gen/docker"
+	"github.com/kdeps/schema/gen/web_server"
 )
 
 // Class representing the settings and configurations for a project.
@@ -19,6 +20,18 @@ type Settings struct {
 	// If API server mode is enabled, these settings provide additional configuration for the API server.
 	// [APIServer.APIServerSettings]: Defines the structure and properties for API server settings.
 	APIServer *apiserver.APIServerSettings `pkl:"APIServer"`
+
+	// Boolean flag to enable or disable Web server mode for the project.
+	//
+	// - `true`: The project runs in Web server mode.
+	// - `false`: The project does not run in Web server mode. Default is `false`.
+	WebServerMode bool `pkl:"WebServerMode"`
+
+	// Settings for configuring the Web server, which is optional.
+	//
+	// If Web server mode is enabled, these settings provide additional configuration for the Web server.
+	// [WebServer.WebServerConfig]: Defines the structure and properties for Web server settings.
+	WebServer *webserver.WebServerConfig `pkl:"WebServer"`
 
 	// Docker-related settings for the project's agent.
 	//
