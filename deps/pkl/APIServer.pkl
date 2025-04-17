@@ -33,6 +33,9 @@ class APIServerSettings {
         ///
         /// Each route defines a path and the allowed HTTP methods for that path.
         routes: Listing<APIServerRoutes>
+
+        /// Cross-Origin Resource Sharing (CORS) configuration
+        cors: CORS
 }
 
 /// Class representing a route in the API server configuration.
@@ -50,4 +53,45 @@ class APIServerRoutes {
 
         /// A listing of allowed HTTP methods for this route, validated by the HTTP method regex.
         methods: Listing<String(isValidHTTPMethod)>
+}
+
+/// Cross-Origin Resource Sharing (CORS) configuration
+class CORS {
+    /// Regex pattern for validating supported HTTP methods
+    hidden methodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
+
+    /// Validates the HTTP method used in CORS configuration
+    ///
+    /// Throws an error if the method is not supported
+    hidden isValidHTTPMethod = (str) -> if (str.matches(methodRegex)) true else
+        throw("Unsupported HTTP method. Use: GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD")
+
+    /// Enables or disables CORS support (default: false)
+    enableCORS: Boolean = false
+
+    /// List of allowed origin domains for CORS requests (e.g., "https://example.com")
+    ///
+    /// If unset, no origins are allowed unless CORS is disabled
+    allowOrigins: Listing<String>?
+
+    /// List of HTTP methods allowed for CORS requests, validated by regex
+    ///
+    /// If unset, defaults to methods specified in the route configuration
+    allowMethods: Listing<String(isValidHTTPMethod)>?
+
+    /// List of request headers allowed in CORS requests (e.g., "Content-Type")
+    ///
+    /// If unset, no additional headers are allowed
+    allowHeaders: Listing<String>?
+
+    /// List of response headers exposed to clients in CORS requests
+    ///
+    /// If unset, no headers are exposed beyond defaults
+    exposeHeaders: Listing<String>?
+
+    /// Allows credentials (e.g., cookies, HTTP authentication) in CORS requests (default: true)
+    allowCredentials: Boolean = true
+
+    /// Maximum duration (in hours) for which CORS preflight responses can be cached (default: 12 hours)
+    maxAge: Duration = 12.h
 }

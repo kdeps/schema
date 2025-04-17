@@ -48,7 +48,7 @@ class DockerSettings {
         models: Listing<String>
 
         /// Sets the Ollama Docker version to be use as the base image
-        ollamaImageTag: String = "0.5.4"
+        ollamaImageTag: String = "0.6.5"
 
         /// A mapping of build arguments variable name
         args: Mapping<String(isValidParams), String>?
