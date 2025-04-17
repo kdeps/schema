@@ -4,7 +4,7 @@ package webserver
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.WebServer", WebServerImpl{})
 	pkl.RegisterMapping("org.kdeps.pkl.WebServer#WebServerConfig", WebServerConfig{})
 	pkl.RegisterMapping("org.kdeps.pkl.WebServer#WebServerRouteConfig", WebServerRouteConfig{})
+	pkl.RegisterMapping("org.kdeps.pkl.WebServer", WebServerImpl{})
 }

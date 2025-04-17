@@ -13,6 +13,7 @@ open module org.kdeps.pkl.Project
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
 
 import "APIServer.pkl"
+import "WebServer.pkl"
 import "Docker.pkl"
 
 /// Class representing the settings and configurations for a project.
@@ -28,6 +29,18 @@ class Settings {
         /// If API server mode is enabled, these settings provide additional configuration for the API server.
         /// [APIServer.APIServerSettings]: Defines the structure and properties for API server settings.
         APIServer: APIServer.APIServerSettings?
+
+        /// Boolean flag to enable or disable Web server mode for the project.
+        ///
+        /// - `true`: The project runs in Web server mode.
+        /// - `false`: The project does not run in Web server mode. Default is `false`.
+        WebServerMode: Boolean = false
+
+        /// Settings for configuring the Web server, which is optional.
+        ///
+        /// If Web server mode is enabled, these settings provide additional configuration for the Web server.
+        /// [WebServer.WebServerConfig]: Defines the structure and properties for Web server settings.
+        WebServer: WebServer.WebServerConfig?
 
         /// Docker-related settings for the project's agent.
         ///
