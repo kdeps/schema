@@ -1,0 +1,48 @@
+/// Configuration for the Kdeps Web Server
+///
+/// This module defines settings and routes for the Kdeps Web Server, including
+/// server binding details (host and port) and route configurations. The server
+/// handles HTTP requests, routing them to appropriate handlers based on defined
+/// paths and server types.
+@ModuleInfo { minPklVersion = "0.28.1" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/web_server" }
+
+open module org.kdeps.pkl.WebServer
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+
+/// Type of web server
+typealias WebServerType = "static" | "app"
+
+/// Configuration settings for the web server
+class WebServerConfig {
+    /// The IP address the server binds to (default: "127.0.0.1")
+    host: String = "127.0.0.1"
+
+    /// The port the server listens on (default: 8080)
+    port: UInt16 = 8080
+
+    /// List of routes configured for the server
+    ///
+    /// Each route specifies a path and its server behavior
+    routes: Listing<WebServerRouteConfig>
+}
+
+/// Configuration for a server route
+class WebServerRouteConfig {
+    /// The URL path for the route
+    path: String
+
+    /// Optional port for the application. Only applicable if serverType is "app". (default: 8052)
+    appPort: UInt16? = 8052
+
+    /// Type of web server for this route, can either be "app" or "static". (default: "static")
+    serverType: WebServerType = "static"
+
+    /// Public path relative to the agent directory (default: "/data/web/")
+    publicPath: String = "/data/web/"
+
+    /// Optional command to execute for the route. Only applicable if serverType is "app".
+    command: String?
+}
