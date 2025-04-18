@@ -40,7 +40,7 @@ class Settings {
         ///
         /// If Web server mode is enabled, these settings provide additional configuration for the Web server.
         /// [WebServer.WebServerConfig]: Defines the structure and properties for Web server settings.
-        WebServer: WebServer.WebServerConfig?
+        WebServer: WebServer.WebServerSettings?
 
         /// Docker-related settings for the project's agent.
         ///
