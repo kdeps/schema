@@ -31,7 +31,7 @@ type Settings struct {
 	//
 	// If Web server mode is enabled, these settings provide additional configuration for the Web server.
 	// [WebServer.WebServerConfig]: Defines the structure and properties for Web server settings.
-	WebServer *webserver.WebServerConfig `pkl:"WebServer"`
+	WebServer *webserver.WebServerSettings `pkl:"WebServer"`
 
 	// Docker-related settings for the project's agent.
 	//
