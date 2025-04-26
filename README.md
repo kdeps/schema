@@ -9,12 +9,34 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.13
-  - allow setting permitted HTTP values (headers, params, methods, routes) on resource (#3)
+### Latest Release: v0.2.17
+  - Add TrustedProxies to WebServer (#7)
+    * fix indentation on deps/pkl files
+    
+    * add trustedproxy on webserver
+    
+    * keep webserver name in parity with apiserver
+
+### Previous Highlights
+- **v0.2.16**:   - add webserver settings to project workflow settings (#6)
+
+- **v0.2.15**:   - Create frontend serving settings (#5)
+    * upgrade default ollama version to 0.6.5
+    
+    * added CORS configuration to APIServer
+    
+    * added webserver settings for serving static (html, htmx, etc.) or app (nodejs, streamlit, rails, etc.)
+
+- **v0.2.14**:   - allow restricting http methods and params per resource (#4)
+    
+    Merge branch 'main' of https://github.com/kdeps/schema
     
     updated release notes
 
-### Previous Highlights
+- **v0.2.13**:   - allow setting permitted HTTP values (headers, params, methods, routes) on resource (#3)
+    
+    updated release notes
+
 - **v0.2.12**:   - add ability to set tz identifier timezone (#2)
 
 - **v0.2.11**:   - Merge pull request #1 from kdeps/bump_versions_04_2025
