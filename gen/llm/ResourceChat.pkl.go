@@ -16,7 +16,10 @@ type ResourceChat struct {
 	Role *roletype.RoleType `pkl:"role"`
 
 	// The prompt text sent to the LLM model.
-	Prompt string `pkl:"prompt"`
+	Prompt *string `pkl:"prompt"`
+
+	// A scenario is where a series of conditions to be sent for this chat.
+	Scenario *[]*MultiChat `pkl:"scenario"`
 
 	// A listing of file paths or identifiers associated with the chat.
 	Files *[]string `pkl:"files"`
