@@ -22,9 +22,6 @@ open module org.kdeps.pkl.LLM
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
 
-/// Type of LLM roles
-typealias RoleType = "user" | "system" | "assistant"
-
 /// A mapping of resource actionIDs to their associated [ResourceChat] objects.
 resources: Mapping<String, ResourceChat>?
 
@@ -35,7 +32,7 @@ class ResourceChat {
         model: String = "llama3.2"
 
         /// The role used to instruct the LLM model.
-        role: RoleType? = "user"
+        role: String?
 
         /// The prompt text sent to the LLM model.
         prompt: String?
@@ -68,7 +65,7 @@ class ResourceChat {
 /// Class representing the details of a multi-prompt interaction with an LLM model
 class MultiChat {
         /// The role used to instruct the LLM model.
-        role: RoleType? = "user"
+        role: String?
 
         /// The prompt text sent to the LLM model.
         prompt: String?
