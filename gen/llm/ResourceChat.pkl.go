@@ -1,10 +1,7 @@
 // Code generated from Pkl module `org.kdeps.pkl.LLM`. DO NOT EDIT.
 package llm
 
-import (
-	"github.com/apple/pkl-go/pkl"
-	"github.com/kdeps/schema/gen/llm/roletype"
-)
+import "github.com/apple/pkl-go/pkl"
 
 // Class representing the details of a chat interaction with an LLM model, including prompts, responses,
 // file generation, and additional metadata.
@@ -13,7 +10,7 @@ type ResourceChat struct {
 	Model string `pkl:"model"`
 
 	// The role used to instruct the LLM model.
-	Role *roletype.RoleType `pkl:"role"`
+	Role *string `pkl:"role"`
 
 	// The prompt text sent to the LLM model.
 	Prompt *string `pkl:"prompt"`
