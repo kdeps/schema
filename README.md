@@ -9,13 +9,17 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.19
-  - Multi-prompt support (#9)
+### Latest Release: v0.2.20
+  - remove specific LLM role types (#10)
+    
+    updated schema readme/relnotes
+
+### Previous Highlights
+- **v0.2.19**:   - Multi-prompt support (#9)
     * add role types on LLM action
     
     * add multiprompt support
 
-### Previous Highlights
 - **v0.2.18**:   - add role types on LLM action (#8)
 
 - **v0.2.17**:   - Add TrustedProxies to WebServer (#7)
