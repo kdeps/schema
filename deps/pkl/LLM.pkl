@@ -38,7 +38,10 @@ class ResourceChat {
         role: RoleType? = "user"
 
         /// The prompt text sent to the LLM model.
-        prompt: String
+        prompt: String?
+
+        /// A scenario is where a series of conditions to be sent for this chat.
+        scenario: Listing<MultiChat>?
 
         /// A listing of file paths or identifiers associated with the chat.
         files: Listing<String>?
@@ -60,6 +63,15 @@ class ResourceChat {
 
         /// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
         timeoutDuration: Duration? = 60.s
+}
+
+/// Class representing the details of a multi-prompt interaction with an LLM model
+class MultiChat {
+        /// The role used to instruct the LLM model.
+        role: RoleType? = "user"
+
+        /// The prompt text sent to the LLM model.
+        prompt: String?
 }
 
 /// Retrieves the [ResourceChat] associated with the given [actionID].
