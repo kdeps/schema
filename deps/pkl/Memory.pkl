@@ -1,0 +1,29 @@
+/// Abstractions for Memory items
+@ModuleInfo { minPklVersion = "0.28.1" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/memory" }
+
+open module org.kdeps.pkl.Memory
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
+
+/// Class representing a memory item
+class MemoryRecord {
+  value: String?
+}
+
+/// Reads a memory item by its [id]
+///
+/// Returns the textual content of the memory entry, or throws an error if not found.
+///
+/// [id]: The identifier of the memory item.
+function readItem(id: String): String = read("memory:/\(id)")?.text ?? ""
+
+/// Updates a memory item with a new [value]
+///
+/// Returns the updated value as confirmation.
+///
+/// [id]: The identifier of the memory item.
+/// [value]: The new value to store.
+function updateItem(id: String, value: String): String = read("memory:/\(id)?op=update&value=\(URI.encodeComponent(value))")?.text ?? ""
