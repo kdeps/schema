@@ -9,12 +9,20 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.20
-  - remove specific LLM role types (#10)
+### Latest Release: v0.2.22
+  - simplify memory operations (getItem/setItem), and add clear() (#12)
+
+### Previous Highlights
+- **v0.2.21**:   - add the persistent sqlite memory record item read and update function (#11)
+    
+    Merge branch 'main' of https://github.com/kdeps/schema
+    
+    update readme/relnote
+
+- **v0.2.20**:   - remove specific LLM role types (#10)
     
     updated schema readme/relnotes
 
-### Previous Highlights
 - **v0.2.19**:   - Multi-prompt support (#9)
     * add role types on LLM action
     
