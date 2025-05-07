@@ -13,17 +13,22 @@ class MemoryRecord {
   value: String?
 }
 
-/// Reads a memory item by its [id]
+/// Retrieves a memory item by its [id]
 ///
-/// Returns the textual content of the memory entry, or throws an error if not found.
+/// Returns the textual content of the memory entry, or an empty string if not found.
 ///
 /// [id]: The identifier of the memory item.
-function readItem(id: String): String = read("memory:/\(id)")?.text ?? ""
+function getItem(id: String): String = read("memory:/\(id)")?.text ?? ""
 
-/// Updates a memory item with a new [value]
+/// Sets or updates a memory item with a new [value]
 ///
-/// Returns the updated value as confirmation.
+/// Returns the set value as confirmation.
 ///
 /// [id]: The identifier of the memory item.
-/// [value]: The new value to store.
-function updateItem(id: String, value: String): String = read("memory:/\(id)?op=update&value=\(URI.encodeComponent(value))")?.text ?? ""
+/// [value]: The value to store.
+function setItem(id: String, value: String): String = read("memory:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+
+/// Clears all memory items
+///
+/// Returns a confirmation message.
+function clear(): String = read("memory:/_?op=clear")?.text ?? ""
