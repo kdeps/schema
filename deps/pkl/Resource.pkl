@@ -69,54 +69,57 @@ run: ResourceAction
 
 /// Class representing an action that can be executed on a resource.
 class ResourceAction {
-    /// Configuration for executing commands.
-    exec: Exec.ResourceExec?
+        /// Block for performing PKL expressions.
+        expr: Dynamic?
 
-    /// Configuration for python scripts.
-    python: Python.ResourcePython?
+        /// Configuration for executing commands.
+        exec: Exec.ResourceExec?
 
-    /// Configuration for chat interactions with an LLM.
-    chat: LLM.ResourceChat?
+        /// Configuration for python scripts.
+        python: Python.ResourcePython?
 
-    /// A listing of conditions that determine if the action should be skipped.
-    skipCondition: Listing<Any>?
+        /// Configuration for chat interactions with an LLM.
+        chat: LLM.ResourceChat?
 
-    /// A pre-flight validation check to be performed before executing the action.
-    preflightCheck: ValidationCheck?
+        /// A listing of conditions that determine if the action should be skipped.
+        skipCondition: Listing<Any>?
 
-    /// A listing of allowed HTTP headers
-    allowedHeaders: Listing<String>?
+        /// A pre-flight validation check to be performed before executing the action.
+        preflightCheck: ValidationCheck?
 
-    /// A listing of allowed HTTP params
-    allowedParams: Listing<String>?
+        /// A listing of allowed HTTP headers
+        allowedHeaders: Listing<String>?
 
-    /// A listing of targeted HTTP methods
-    restrictToHTTPMethods: Listing<String>?
+        /// A listing of allowed HTTP params
+        allowedParams: Listing<String>?
 
-    /// A listing of targeted HTTP routes
-    restrictToRoutes: Listing<String>?
+        /// A listing of targeted HTTP methods
+        restrictToHTTPMethods: Listing<String>?
 
-    /// Configuration for HTTP client interactions.
-    HTTPClient: HTTP.ResourceHTTPClient?
+        /// A listing of targeted HTTP routes
+        restrictToRoutes: Listing<String>?
 
-    /// Configuration for handling API responses.
-    APIResponse: APIServerResponse?
+        /// Configuration for HTTP client interactions.
+        HTTPClient: HTTP.ResourceHTTPClient?
+
+        /// Configuration for handling API responses.
+        APIResponse: APIServerResponse?
 }
 
 /// Class representing validation checks that can be performed on actions.
 class ValidationCheck {
-    /// A listing of validation conditions.
-    validations: Listing<Any>?
+        /// A listing of validation conditions.
+        validations: Listing<Any>?
 
-    /// An error associated with the validation check, if any.
-    error: APIError?
+        /// An error associated with the validation check, if any.
+        error: APIError?
 }
 
 /// Class representing an error returned from an API validation check.
 class APIError {
-    /// The error code associated with the API error.
-    code: Int
+        /// The error code associated with the API error.
+        code: Int
 
-    /// A message providing details about the error.
-    message: String
+        /// A message providing details about the error.
+        message: String
 }

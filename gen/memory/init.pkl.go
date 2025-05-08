@@ -5,5 +5,4 @@ import "github.com/apple/pkl-go/pkl"
 
 func init() {
 	pkl.RegisterMapping("org.kdeps.pkl.Memory", MemoryImpl{})
-	pkl.RegisterMapping("org.kdeps.pkl.Memory#MemoryRecord", MemoryRecord{})
 }

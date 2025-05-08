@@ -2,6 +2,7 @@
 package resource
 
 import (
+	"github.com/apple/pkl-go/pkl"
 	"github.com/kdeps/schema/gen/api_server_response"
 	"github.com/kdeps/schema/gen/exec"
 	"github.com/kdeps/schema/gen/http"
@@ -11,6 +12,9 @@ import (
 
 // Class representing an action that can be executed on a resource.
 type ResourceAction struct {
+	// Block for performing PKL expressions.
+	Expr *pkl.Object `pkl:"expr"`
+
 	// Configuration for executing commands.
 	Exec *exec.ResourceExec `pkl:"exec"`
 
