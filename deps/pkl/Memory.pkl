@@ -23,6 +23,13 @@ function getItem(id: String): String = read("memory:/\(id)")?.text ?? ""
 /// [value]: The value to store.
 function setItem(id: String, value: String): String = read("memory:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
 
+/// Deletes a memory item by its [id]
+///
+/// Returns a confirmation message or an empty string if the item was not found.
+///
+/// [id]: The identifier of the memory item.
+function deleteItem(id: String): String = read("memory:/\(id)?op=delete")?.text ?? ""
+
 /// Clears all memory items
 ///
 /// Returns a confirmation message.
