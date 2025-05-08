@@ -9,8 +9,15 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.23
-  - Expr block (#13)
+### Latest Release: v0.2.24
+  - Session sqlite storage (#14)
+    * added deleteItem to memory storage
+    
+    * add Session ephemeral storage
+    updated relnote/readme
+
+### Previous Highlights
+- **v0.2.23**:   - Expr block (#13)
     * removed unusued MemoryRecord class
     
     * add 'expr {...}' block to eval pkl expressions, i.e. memory.setItem('foo', 'bar')
@@ -18,7 +25,6 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
     
     updated relnote/readme
 
-### Previous Highlights
 - **v0.2.22**:   - simplify memory operations (getItem/setItem), and add clear() (#12)
 
 - **v0.2.21**:   - add the persistent sqlite memory record item read and update function (#11)
