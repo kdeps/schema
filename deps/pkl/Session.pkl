@@ -1,0 +1,36 @@
+/// Abstractions for Session items
+@ModuleInfo { minPklVersion = "0.28.1" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/session" }
+
+open module org.kdeps.pkl.Session
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
+
+/// Retrieves a session item by its [id]
+///
+/// Returns the textual content of the session entry, or an empty string if not found.
+///
+/// [id]: The identifier of the session item.
+function getItem(id: String): String = read("session:/\(id)")?.text ?? ""
+
+/// Sets or updates a session item with a new [value]
+///
+/// Returns the set value as confirmation.
+///
+/// [id]: The identifier of the session item.
+/// [value]: The value to store.
+function setItem(id: String, value: String): String = read("session:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+
+/// Deletes a session item by its [id]
+///
+/// Returns a confirmation message or an empty string if the item was not found.
+///
+/// [id]: The identifier of the session item.
+function deleteItem(id: String): String = read("session:/\(id)?op=delete")?.text ?? ""
+
+/// Clears all session items
+///
+/// Returns a confirmation message.
+function clear(): String = read("session:/_?op=clear")?.text ?? ""

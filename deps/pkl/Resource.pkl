@@ -23,6 +23,7 @@ import "pkl:yaml"
 import "Document.pkl" as document
 import "Utils.pkl" as utils
 import "Memory.pkl" as memory
+import "Session.pkl" as session
 
 import "Project.pkl"
 import "APIServer.pkl"
