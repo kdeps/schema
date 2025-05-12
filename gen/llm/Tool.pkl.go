@@ -6,6 +6,9 @@ type Tool struct {
 	// name of the function
 	Name *string `pkl:"name"`
 
+	// path of the script or inline
+	Script *string `pkl:"script"`
+
 	// description of what the tool does
 	Description *string `pkl:"description"`
 

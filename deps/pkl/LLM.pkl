@@ -79,6 +79,9 @@ class Tool {
         /// name of the function
         name: String?
 
+        /// path of the script or inline
+        script: String?
+
         /// description of what the tool does
         description: String?
 
