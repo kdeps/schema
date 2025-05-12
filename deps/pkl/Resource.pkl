@@ -24,6 +24,7 @@ import "Document.pkl" as document
 import "Utils.pkl" as utils
 import "Memory.pkl" as memory
 import "Session.pkl" as session
+import "Tool.pkl" as tool
 
 import "Project.pkl"
 import "APIServer.pkl"
