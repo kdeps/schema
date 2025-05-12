@@ -1,0 +1,32 @@
+/// Abstractions for Tool items
+@ModuleInfo { minPklVersion = "0.28.1" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/tool" }
+
+open module org.kdeps.pkl.Tool
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
+
+/// Retrieves the output of a previously run script by its [id]
+///
+/// Returns the textual content of the script output (stdout/stderr), or an empty string if not found.
+///
+/// [id]: The identifier of the script execution.
+function getItem(id: String): String = read("tool:/\(id)")?.text ?? ""
+
+/// Runs a script (inline or from a file path) with optional parameters and overwrites its output
+///
+/// Returns the script output (stdout/stderr) as confirmation.
+///
+/// [id]: The identifier for the script execution.
+/// [script]: The inline script content or file path to the script.
+/// [params]: Optional parameters for the script, comma-separated (e.g., "a, b, c").
+function runScript(id: String, script: String, params: String): String = read("tool:/\(id)?op=run&script=\(URI.encodeComponent(script))&params=\(URI.encodeComponent(params))")?.text ?? ""
+
+/// Appends the current script output to the history for the given [id]
+///
+/// Returns the full history of outputs for the script execution as confirmation.
+///
+/// [id]: The identifier of the script execution.
+function history(id: String): String = read("tool:/\(id)?op=history")?.text ?? ""

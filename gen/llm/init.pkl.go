@@ -7,4 +7,6 @@ func init() {
 	pkl.RegisterMapping("org.kdeps.pkl.LLM#ResourceChat", ResourceChat{})
 	pkl.RegisterMapping("org.kdeps.pkl.LLM#MultiChat", MultiChat{})
 	pkl.RegisterMapping("org.kdeps.pkl.LLM", LLMImpl{})
+	pkl.RegisterMapping("org.kdeps.pkl.LLM#Tool", Tool{})
+	pkl.RegisterMapping("org.kdeps.pkl.LLM#ToolProperties", ToolProperties{})
 }

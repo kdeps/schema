@@ -40,6 +40,9 @@ class ResourceChat {
         /// A scenario is where a series of conditions to be sent for this chat.
         scenario: Listing<MultiChat>?
 
+        /// Tools that interact with the LLM model
+        tools: Listing<Tool>?
+
         /// A listing of file paths or identifiers associated with the chat.
         files: Listing<String>?
 
@@ -69,6 +72,30 @@ class MultiChat {
 
         /// The prompt text sent to the LLM model.
         prompt: String?
+}
+
+/// Class representing the details of a tool interaction with an LLM model
+class Tool {
+        /// name of the function
+        name: String?
+
+        /// description of what the tool does
+        description: String?
+
+        /// mapping of parameter names to their properties
+        parameters: Mapping<String, ToolProperties>?
+}
+
+/// Class representing a single parameter's properties in a tool definition
+class ToolProperties {
+        /// Whether this parameter is required; defaults to true
+        required: Boolean? = true
+
+        /// Data type of the parameter (e.g., 'string', 'integer')
+        type: String?
+
+        /// description of the parameter for clarity
+        description: String?
 }
 
 /// Retrieves the [ResourceChat] associated with the given [actionID].
