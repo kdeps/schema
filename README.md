@@ -9,10 +9,14 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.26
-  - hotfix: add path to the script or inline script to LLM tools
+### Latest Release: v0.2.27
+  - hotfix: register tool into resources
+    
+    updated relnote/readme
 
 ### Previous Highlights
+- **v0.2.26**:   - hotfix: add path to the script or inline script to LLM tools
+
 - **v0.2.25**:   - add ability for LLM to use tools (akin to MCP) (#15)
     
     Merge branch 'main' of https://github.com/kdeps/schema
