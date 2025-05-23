@@ -25,6 +25,7 @@ import "Utils.pkl" as utils
 import "Memory.pkl" as memory
 import "Session.pkl" as session
 import "Tool.pkl" as tool
+import "Item.pkl" as item
 
 import "Project.pkl"
 import "APIServer.pkl"
@@ -65,6 +66,9 @@ category: String
 
 /// A listing of dependencies required by the resource, validated against [isValidDependency].
 requires: Listing<String(isValidDependency)>?
+
+/// Defines the action items to be processed individually in a loop.
+items: Listing<String>?
 
 /// Defines the action to be taken for the resource.
 run: ResourceAction

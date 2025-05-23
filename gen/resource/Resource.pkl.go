@@ -29,6 +29,9 @@ type Resource struct {
 	// A listing of dependencies required by the resource, validated against [isValidDependency].
 	Requires *[]string `pkl:"requires"`
 
+	// Defines the action items to be processed individually in a loop.
+	Items *[]string `pkl:"items"`
+
 	// Defines the action to be taken for the resource.
 	Run *ResourceAction `pkl:"run"`
 }

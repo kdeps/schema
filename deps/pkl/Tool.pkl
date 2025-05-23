@@ -1,4 +1,4 @@
-/// Abstractions for Tool items
+/// Abstractions for Tool records
 @ModuleInfo { minPklVersion = "0.28.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/tool" }
@@ -13,7 +13,7 @@ import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pk
 /// Returns the textual content of the script output (stdout/stderr), or an empty string if not found.
 ///
 /// [id]: The identifier of the script execution.
-function getItem(id: String): String = read("tool:/\(id)")?.text ?? ""
+function getOutput(id: String): String = read("tool:/\(id)")?.text ?? ""
 
 /// Runs a script (inline or from a file path) with optional parameters and overwrites its output
 ///

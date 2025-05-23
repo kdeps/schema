@@ -1,4 +1,4 @@
-/// Abstractions for Memory items
+/// Abstractions for Memory records
 @ModuleInfo { minPklVersion = "0.28.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/memory" }
@@ -8,29 +8,29 @@ open module org.kdeps.pkl.Memory
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
 import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
 
-/// Retrieves a memory item by its [id]
+/// Retrieves a memory record by its [id]
 ///
 /// Returns the textual content of the memory entry, or an empty string if not found.
 ///
-/// [id]: The identifier of the memory item.
-function getItem(id: String): String = read("memory:/\(id)")?.text ?? ""
+/// [id]: The identifier of the memory record.
+function getRecord(id: String): String = read("memory:/\(id)")?.text ?? ""
 
-/// Sets or updates a memory item with a new [value]
+/// Sets or updates a memory record with a new [value]
 ///
 /// Returns the set value as confirmation.
 ///
-/// [id]: The identifier of the memory item.
+/// [id]: The identifier of the memory record.
 /// [value]: The value to store.
-function setItem(id: String, value: String): String = read("memory:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+function setRecord(id: String, value: String): String = read("memory:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
 
-/// Deletes a memory item by its [id]
+/// Deletes a memory record by its [id]
 ///
-/// Returns a confirmation message or an empty string if the item was not found.
+/// Returns a confirmation message or an empty string if the record was not found.
 ///
-/// [id]: The identifier of the memory item.
-function deleteItem(id: String): String = read("memory:/\(id)?op=delete")?.text ?? ""
+/// [id]: The identifier of the memory record.
+function deleteRecord(id: String): String = read("memory:/\(id)?op=delete")?.text ?? ""
 
-/// Clears all memory items
+/// Clears all memory records
 ///
 /// Returns a confirmation message.
 function clear(): String = read("memory:/_?op=clear")?.text ?? ""

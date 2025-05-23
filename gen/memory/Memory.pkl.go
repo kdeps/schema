@@ -12,7 +12,7 @@ type Memory interface {
 
 var _ Memory = (*MemoryImpl)(nil)
 
-// Abstractions for Memory items
+// Abstractions for Memory records
 type MemoryImpl struct {
 }
 
