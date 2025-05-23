@@ -18,7 +18,7 @@ import "pkl:json"
 /// Returns the textual content of the loop record, or an empty string if the record is not found.
 ///
 /// @param id The unique identifier of the loop record.
-function fetch(id: String): String = read("item:/\(id)")?.text ?? ""
+function current(id: String): String = read("item:/\(id)")?.text ?? ""
 
 /// Retrieves the record for the previous iteration relative to the specified identifier
 ///
