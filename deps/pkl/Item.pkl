@@ -1,0 +1,61 @@
+/// Abstractions for managing records in a for loop
+///
+/// This module provides functions to interact with records representing iterations or elements in a for loop.
+/// Each record is identified by a unique string identifier, and the module supports retrieving, navigating, and listing these records.
+@ModuleInfo { minPklVersion = "0.28.1" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/item" }
+
+open module org.kdeps.pkl.Item
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
+import "pkl:test"
+import "pkl:json"
+
+/// Retrieves the record for a specific iteration by its identifier
+///
+/// Returns the textual content of the loop record, or an empty string if the record is not found.
+///
+/// @param id The unique identifier of the loop record.
+function current(id: String): String = read("item:/\(id)")?.text ?? ""
+
+/// Retrieves the record for the previous iteration relative to the specified identifier
+///
+/// Returns the textual content of the previous loop record, or an empty string if no previous record exists.
+///
+/// @param id The unique identifier of the loop record.
+function prev(id: String): String = read("item:/\(id)?op=prev")?.text ?? ""
+
+/// Retrieves the record for the next iteration relative to the specified identifier
+///
+/// Returns the textual content of the next loop record, or an empty string if no next record exists.
+///
+/// @param id The unique identifier of the loop record.
+function next(id: String): String = read("item:/\(id)?op=next")?.text ?? ""
+
+/// Lists all records associated with the for loop for the specified identifier
+///
+/// Returns a textual representation of all loop records, or an empty string if no records are found.
+///
+/// @param id The unique identifier of the loop record.
+function list(id: String): String = read("item:/\(id)?op=list")?.text ?? ""
+
+/// Lists all record results associated with the for loop for the specified identifier
+///
+/// Returns a textual representation of all loop records, or an empty string if no records are found.
+///
+/// @param id The unique identifier of the loop record.
+function results(id: String): Listing =
+  if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(read("item:/\(id)?op=values")?.text)) == null)
+    (new json.Parser { useMapping = false }).parse(read("item:/\(id)?op=values")?.text)
+  else
+    null
+
+/// Sets or updates a item record with a new [value]
+///
+/// Returns the set value as confirmation.
+///
+/// [id]: The identifier of the item record.
+/// [value]: The value to store.
+function set(id: String, value: String): String = read("item:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""

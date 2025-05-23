@@ -12,7 +12,7 @@ type Session interface {
 
 var _ Session = (*SessionImpl)(nil)
 
-// Abstractions for Session items
+// Abstractions for Session records
 type SessionImpl struct {
 }
 
