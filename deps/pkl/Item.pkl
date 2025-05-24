@@ -1,7 +1,7 @@
 /// Abstractions for managing records in a for loop
 ///
 /// This module provides functions to interact with records representing iterations or elements in a for loop.
-/// Each record is identified by a unique string identifier, and the module supports retrieving, navigating, and listing these records.
+/// The module supports retrieving, navigating, and listing records without requiring a specific identifier.
 @ModuleInfo { minPklVersion = "0.28.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/item" }
@@ -13,49 +13,38 @@ import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pk
 import "pkl:test"
 import "pkl:json"
 
-/// Retrieves the record for a specific iteration by its identifier
+/// Retrieves the record for the current iteration
 ///
-/// Returns the textual content of the loop record, or an empty string if the record is not found.
-///
-/// @param id The unique identifier of the loop record.
-function current(id: String): String = read("item:/\(id)")?.text ?? ""
+/// Returns the textual content of the most recent loop record, or an empty string if no record is found.
+function current(): String = read("item:/?op=current")?.text ?? ""
 
-/// Retrieves the record for the previous iteration relative to the specified identifier
+/// Retrieves the record for the previous iteration
 ///
 /// Returns the textual content of the previous loop record, or an empty string if no previous record exists.
-///
-/// @param id The unique identifier of the loop record.
-function prev(id: String): String = read("item:/\(id)?op=prev")?.text ?? ""
+function prev(): String = read("item:/?op=prev")?.text ?? ""
 
-/// Retrieves the record for the next iteration relative to the specified identifier
+/// Retrieves the record for the next iteration
 ///
 /// Returns the textual content of the next loop record, or an empty string if no next record exists.
-///
-/// @param id The unique identifier of the loop record.
-function next(id: String): String = read("item:/\(id)?op=next")?.text ?? ""
+function next(): String = read("item:/?op=next")?.text ?? ""
 
-/// Lists all records associated with the for loop for the specified identifier
+/// Lists all records associated with the for loop
 ///
 /// Returns a textual representation of all loop records, or an empty string if no records are found.
-///
-/// @param id The unique identifier of the loop record.
-function list(id: String): String = read("item:/\(id)?op=list")?.text ?? ""
+function list(): String = read("item:/?op=list")?.text ?? ""
 
-/// Lists all record results associated with the for loop for the specified identifier
+/// Lists all record results associated with the for loop
 ///
 /// Returns a textual representation of all loop records, or an empty string if no records are found.
-///
-/// @param id The unique identifier of the loop record.
-function results(id: String): Listing =
-  if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(read("item:/\(id)?op=values")?.text)) == null)
-    (new json.Parser { useMapping = false }).parse(read("item:/\(id)?op=values")?.text)
+function results(): Listing =
+  if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(read("item:/?op=values")?.text)) == null)
+    (new json.Parser { useMapping = false }).parse(read("item:/?op=values")?.text)
   else
     null
 
-/// Sets or updates a item record with a new [value]
+/// Sets or updates an item record with a new [value]
 ///
 /// Returns the set value as confirmation.
 ///
-/// [id]: The identifier of the item record.
 /// [value]: The value to store.
-function set(id: String, value: String): String = read("item:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+function set(value: String): String = read("item:/?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""

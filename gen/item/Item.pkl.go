@@ -15,7 +15,7 @@ var _ Item = (*ItemImpl)(nil)
 // Abstractions for managing records in a for loop
 //
 // This module provides functions to interact with records representing iterations or elements in a for loop.
-// Each record is identified by a unique string identifier, and the module supports retrieving, navigating, and listing these records.
+// The module supports retrieving, navigating, and listing records without requiring a specific identifier.
 type ItemImpl struct {
 }
 
