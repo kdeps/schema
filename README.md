@@ -9,15 +9,21 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.29
-  - change item function signature to not require an id params (#17)
+### Latest Release: v0.2.30
+  - update readme/relnotes
+    
+    Merge branch 'main' of https://github.com/kdeps/schema
+    
+    removed id params on item operations
+
+### Previous Highlights
+- **v0.2.29**:   - change item function signature to not require an id params (#17)
     * added ability to iterate through items
     
     * changed item.fetch -> item.current
     
     * change item function signature to not require an id params
 
-### Previous Highlights
 - **v0.2.28**:   - added ability to iterate through items (#16)
     * added ability to iterate through items
     
