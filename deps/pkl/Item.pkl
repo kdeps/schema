@@ -33,6 +33,6 @@ function next(): String = read("item:/_?op=next")?.text ?? ""
 /// Returns a textual representation of all loop records, or an empty string if no records are found.
 function values(id: String): Listing<String> =
   if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(read("item:/\(id)?op=values")?.text)) == null)
-    (new json.Parser { useMapping = false }).parse(read("item:/\(id)?op=values")?.text) ?? new Listing {}
+    new Listing {...?(new json.Parser { useMapping = false }).parse(read("item:/\(id)?op=values")?.text)}
   else
     new Listing {}
