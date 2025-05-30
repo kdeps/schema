@@ -117,6 +117,7 @@ function resource(actionID: String): ResourceChat =
                 response = ""
                 JSONResponse = false
                 JSONResponseKeys {}
+                itemValues {}
         }
 
 /// Retrieves the response text associated with the resource [actionID].
@@ -142,6 +143,12 @@ function JSONResponse(actionID: String): Boolean = if (isBase64(resource(actionI
 /// [actionID]: The actionID of the resource to retrieve the JSON response keys for.
 /// [Listing<String>]: A listing of expected JSON keys in the response.
 function JSONResponseKeys(actionID: String): Listing<String> = if (isBase64(resource(actionID).JSONResponseKeys)) resource(actionID).JSONResponseKeys.base64Decoded else resource(actionID).JSONResponseKeys
+
+/// Retrieves the item iteration responses for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the item values.
+/// [Listing<String>]: A listing of expected item iteration output.
+function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).itemValues)) resource(actionID).itemValues.base64Decoded else resource(actionID).itemValues
 
 /// Retrieves the file path containing the LLM response associated with the specified resource [actionID].
 ///

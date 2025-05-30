@@ -81,6 +81,7 @@ function resource(actionID: String): ResourceHTTPClient =
                 params {}
                 response {}
                 file = ""
+                itemValues {}
         }
 
 /// Retrieves the body of the response associated with the resource [actionID].
@@ -94,6 +95,12 @@ function responseBody(actionID: String): String = if (isBase64(resource(actionID
 /// [actionID]: The actionID of the resource to retrieve the response body for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
 function file(actionID: String): String = if (isBase64(resource(actionID).file)) resource(actionID).file.base64Decoded else resource(actionID).file
+
+/// Retrieves the item iteration responses for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the item values.
+/// [Listing<String>]: A listing of expected item iteration output.
+function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).itemValues)) resource(actionID).itemValues.base64Decoded else resource(actionID).itemValues
 
 /// Retrieves the specified response header associated with the resource [actionID].
 ///

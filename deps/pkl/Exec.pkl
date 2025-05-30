@@ -66,6 +66,7 @@ function resource(actionID: String): ResourceExec =
                 stdout = ""
                 exitCode = 0
                 file = ""
+                itemValues {}
         }
 
 /// Retrieves the standard error output associated with the resource [actionID].
@@ -91,6 +92,12 @@ function exitCode(actionID: String): Int = if (isBase64(resource(actionID).exitC
 /// [actionID]: The actionID of the resource to retrieve the standard output for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
 function file(actionID: String): String = if (isBase64(resource(actionID).file)) resource(actionID).file.base64Decoded else resource(actionID).file
+
+/// Retrieves the item iteration responses for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the item values.
+/// [Listing<String>]: A listing of expected item iteration output.
+function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).itemValues)) resource(actionID).itemValues.base64Decoded else resource(actionID).itemValues
 
 /// Retrieves the value of the specified environment variable for the resource [actionID].
 ///
