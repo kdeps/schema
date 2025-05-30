@@ -9,14 +9,28 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.30
-  - update readme/relnotes
+### Latest Release: v0.2.37
+  - add pkl:json imports per each resource
+
+### Previous Highlights
+- **v0.2.36**:   - added the itemValues per resource to obtain the iteration results
+
+- **v0.2.35**:   - null propagate the array obtained from dynamic reader for item values
+
+- **v0.2.34**:   - add nullable defaults for item values listing
+
+- **v0.2.33**:   - add return value listing type for item
+
+- **v0.2.32**:   - return a new listing when item results is null
+
+- **v0.2.31**:   - values now require to pass the actionID (#18)
+
+- **v0.2.30**:   - update readme/relnotes
     
     Merge branch 'main' of https://github.com/kdeps/schema
     
     removed id params on item operations
 
-### Previous Highlights
 - **v0.2.29**:   - change item function signature to not require an id params (#17)
     * added ability to iterate through items
     
