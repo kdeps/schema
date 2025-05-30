@@ -35,4 +35,4 @@ function values(id: String): Listing =
   if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(read("item:/\(id)?op=values")?.text)) == null)
     (new json.Parser { useMapping = false }).parse(read("item:/\(id)?op=values")?.text)
   else
-    null
+    new Listing {}
