@@ -27,6 +27,9 @@ type ResourceHTTPClient struct {
 	// The file path where the response body value of this resource is saved
 	File *string `pkl:"file"`
 
+	// The listing of the item iteration results
+	ItemValues *[]string `pkl:"itemValues"`
+
 	// A timestamp of when the request was made, represented as an unsigned 64-bit integer.
 	Timestamp *pkl.Duration `pkl:"timestamp"`
 

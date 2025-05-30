@@ -58,6 +58,9 @@ class ResourceChat {
         /// The file path where the LLM response of this resource is saved
         file: String?
 
+        /// The listing of the item iteration results
+        itemValues: Listing<String>?
+
         /// A timestamp of when the response was generated, represented as an unsigned 64-bit integer.
         timestamp: Duration?
 

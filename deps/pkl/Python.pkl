@@ -48,6 +48,9 @@ class ResourcePython {
         /// The file path where the Python stdout of this resource is saved
         file: String?
 
+        /// The listing of the item iteration results
+        itemValues: Listing<String>?
+
         /// A timestamp indicating when the command was executed, as an unsigned 64-bit integer.
         timestamp: Duration?
 

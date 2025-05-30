@@ -28,6 +28,9 @@ type ResourcePython struct {
 	// The file path where the Python stdout of this resource is saved
 	File *string `pkl:"file"`
 
+	// The listing of the item iteration results
+	ItemValues *[]string `pkl:"itemValues"`
+
 	// A timestamp indicating when the command was executed, as an unsigned 64-bit integer.
 	Timestamp *pkl.Duration `pkl:"timestamp"`
 

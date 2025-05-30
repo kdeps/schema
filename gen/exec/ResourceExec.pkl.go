@@ -24,6 +24,9 @@ type ResourceExec struct {
 	// The file path where the stdout value of this resource is saved
 	File *string `pkl:"file"`
 
+	// The listing of the item iteration results
+	ItemValues *[]string `pkl:"itemValues"`
+
 	// A timestamp of when the command was executed, represented as an unsigned 64-bit integer.
 	Timestamp *pkl.Duration `pkl:"timestamp"`
 

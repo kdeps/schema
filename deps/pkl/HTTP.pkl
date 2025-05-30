@@ -45,6 +45,9 @@ class ResourceHTTPClient {
         /// The file path where the response body value of this resource is saved
         file: String?
 
+        /// The listing of the item iteration results
+        itemValues: Listing<String>?
+
         /// A timestamp of when the request was made, represented as an unsigned 64-bit integer.
         timestamp: Duration?
 

@@ -42,6 +42,9 @@ class ResourceExec {
         /// The file path where the stdout value of this resource is saved
         file: String?
 
+        /// The listing of the item iteration results
+        itemValues: Listing<String>?
+
         /// A timestamp of when the command was executed, represented as an unsigned 64-bit integer.
         timestamp: Duration?
 
