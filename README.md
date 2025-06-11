@@ -9,10 +9,14 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.37
-  - add pkl:json imports per each resource
+### Latest Release: v0.2.38
+  - update readme/relnotes
+    
+    add resource#itemValues function to obtain item iteration values
 
 ### Previous Highlights
+- **v0.2.37**:   - add pkl:json imports per each resource
+
 - **v0.2.36**:   - added the itemValues per resource to obtain the iteration results
 
 - **v0.2.35**:   - null propagate the array obtained from dynamic reader for item values

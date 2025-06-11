@@ -23,5 +23,6 @@ generate:
 
 		@if [ -d "$(OUTPUT_DIR)/github.com/kdeps/schema/gen" ]; then \
 			mv $(OUTPUT_DIR)/github.com/kdeps/schema/gen $(OUTPUT_DIR); \
+			mv $(OUTPUT_DIR)/github.com/kdeps/schema/deps/pkl $(OUTPUT_DIR); \
 			rm -rf $(OUTPUT_DIR)/github.com; \
 		fi
