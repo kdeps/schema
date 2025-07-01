@@ -30,6 +30,9 @@ type ResourceAction struct {
 	// A pre-flight validation check to be performed before executing the action.
 	PreflightCheck *ValidationCheck `pkl:"PreflightCheck"`
 
+	// A post-flight validation check to be performed after executing the action.
+	PostflightCheck *ValidationCheck `pkl:"PostflightCheck"`
+
 	// A listing of allowed HTTP headers
 	AllowedHeaders *[]string `pkl:"AllowedHeaders"`
 

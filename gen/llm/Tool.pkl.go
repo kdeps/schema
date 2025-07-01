@@ -9,6 +9,9 @@ type Tool struct {
 	// The script content to execute for the tool.
 	Script *string `pkl:"Script"`
 
+	// The MCP server configuration for the tool.
+	MCPServer *string `pkl:"MCPServer"`
+
 	// A description of what the tool does.
 	Description *string `pkl:"Description"`
 

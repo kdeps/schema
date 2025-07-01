@@ -46,4 +46,7 @@ type DockerSettings struct {
 
 	// A mapping of build env variable names that persist in the image and container
 	Env *map[string]string `pkl:"Env"`
+
+	// A list of ports to be exposed in the Docker container.
+	ExposedPorts *[]string `pkl:"ExposedPorts"`
 }

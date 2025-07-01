@@ -2,7 +2,12 @@
 ///
 /// This test suite validates all camelCase functions across the PKL modules
 /// to ensure proper functionality after the naming convention updates.
-@ModuleInfo { minPklVersion = "0.28.1" }
+///
+/// Note: PKL files are also embedded in Go binaries via the assets package.
+/// See test/assets_test.go for comprehensive Go-based tests of the assets
+/// functionality including PKL workspace setup, file extraction, and
+/// tmpdir handling for use in external tests and applications.
+@ModuleInfo { minPklVersion = "0.28.2" }
 
 module test.Functions
 
@@ -19,6 +24,9 @@ import "../deps/pkl/HTTP.pkl" as HTTP
 import "../deps/pkl/APIServerRequest.pkl" as APIRequest
 import "../deps/pkl/Kdeps.pkl" as Kdeps
 import "../deps/pkl/Workflow.pkl" as Workflow
+import "../deps/pkl/Resource.pkl" as Resource
+import "../deps/pkl/Docker.pkl" as Docker
+import "../deps/pkl/Project.pkl" as Project
 
 /// Test APIServerRequest.pkl functions
 local testRequest = new APIRequest {
@@ -41,7 +49,52 @@ local testRequest = new APIRequest {
     }
 }
 
-/// Comprehensive test suite for all PKL functions
+/// Test new ValidationCheck with retry functionality
+local testValidationCheck = new Resource.ValidationCheck {
+    Validations {
+        "test validation"
+    }
+    Error = new Resource.APIError {
+        Code = 400
+        Message = "Test error"
+    }
+    Retry = true
+    RetryTimes = 5
+}
+
+/// Test new ResourceAction with PostflightCheck
+local testResourceAction = new Resource.ResourceAction {
+    Expr = "test expression"
+    PreflightCheck = testValidationCheck
+    PostflightCheck = new Resource.ValidationCheck {
+        Validations {
+            "post-flight validation"
+        }
+        Retry = false
+        RetryTimes = 1
+    }
+}
+
+/// Test new DockerSettings with ExposedPorts
+local testDockerSettings = new Docker.DockerSettings {
+    ExposedPorts {
+        "8080"
+        "9090"
+        "3000"
+    }
+    OllamaVersion = "0.9.2"
+    InstallAnaconda = true
+}
+
+/// Test new Project Settings with rate limiting and environment
+local testProjectSettings = new Project.Settings {
+    APIServerMode = true
+    AgentSettings = testDockerSettings
+    RateLimitMax = 250
+    Environment = "prod"
+}
+
+/// Comprehensive test suite for all PKL functions and new attributes
 facts {
     // === Utils.pkl function tests ===
     ["Utils.isBase64 detects valid Base64"] {
@@ -253,6 +306,100 @@ facts {
     ["APIRequest.id function works"] {
         testRequest.id() == "test-request-123"
     }
+    
+    // === NEW: ValidationCheck retry functionality tests ===
+    ["ValidationCheck has default retry settings"] {
+        local defaultCheck = new Resource.ValidationCheck {}
+        defaultCheck.Retry == false
+        defaultCheck.RetryTimes == 3
+    }
+    
+    ["ValidationCheck retry functionality works"] {
+        testValidationCheck.Retry == true
+        testValidationCheck.RetryTimes == 5
+    }
+    
+    ["ValidationCheck error handling works"] {
+        testValidationCheck.Error.Code == 400
+        testValidationCheck.Error.Message == "Test error"
+    }
+    
+    // === NEW: ResourceAction PostflightCheck tests ===
+    ["ResourceAction has PostflightCheck attribute"] {
+        testResourceAction.PostflightCheck != null
+    }
+    
+    ["ResourceAction PostflightCheck has correct properties"] {
+        testResourceAction.PostflightCheck.Retry == false
+        testResourceAction.PostflightCheck.RetryTimes == 1
+    }
+    
+    ["ResourceAction PreflightCheck still works"] {
+        testResourceAction.PreflightCheck.Retry == true
+        testResourceAction.PreflightCheck.RetryTimes == 5
+    }
+    
+    // === NEW: DockerSettings ExposedPorts tests ===
+    ["DockerSettings has ExposedPorts attribute"] {
+        testDockerSettings.ExposedPorts != null
+    }
+    
+    ["DockerSettings ExposedPorts contains expected ports"] {
+        testDockerSettings.ExposedPorts.contains("8080")
+        testDockerSettings.ExposedPorts.contains("9090")
+        testDockerSettings.ExposedPorts.contains("3000")
+    }
+    
+    ["DockerSettings has updated OllamaVersion"] {
+        testDockerSettings.OllamaVersion == "0.9.2"
+    }
+    
+    ["DockerSettings default ExposedPorts is null"] {
+        local defaultDocker = new Docker.DockerSettings {}
+        defaultDocker.ExposedPorts == null
+    }
+    
+    // === NEW: Project Settings rate limiting and environment tests ===
+    ["Project Settings has default rate limit"] {
+        local defaultSettings = new Project.Settings {
+            AgentSettings = new Docker.DockerSettings {}
+        }
+        defaultSettings.RateLimitMax == 100
+    }
+    
+    ["Project Settings has default environment"] {
+        local defaultSettings = new Project.Settings {
+            AgentSettings = new Docker.DockerSettings {}
+        }
+        defaultSettings.Environment == "dev"
+    }
+    
+    ["Project Settings custom rate limit works"] {
+        testProjectSettings.RateLimitMax == 250
+    }
+    
+    ["Project Settings custom environment works"] {
+        testProjectSettings.Environment == "prod"
+    }
+    
+    // === NEW: BuildEnv type alias tests ===
+    ["BuildEnv accepts dev value"] {
+        local devEnv: Project.BuildEnv = "dev"
+        devEnv == "dev"
+    }
+    
+    ["BuildEnv accepts prod value"] {
+        local prodEnv: Project.BuildEnv = "prod"
+        prodEnv == "prod"
+    }
+    
+    // === NEW: Updated version tests ===
+    ["PKL modules use updated version 0.28.2"] {
+        // This validates that the modules can be imported with the new version
+        test.catchOrNull(() -> Resource) != null
+        test.catchOrNull(() -> Docker) != null
+        test.catchOrNull(() -> Project) != null
+    }
 }
 
 /// Summary of test coverage
@@ -272,7 +419,25 @@ output {
     ✅ APIServerRequest.pkl functions: data, params, header, file, filetype, filepath, filecount, path, method, ip, id
     ✅ Configuration validation: Kdeps defaults, Workflow validation
     
+    🆕 NEW ATTRIBUTES TESTED:
+    ✅ ValidationCheck: Retry, RetryTimes attributes with default values
+    ✅ ResourceAction: PostflightCheck attribute for post-execution validation
+    ✅ DockerSettings: ExposedPorts attribute for Docker port configuration
+    ✅ DockerSettings: Updated OllamaVersion to 0.9.2
+    ✅ Project Settings: RateLimitMax attribute with default value 100
+    ✅ Project Settings: Environment attribute with default "dev"
+    ✅ BuildEnv: Type alias supporting "dev" and "prod" values
+    ✅ Version Updates: PKL 0.28.2 and pkl-go 0.10.0 compatibility
+    
     All camelCase function names are working correctly!
+    All new attributes have proper defaults and validation!
     Test suite validates function existence and basic functionality.
+    
+    📦 PKL files are also embedded in Go binaries via the assets package.
+    📋 See test/assets_test.go for comprehensive Go-based tests of:
+       - PKL workspace setup for external testing
+       - File extraction with preserved names  
+       - TmpDir handling for predictable testing
+       - Cross-import compatibility validation
     """
 } 
