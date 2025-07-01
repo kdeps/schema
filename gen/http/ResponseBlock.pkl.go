@@ -5,8 +5,8 @@ package http
 // It contains the body and headers of the response.
 type ResponseBlock struct {
 	// The body of the response.
-	Body *string `pkl:"body"`
+	Body *string `pkl:"Body"`
 
 	// A mapping of response headers.
-	Headers *map[string]string `pkl:"headers"`
+	Headers *map[string]string `pkl:"Headers"`
 }

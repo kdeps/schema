@@ -14,7 +14,7 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
 import "pkl:json"
 
 /// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-resources: Mapping<String, ResourceHTTPClient>?
+Resources: Mapping<String, ResourceHTTPClient>?
 
 /// Class representing an HTTP client resource, which includes details
 /// about the HTTP method, URL, request data, headers, and response.
@@ -26,44 +26,44 @@ class ResourceHTTPClient {
         hidden isValidHTTPMethod = (str) -> if (str.matches(apiMethodRegex)) true else throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
 
         /// The HTTP method to be used for the request.
-        method: String(isValidHTTPMethod)
+        Method: String(isValidHTTPMethod)
 
         /// The URL to which the request will be sent.
-        url: Uri
+        Url: Uri
 
         /// Optional data to be sent with the request.
-        data: Listing<String>?
+        Data: Listing<String>?
 
         /// A mapping of headers to be included in the request.
-        headers: Mapping<String, String>?
+        Headers: Mapping<String, String>?
 
         /// A mapping of parameters to be included in the request.
-        params: Mapping<String, String>?
+        Params: Mapping<String, String>?
 
         /// The response received from the HTTP request.
-        response: ResponseBlock?
+        Response: ResponseBlock?
 
         /// The file path where the response body value of this resource is saved
-        file: String?
+        File: String?
 
         /// The listing of the item iteration results
-        itemValues: Listing<String>?
+        ItemValues: Listing<String>?
 
         /// A timestamp of when the request was made, represented as an unsigned 64-bit integer.
-        timestamp: Duration?
+        Timestamp: Duration?
 
         /// The timeout duration (in seconds) for the HTTP request. Defaults to 60 seconds.
-        timeoutDuration: Duration? = 60.s
+        TimeoutDuration: Duration? = 60.s
 }
 
 /// Class representing the response block of an HTTP request.
 /// It contains the body and headers of the response.
 class ResponseBlock {
         /// The body of the response.
-        body: String?
+        Body: String?
 
         /// A mapping of response headers.
-        headers: Mapping<String, String>?
+        Headers: Mapping<String, String>?
 }
 
 /// Retrieves the [ResourceHTTPClient] associated with the given [actionID].
@@ -73,34 +73,34 @@ class ResponseBlock {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceHTTPClient]: The [ResourceHTTPClient] object associated with the resource actionID.
 function resource(actionID: String): ResourceHTTPClient =
-        if (resources.getOrNull(actionID) != null) resources[actionID] else new ResourceHTTPClient {
-                method = "GET"
-                url = ""
-                data {}
-                headers {}
-                params {}
-                response {}
-                file = ""
-                itemValues {}
+        if (Resources.getOrNull(actionID) != null) Resources[actionID] else new ResourceHTTPClient {
+                Method = "GET"
+                Url = ""
+                Data {}
+                Headers {}
+                Params {}
+                Response {}
+                File = ""
+                ItemValues {}
         }
 
 /// Retrieves the body of the response associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response body for.
 /// [str]: The body of the response from the HTTP request.
-function responseBody(actionID: String): String = if (isBase64(resource(actionID).response.body)) resource(actionID).response.body.base64Decoded else resource(actionID).response.body
+function responseBody(actionID: String): String = if (isBase64(resource(actionID).Response.Body)) resource(actionID).Response.Body.base64Decoded else resource(actionID).Response.Body
 
 /// Retrieves the file path containing the response body associated with the specified resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response body for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(actionID: String): String = if (isBase64(resource(actionID).file)) resource(actionID).file.base64Decoded else resource(actionID).file
+function file(actionID: String): String = if (isBase64(resource(actionID).File)) resource(actionID).File.base64Decoded else resource(actionID).File
 
 /// Retrieves the item iteration responses for the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the item values.
 /// [Listing<String>]: A listing of expected item iteration output.
-function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).itemValues)) resource(actionID).itemValues.base64Decoded else resource(actionID).itemValues
+function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).ItemValues)) resource(actionID).ItemValues.base64Decoded else resource(actionID).ItemValues
 
 /// Retrieves the specified response header associated with the resource [actionID].
 ///
@@ -108,13 +108,7 @@ function itemValues(actionID: String): Listing<String> = if (isBase64(resource(a
 /// [headeractionID]: The name of the header to retrieve.
 /// [str]: The value of the specified response header, or an empty string if not found.
 function responseHeader(actionID: String, headeractionID: String): String =
-if (!resource(actionID).response.headers.isEmpty)
-  if (resource(actionID).response.headers.containsKey(headeractionID))
-    if (isBase64(resource(actionID).response.headers[headeractionID]))
-      resource(actionID).response.headers[headeractionID].base64Decoded
-    else
-      resource(actionID).response.headers[headeractionID]
-  else
-    ""
-else
-  ""
+        if (isBase64(resource(actionID).Response.Headers[headeractionID]))
+                resource(actionID).Response.Headers[headeractionID].base64Decoded
+        else
+                resource(actionID).Response.Headers[headeractionID]

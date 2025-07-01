@@ -6,53 +6,59 @@
 
 @go.Package { name = "github.com/kdeps/schema/gen/docker" }
 
-module org.kdeps.pkl.Docker
+open module org.kdeps.pkl.Docker
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
 
 /// Class representing the settings for Docker configurations.
 /// It includes options for specifying packages, PPAs, and models.
 class DockerSettings {
-        /// Regular expression for validating params variable names.
-        hidden paramStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
+    /// Regular expression for validating Docker parameter names.
+    hidden paramStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
 
-        /// Function to check if a given params variable name is valid.
-        hidden isValidParams = (str) -> if (str.matches(paramStringRegex)) true else throw("Error: Invalid params name: The params name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
+    /// Function to check if a given params variable name is valid.
+    hidden isValidParams = (str) -> if (str.matches(paramStringRegex)) true else throw("Error: Invalid params name: The params name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
 
-        /// Sets the timezone (see the TZ Identifier here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-        timezone: String = "Etc/UTC"
+    /// A mapping of environment variable names to their values.
+    Params: Mapping<String(isValidParams), String>?
 
-        /// Sets if Anaconda3 will be pre-installed in the Image
-        installAnaconda: Boolean = false
+    /// Docker image to be used as the base image
+    Image: String = "kdeps/kdeps"
 
-        /// Conda packages to install when `installAnaconda` is set to true.
-        ///
-        /// Example:
-        /// condaPackages {
-        ///   ["base"] { // The name of the Anaconda environment
-        ///     ["main"] = "diffuser"  // Package "diffuser" from the "main" channel
-        ///   }
-        /// }
-        condaPackages: Mapping<String, Mapping<String, String>>?
+    /// Sets the Ollama Docker version to be use as the base image
+    OllamaVersion: String = "0.3.14"
 
-        /// Python packages that will be pre-installed.
-        pythonPackages: Listing<String>?
+    /// Install Anaconda Python on the Docker container
+    InstallAnaconda: Boolean = false
 
-        /// A list of packages to be installed in the Docker container.
-        packages: Listing<String>?
+    /// Sets the timezone (see the TZ Identifier here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+    Timezone: String = "Etc/UTC"
 
-        /// A list of APT or PPA repos to be added.
-        repositories: Listing<String>?
+    /// Conda packages to install when `InstallAnaconda` is set to true.
+    ///
+    /// Example:
+    /// CondaPackages {
+    ///   ["base"] { // The name of the Anaconda environment
+    ///     ["main"] = "diffuser"  // Package "diffuser" from the "main" channel
+    ///   }
+    /// }
+    CondaPackages: Mapping<String, Mapping<String, String>>?
 
-        /// A mandatory list of models to be used in the Docker environment.
-        models: Listing<String>
+    /// Python packages that will be pre-installed.
+    PythonPackages: Listing<String>?
 
-        /// Sets the Ollama Docker version to be use as the base image
-        ollamaImageTag: String = "0.6.5"
+    /// A list of packages to be installed in the Docker container.
+    Packages: Listing<String>?
 
-        /// A mapping of build arguments variable name
-        args: Mapping<String(isValidParams), String>?
+    /// A list of APT or PPA repos to be added.
+    Repositories: Listing<String>?
 
-        /// A mapping of build env variable names that persist in the image and container
-        env: Mapping<String(isValidParams), String>?
+    /// A mandatory list of models to be used in the Docker environment.
+    Models: Listing<String>
+
+    /// A mapping of build arguments variable name
+    Args: Mapping<String(isValidParams), String>?
+
+    /// A mapping of build env variable names that persist in the image and container
+    Env: Mapping<String(isValidParams), String>?
 }

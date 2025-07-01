@@ -9,20 +9,20 @@ open module org.kdeps.pkl.Skip
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
 
-/// Checks if a file exists.
+/// Checks if a file exists at the given path.
 ///
-/// [it]: The path of the file to check.
-/// [bool]: Returns true if the file exists; false otherwise.
+/// [it]: The file path to check.
+/// Returns `true` if the file exists, `false` otherwise.
 function ifFileExists(it: String) = read?(it) != null
 
-/// Checks if a folder exists.
+/// Checks if a folder exists and contains files at the given path.
 ///
-/// [it]: The path of the folder to check.
-/// [bool]: Returns true if the folder exists and contains at least one key; false otherwise.
+/// [it]: The folder path to check.
+/// Returns `true` if the folder exists and has files, `false` otherwise.
 function ifFolderExists(it: String) = read*(it).keys.length > 0
 
-/// Checks if a file is empty.
+/// Checks if a file exists and is empty at the given path.
 ///
-/// [it]: The path of the file to check.
-/// [bool]: Returns true if the file exists and is empty; false otherwise.
+/// [it]: The file path to check.
+/// Returns `true` if the file exists and is empty, `false` otherwise.
 function ifFileIsEmpty(it: String) = ifFileExists(it) && read?(it).base64Decoded.isEmpty

@@ -27,54 +27,59 @@ type APIServerRequest interface {
 
 var _ APIServerRequest = (*APIServerRequestImpl)(nil)
 
-// Abstractions for Kdeps API Server Requests
+// Abstractions for KDEPS API Server Request handling
 //
-// This module provides functionality to handle and validate HTTP requests to the Kdeps API Server, including methods
-// for parsing HTTP methods, request data, parameters, headers, and file uploads.
+// This module provides the structure for handling API server requests in the Kdeps system.
+// It includes classes and variables for managing request data such as paths, methods, headers,
+// query parameters, and uploaded files. It also provides functions for retrieving and processing
+// request information, including file uploads and metadata extraction.
 //
-// Supported features:
-// - Validation of HTTP methods.
-// - Handling request body data, parameters, headers, and file uploads.
-// - Functions to decode Base64 encoded request data.
-// - File management utilities like retrieving file types and paths.
-// - Filtering files by MIME type.
+// This module is part of the `kdeps` schema and interacts with the API server to process incoming
+// requests.
+//
+// The module defines:
+// - [APIServerRequestUploads]: For managing metadata of uploaded files.
+// - [Path]: The URI path of the incoming request.
+// - [Method]: The HTTP method used for the request.
+// - [Data]: The request body data.
+// - [Files]: A mapping of uploaded files and their metadata.
 type APIServerRequestImpl struct {
-	// Represents the request URI path.
-	Path string `pkl:"path"`
+	// The URI path of the incoming request.
+	Path string `pkl:"Path"`
 
-	// Represents the Client IP.
+	// The Client IP Address
 	IP string `pkl:"IP"`
 
-	// Represents the Request ID.
+	// The Request ID
 	ID string `pkl:"ID"`
 
 	// The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
-	Method string `pkl:"method"`
+	Method string `pkl:"Method"`
 
-	// The body data of the request, which is optional.
-	Data *string `pkl:"data"`
+	// The request body, if provided.
+	Data *string `pkl:"Data"`
 
-	// Query parameters sent with the request.
-	Params *map[string]string `pkl:"params"`
+	// A mapping of query parameters included in the request.
+	Params *map[string]string `pkl:"Params"`
 
-	// Headers sent with the request.
-	Headers *map[string]string `pkl:"headers"`
+	// A mapping of HTTP headers included in the request.
+	Headers *map[string]string `pkl:"Headers"`
 
 	// Files uploaded with the request, represented as a mapping of file keys to upload metadata.
-	Files *map[string]*APIServerRequestUploads `pkl:"files"`
+	Files *map[string]*APIServerRequestUploads `pkl:"Files"`
 }
 
-// Represents the request URI path.
+// The URI path of the incoming request.
 func (rcv *APIServerRequestImpl) GetPath() string {
 	return rcv.Path
 }
 
-// Represents the Client IP.
+// The Client IP Address
 func (rcv *APIServerRequestImpl) GetIP() string {
 	return rcv.IP
 }
 
-// Represents the Request ID.
+// The Request ID
 func (rcv *APIServerRequestImpl) GetID() string {
 	return rcv.ID
 }
@@ -84,17 +89,17 @@ func (rcv *APIServerRequestImpl) GetMethod() string {
 	return rcv.Method
 }
 
-// The body data of the request, which is optional.
+// The request body, if provided.
 func (rcv *APIServerRequestImpl) GetData() *string {
 	return rcv.Data
 }
 
-// Query parameters sent with the request.
+// A mapping of query parameters included in the request.
 func (rcv *APIServerRequestImpl) GetParams() *map[string]string {
 	return rcv.Params
 }
 
-// Headers sent with the request.
+// A mapping of HTTP headers included in the request.
 func (rcv *APIServerRequestImpl) GetHeaders() *map[string]string {
 	return rcv.Headers
 }

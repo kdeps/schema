@@ -1,4 +1,4 @@
-/// Abstractions for managing records in a for loop
+/// Abstractions for Item iteration records
 ///
 /// This module provides functions to interact with records representing iterations or elements in a for loop.
 /// The module supports retrieving, navigating, and listing records without requiring a specific identifier.
@@ -15,7 +15,7 @@ import "pkl:json"
 
 /// Retrieves the record for the current iteration
 ///
-/// Returns the textual content of the most recent loop record, or an empty string if no record is found.
+/// Returns the textual content of the current loop record, or an empty string if no current record exists.
 function current(): String = read("item:/_?op=current")?.text ?? ""
 
 /// Retrieves the record for the previous iteration

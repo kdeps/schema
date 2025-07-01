@@ -37,7 +37,7 @@ hidden isValidName = (str) -> if (str.matches(nameStringRegex)) true else throw(
 /// Validates the format of a workflow reference string.
 ///
 /// The workflow must start with `@`, followed by a package name, and optionally a path segment and version.
-hidden isValidWorkflow = (str) -> if (str.matches(workflowStringRegex)) true else throw("External workflows must start with `@`, followed by a package name, with an optional `/action` path segment and an optional `:version` (e.g., `@example`, `@example/action`, or `@example/action:1.0.0`). Ensure your input matches this format.")
+hidden isValidWorkflow = (str) -> if (str.matches(workflowStringRegex)) true else throw("External workflows must start with `@`, followed by a package name, with an optional `/action` path segment and an optional `:version` (e.g., `@example`, `@example/action`, or `@example/action:1.0.0`).")
 
 /// Validates the format of an action string.
 ///
@@ -50,37 +50,37 @@ hidden isValidAction = (str) -> if (str.matches(actionStringRegex)) true else th
 hidden isValidVersion = (str) -> if (str.matches(versionStringRegex)) true else throw("Error: Invalid version format. Expected format: major.minor.patch or major.minor.")
 
 /// The name of the workflow, validated to contain only alphanumeric characters.
-name: String(isValidName)
+AgentID: String(isValidName)
 
 /// A description of the workflow, providing details about its purpose and behavior.
-description: String
+Description: String
 
 /// A URI pointing to the website or landing page for the workflow, if available.
-website: Uri?
+Website: Uri?
 
 /// A listing of the authors or contributors to the workflow.
-authors: Listing<String>?
+Authors: Listing<String>?
 
 /// A URI pointing to the documentation for the workflow, if available.
-documentation: Uri?
+Documentation: Uri?
 
 /// A URI pointing to the repository where the workflow's code or configuration can be found.
-repository: Uri?
+Repository: Uri?
 
 /// Hero image to be used on this AI Agent.
-heroImage: String?
+HeroImage: String?
 
 /// The icon to be used on this AI agent.
-agentIcon: String?
+AgentIcon: String?
 
 /// The version of the workflow, following semantic versioning rules (e.g., 1.0.0).
-version: String(isValidVersion) = "1.0.0"
+Version: String(isValidVersion) = "1.0.0"
 
 /// The default action to be performed by the workflow, validated to ensure proper formatting.
-targetActionID: String(isValidAction)
+TargetActionID: String(isValidAction)
 
 /// A listing of external workflows referenced by this workflow, validated by format.
-workflows: Listing<String(isValidWorkflow)>
+Workflows: Listing<String(isValidWorkflow)>
 
 /// The project settings that this workflow depends on.
-settings: Project.Settings
+Settings: Project.Settings

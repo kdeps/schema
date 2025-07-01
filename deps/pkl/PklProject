@@ -21,19 +21,19 @@ package {
 
     // The version of the package, derived from the environment variable `VERSION`.
     // If the variable is not set, defaults to "0.0.1-SNAPSHOT".
-    version = version_num?.replaceFirst(Regex("^v(\\d+\\.\\d+\\.\\d+)(-[\\w\\.]+)?(\\+[\\w\\.]+)?$"), "$1").replaceFirst("\(name)@v", "") ?? "0.0.1-SNAPSHOT"
+    version = if (version_num != null) version_num.replaceFirst(Regex("^v(\\d+\\.\\d+\\.\\d+)(-[\\w\\.]+)?(\\+[\\w\\.]+)?$"), "$1").replaceFirst("\(name)@v", "") else "0.0.1-SNAPSHOT"
 
     // The base URI for the package, used for package resolution and access.
     baseUri = "package://schema.kdeps.com/core"
 
     // The URL for the zipped package release.
-    packageZipUrl = "https://github.com/kdeps/schema/releases/download/\(version_num)/\(name)@\(version).zip"
+    packageZipUrl = "https://github.com/kdeps/schema/releases/download/\(version_num ?? "v0.0.1-SNAPSHOT")/\(name)@\(version).zip"
 
     // The URL for the source code repository.
     sourceCode = "https://github.com/kdeps/schema"
 
     // The URL scheme for linking to specific lines in the source code.
-    sourceCodeUrlScheme = "\(sourceCode)/blob/\(version_num)%{path}#L%{line}-L%{endLine}"
+    sourceCodeUrlScheme = "\(sourceCode)/blob/\(version_num ?? "main")%{path}#L%{line}-L%{endLine}"
 
     // The documentation URL for the package.
     documentation = "https://schema.kdeps.com"

@@ -11,19 +11,19 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
 typealias GPU = "nvidia" | "amd" | "cpu"
 
 /// Defines the mode of execution for Kdeps.
-typealias RunMode = "docker"
+typealias RunMode = "docker" | "local"
 
 /// Defines the paths where Kdeps configurations can be stored.
 typealias Path = "user" | "project" | "xdg"
 
 /// The mode of execution for Kdeps, defaulting to "docker".
-runMode: RunMode = "docker"
+Mode: RunMode = "docker"
 
 /// The GPU type to use for Kdeps, defaulting to "cpu".
-dockerGPU: GPU = "cpu"
+DockerGPU: GPU = "cpu"
 
 /// The directory where Kdeps files are stored, defaulting to ".kdeps".
-kdepsDir: String = ".kdeps"
+KdepsDir: String = ".kdeps"
 
 /// The path where Kdeps configurations are stored, defaulting to "user".
-kdepsPath: Path = "user"
+KdepsPath: Path = "user"

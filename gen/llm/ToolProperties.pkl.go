@@ -3,12 +3,12 @@ package llm
 
 // Class representing a single parameter's properties in a tool definition
 type ToolProperties struct {
-	// Whether this parameter is required; defaults to true
-	Required *bool `pkl:"required"`
+	// Indicates if the parameter is required for the tool to function.
+	Required *bool `pkl:"Required"`
 
-	// Data type of the parameter (e.g., 'string', 'integer')
-	Type *string `pkl:"type"`
+	// The data type of the parameter (e.g., "string", "integer").
+	Type *string `pkl:"Type"`
 
-	// description of the parameter for clarity
-	Description *string `pkl:"description"`
+	// A description of the parameter's purpose.
+	Description *string `pkl:"Description"`
 }

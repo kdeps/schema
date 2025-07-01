@@ -1,4 +1,4 @@
-/// Abstractions for Tool records
+/// Abstractions for Tool execution
 @ModuleInfo { minPklVersion = "0.28.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/tool" }
@@ -10,23 +10,23 @@ import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pk
 
 /// Retrieves the output of a previously run script by its [id]
 ///
-/// Returns the textual content of the script output (stdout/stderr), or an empty string if not found.
+/// Returns the script output (stdout/stderr) as confirmation.
 ///
 /// [id]: The identifier of the script execution.
 function getOutput(id: String): String = read("tool:/\(id)")?.text ?? ""
 
-/// Runs a script (inline or from a file path) with optional parameters and overwrites its output
+/// Executes a script with the given [id], [script] content, and [params]
 ///
 /// Returns the script output (stdout/stderr) as confirmation.
 ///
 /// [id]: The identifier for the script execution.
-/// [script]: The inline script content or file path to the script.
-/// [params]: Optional parameters for the script, comma-separated (e.g., "a, b, c").
+/// [script]: The script content to execute.
+/// [params]: The parameters to pass to the script.
 function runScript(id: String, script: String, params: String): String = read("tool:/\(id)?op=run&script=\(URI.encodeComponent(script))&params=\(URI.encodeComponent(params))")?.text ?? ""
 
 /// Appends the current script output to the history for the given [id]
 ///
 /// Returns the full history of outputs for the script execution as confirmation.
 ///
-/// [id]: The identifier of the script execution.
+/// [id]: The identifier for the script execution.
 function history(id: String): String = read("tool:/\(id)?op=history")?.text ?? ""

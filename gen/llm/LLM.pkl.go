@@ -16,26 +16,21 @@ type LLM interface {
 
 var _ LLM = (*LLMImpl)(nil)
 
-// Abstractions for Kdeps LLM Resource
+// Abstractions for KDEPS LLM Resources
 //
-// This module provides an abstraction layer for managing resources related to
-// large language model (LLM) interactions within the Kdeps system.
-//
-// It defines the [ResourceChat] class, which encapsulates the metadata and responses
+// This module defines the structure for managing large language model (LLM) resources
 // related to LLM model interactions. The class allows for managing prompts, responses,
-// file generations, image generation flags, and the handling of JSON responses.
+// and additional configurations such as tools, scenarios, and output files. It also
+// provides utilities for retrieving and managing LLM resources based on their identifiers.
 //
-// Key functionalities include:
-// - Managing a collection of resources that represent LLM interactions through a mapping of unique
-// resource actionIDs to [ResourceChat] objects.
-// - Providing methods to retrieve various pieces of information related to the LLM interaction,
-// such as the prompt text, response text, file paths, JSON keys, and whether image generation was
-// involved.
+// The module includes:
+// - [ResourceChat]: A class for handling individual chat interactions with LLM models.
+// - [Resource]: Mapping of resource actionIDs to [ResourceChat] objects.
 type LLMImpl struct {
 	*utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-	Resources *map[string]*ResourceChat `pkl:"resources"`
+	Resources *map[string]*ResourceChat `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceChat] objects.

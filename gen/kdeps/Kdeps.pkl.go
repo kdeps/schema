@@ -7,21 +7,22 @@ import (
 	"github.com/apple/pkl-go/pkl"
 	"github.com/kdeps/schema/gen/kdeps/gpu"
 	"github.com/kdeps/schema/gen/kdeps/path"
+	"github.com/kdeps/schema/gen/kdeps/runmode"
 )
 
 // Abstractions for Kdeps Configuration
 type Kdeps struct {
 	// The mode of execution for Kdeps, defaulting to "docker".
-	RunMode string `pkl:"runMode"`
+	Mode runmode.RunMode `pkl:"Mode"`
 
 	// The GPU type to use for Kdeps, defaulting to "cpu".
-	DockerGPU gpu.GPU `pkl:"dockerGPU"`
+	DockerGPU gpu.GPU `pkl:"DockerGPU"`
 
 	// The directory where Kdeps files are stored, defaulting to ".kdeps".
-	KdepsDir string `pkl:"kdepsDir"`
+	KdepsDir string `pkl:"KdepsDir"`
 
 	// The path where Kdeps configurations are stored, defaulting to "user".
-	KdepsPath path.Path `pkl:"kdepsPath"`
+	KdepsPath path.Path `pkl:"KdepsPath"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Kdeps

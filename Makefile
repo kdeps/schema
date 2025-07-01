@@ -26,3 +26,32 @@ generate:
 			mv $(OUTPUT_DIR)/github.com/kdeps/schema/deps/pkl $(OUTPUT_DIR); \
 			rm -rf $(OUTPUT_DIR)/github.com; \
 		fi
+
+# Run the comprehensive PKL test suite
+test:
+		@echo "Running Comprehensive PKL Function Test Suite..."
+		@pkl eval test/test_functions.pkl
+
+# Run individual module tests
+test-utils:
+		@echo "Running Utils.pkl Unit Tests..."
+		@pkl eval test/test_utils.pkl
+
+# Run all tests (comprehensive + individual)
+test-all: test test-utils
+		@echo "All PKL tests completed successfully!"
+
+# Run tests and generate Go code
+test-and-generate: test-all generate
+
+# Help target
+help:
+		@echo "Available targets:"
+		@echo "  generate         - Generate Go code from PKL files"
+		@echo "  test            - Run comprehensive PKL function test suite"
+		@echo "  test-utils       - Run Utils.pkl unit tests"
+		@echo "  test-all         - Run all test suites"
+		@echo "  test-and-generate - Run all tests then generate Go code"
+		@echo "  help            - Show this help message"
+
+.PHONY: generate test test-utils test-all test-and-generate help

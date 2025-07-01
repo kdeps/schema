@@ -9,15 +9,15 @@ type APIServerResponseMetaBlock struct {
 	// A unique identifier (UUID) for the request.
 	//
 	// This ID helps track and correlate API requests.
-	RequestID *string `pkl:"requestID"`
+	RequestID *string `pkl:"RequestID"`
 
 	// HTTP headers included in the API response.
 	//
 	// Contains key-value pairs representing response headers.
-	Headers *map[string]string `pkl:"headers"`
+	Headers *map[string]string `pkl:"Headers"`
 
 	// Custom key-value properties included in the JSON response.
 	//
 	// Used to store additional metadata or context-specific details.
-	Properties *map[string]string `pkl:"properties"`
+	Properties *map[string]string `pkl:"Properties"`
 }
