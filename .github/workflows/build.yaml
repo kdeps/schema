@@ -82,7 +82,7 @@ jobs:
         echo "All generated files validated successfully!"
         
     - name: Archive generated files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: generated-files
         path: |
