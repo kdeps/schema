@@ -27,12 +27,14 @@ jobs:
       uses: gradle/actions/setup-gradle@v3
       
     - name: Install PKL CLI
+      uses: pkl-community/setup-pkl@v0
+      with:
+        pkl-version: 0.28.2
+    
+    - name: Verify PKL installation
       run: |
-        curl -L -o pkl.tar.gz https://github.com/apple/pkl/releases/download/0.28.2/pkl-linux-amd64.tar.gz
-        tar -xzf pkl.tar.gz
-        sudo mv pkl-linux-amd64/bin/pkl /usr/local/bin/pkl
-        sudo mv pkl-linux-amd64/bin/pkl-gen-go /usr/local/bin/pkl-gen-go
         pkl --version
+        which pkl
         
     - name: Setup Go (for assets tests)
       uses: actions/setup-go@v4
