@@ -31,23 +31,34 @@ jobs:
           echo "pkl-gen-go is available"
           pkl-gen-go --help
         else
-          echo "pkl-gen-go not found, installing separately..."
+          echo "pkl-gen-go not found, installing via Go..."
           
-          # Download and install pkl-gen-go from PKL releases
-          echo "Downloading pkl-gen-go..."
-          curl -L -o pkl-gen-go-linux-amd64.tar.gz "https://github.com/apple/pkl/releases/download/0.28.2/pkl-gen-go-linux-amd64.tar.gz"
+          # Install pkl-gen-go via Go (more reliable than downloading)
+          echo "Installing pkl-gen-go using Go..."
+          go install github.com/apple/pkl-go/cmd/pkl-gen-go@latest
           
-          if [ -s pkl-gen-go-linux-amd64.tar.gz ]; then
-            tar -xzf pkl-gen-go-linux-amd64.tar.gz
-            sudo cp pkl-gen-go-linux-amd64/pkl-gen-go /usr/local/bin/pkl-gen-go
-            sudo chmod +x /usr/local/bin/pkl-gen-go
-            echo "pkl-gen-go installed successfully"
+          # Add Go bin to PATH if needed
+          export PATH=$PATH:$(go env GOPATH)/bin
+          
+          # Verify installation
+          if command -v pkl-gen-go &> /dev/null; then
+            echo "pkl-gen-go installed successfully via Go"
             pkl-gen-go --help
           else
-            echo "Failed to download pkl-gen-go, trying alternative approach..."
-            # Try to install via Go
-            go install github.com/apple/pkl-go/cmd/pkl-gen-go@latest
-            echo "pkl-gen-go installed via Go"
+            echo "pkl-gen-go still not found after Go install, checking GOPATH..."
+            echo "GOPATH: $(go env GOPATH)"
+            echo "Contents of Go bin directory:"
+            ls -la $(go env GOPATH)/bin/ || echo "Go bin directory not found"
+            
+            # Try direct path
+            if [ -f "$(go env GOPATH)/bin/pkl-gen-go" ]; then
+              echo "Found pkl-gen-go in GOPATH, creating symlink..."
+              sudo ln -sf $(go env GOPATH)/bin/pkl-gen-go /usr/local/bin/pkl-gen-go
+              pkl-gen-go --help
+            else
+              echo "pkl-gen-go installation failed"
+              exit 1
+            fi
           fi
         fi
         
