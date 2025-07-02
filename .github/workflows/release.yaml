@@ -8,12 +8,43 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for release notes generation
     - uses: actions/setup-java@v4
       with:
         distribution: temurin
         java-version: '17'
         cache: gradle
     - uses: gradle/actions/setup-gradle@v3
+    - name: Install PKL CLI
+      run: |
+        curl -L -o pkl.tar.gz https://github.com/apple/pkl/releases/download/0.28.2/pkl-linux-amd64.tar.gz
+        tar -xzf pkl.tar.gz
+        sudo mv pkl-linux-amd64/bin/pkl /usr/local/bin/pkl
+        sudo mv pkl-linux-amd64/bin/pkl-gen-go /usr/local/bin/pkl-gen-go
+        pkl --version
+    - name: Update release notes
+      env:
+        VERSION: ${{ github.ref_name }}
+      run: |
+        echo "Generating release notes for version $VERSION..."
+        chmod +x scripts/generate_release_notes.sh
+        ./scripts/generate_release_notes.sh > README.md
+        echo "Release notes updated successfully!"
+    - name: Commit updated README
+      env:
+        VERSION: ${{ github.ref_name }}
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        if git diff --quiet README.md; then
+          echo "No changes to README.md"
+        else
+          git add README.md
+          git commit -m "Update release notes for $VERSION [skip ci]"
+          git push origin HEAD:main
+          echo "README.md updated and pushed"
+        fi
     - name: build
       env:
         VERSION: ${{ github.ref_name }}

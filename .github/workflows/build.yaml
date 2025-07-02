@@ -1,0 +1,92 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for release notes generation
+        
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+        cache: gradle
+        
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      
+    - name: Install PKL CLI
+      run: |
+        curl -L -o pkl.tar.gz https://github.com/apple/pkl/releases/download/0.28.2/pkl-linux-amd64.tar.gz
+        tar -xzf pkl.tar.gz
+        sudo mv pkl-linux-amd64/bin/pkl /usr/local/bin/pkl
+        sudo mv pkl-linux-amd64/bin/pkl-gen-go /usr/local/bin/pkl-gen-go
+        pkl --version
+        
+    - name: Setup Go (for assets tests)
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+        
+    - name: Validate release notes generation
+      run: |
+        echo "Validating release notes generation..."
+        chmod +x scripts/generate_release_notes.sh
+        ./scripts/generate_release_notes.sh --help
+        ./scripts/generate_release_notes.sh --max-releases 3 > test_release_notes.md
+        echo "Release notes generation validated successfully!"
+        rm test_release_notes.md
+        
+    - name: Run PKL tests
+      run: |
+        echo "Running PKL test suite..."
+        make test-all
+        
+    - name: Run Go assets tests
+      run: |
+        echo "Running Go assets tests..."
+        make test-assets
+        
+    - name: Run new attributes tests
+      run: |
+        echo "Running new attributes tests..."
+        make test-new-attributes
+        
+    - name: Build and generate code
+      run: |
+        echo "Building project with release notes generation..."
+        make build
+        
+    - name: Validate generated files
+      run: |
+        echo "Validating generated Go files..."
+        if [ ! -d "gen" ]; then
+          echo "Error: gen directory not created"
+          exit 1
+        fi
+        if [ ! -f "README.md" ]; then
+          echo "Error: README.md not found"
+          exit 1
+        fi
+        echo "All generated files validated successfully!"
+        
+    - name: Archive generated files
+      uses: actions/upload-artifact@v3
+      with:
+        name: generated-files
+        path: |
+          gen/
+          README.md
+          assets/pkl/
+        retention-days: 5 

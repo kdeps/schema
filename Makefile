@@ -78,6 +78,10 @@ test-all: test test-utils
 test-all-comprehensive: test-all test-assets
 		@echo "All PKL and Go assets tests completed successfully!"
 
+# Build target (includes tests, release notes, and generation)
+build: test-all-comprehensive update-readme generate
+	@echo "Build completed successfully with updated release notes!"
+
 # Run tests and generate Go code (now includes README update and PKL asset copying)
 test-and-generate: test-all-comprehensive generate
 
@@ -100,8 +104,9 @@ help:
 		@echo "  test-assets-bench  - Run Go assets tests with benchmarks"
 		@echo "  test-all           - Run all PKL test suites"
 		@echo "  test-all-comprehensive - Run all PKL and Go assets tests"
+		@echo "  build             - Run tests, update README.md, and generate Go code (recommended for CI/CD)"
 		@echo "  test-and-generate  - Run all tests, copy PKL assets, update README.md, then generate Go code"
 		@echo "  test-new-attributes - Run tests for newly added attributes"
 		@echo "  help              - Show this help message"
 
-.PHONY: copy-pkl-assets update-readme generate clean test test-utils test-assets test-assets-bench test-all test-all-comprehensive test-and-generate test-new-attributes help
+.PHONY: copy-pkl-assets update-readme generate clean test test-utils test-assets test-assets-bench test-all test-all-comprehensive build test-and-generate test-new-attributes help
