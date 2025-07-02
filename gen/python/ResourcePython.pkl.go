@@ -3,37 +3,33 @@ package python
 
 import "github.com/apple/pkl-go/pkl"
 
-// Represents an executable Python resource, including its associated script,
+// Class representing a Python execution resource, which includes the script to be executed,
 // environment variables, and execution details such as outputs and exit codes.
 type ResourcePython struct {
 	// A mapping of environment variable names to their values.
-	Env *map[string]string `pkl:"env"`
-
-	// Specifies the conda environment in which this Python script will execute, if Anaconda is
-	// installed.
-	CondaEnvironment *string `pkl:"condaEnvironment"`
+	Env *map[string]string `pkl:"Env"`
 
 	// The Python script to be executed.
-	Script string `pkl:"script"`
+	Command string `pkl:"Command"`
 
-	// Captures the standard error output from the execution.
-	Stderr *string `pkl:"stderr"`
+	// The standard error output of the script, if any.
+	Stderr *string `pkl:"Stderr"`
 
-	// Captures the standard output from the execution.
-	Stdout *string `pkl:"stdout"`
+	// The standard output of the script, if any.
+	Stdout *string `pkl:"Stdout"`
 
-	// The exit code of the executed command. Defaults to 0.
-	ExitCode *int `pkl:"exitCode"`
+	// The exit code of the script. Defaults to 0 (success).
+	ExitCode *int `pkl:"ExitCode"`
 
-	// The file path where the Python stdout of this resource is saved
-	File *string `pkl:"file"`
+	// The file path where the script output value of this resource is saved
+	File *string `pkl:"File"`
 
 	// The listing of the item iteration results
-	ItemValues *[]string `pkl:"itemValues"`
+	ItemValues *[]string `pkl:"ItemValues"`
 
 	// A timestamp indicating when the command was executed, as an unsigned 64-bit integer.
-	Timestamp *pkl.Duration `pkl:"timestamp"`
+	Timestamp *pkl.Duration `pkl:"Timestamp"`
 
-	// The maximum duration (in seconds) allowed for the command execution. Defaults to 60 seconds.
-	TimeoutDuration *pkl.Duration `pkl:"timeoutDuration"`
+	// The timeout duration (in seconds) for the script execution. Defaults to 60 seconds.
+	TimeoutDuration *pkl.Duration `pkl:"TimeoutDuration"`
 }

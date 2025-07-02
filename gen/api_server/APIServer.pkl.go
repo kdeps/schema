@@ -12,12 +12,11 @@ type APIServer interface {
 
 var _ APIServer = (*APIServerImpl)(nil)
 
-// Abstractions for Kdeps API Server Configuration
+// Configuration for the Kdeps API Server
 //
-// This module defines the settings and routes for configuring the Kdeps API Server. It includes
-// server settings such as host IP and port number, as well as route definitions. The API server
-// is designed to handle incoming requests and route them to the appropriate handlers, ensuring
-// proper management of HTTP methods and deferred processing.
+// This module defines the settings and routes for the Kdeps API Server, including server binding details
+// (host and port) and route configurations. The server handles HTTP requests, routing them to appropriate
+// handlers based on defined paths and HTTP methods.
 type APIServerImpl struct {
 }
 

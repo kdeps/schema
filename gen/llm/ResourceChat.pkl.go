@@ -4,44 +4,44 @@ package llm
 import "github.com/apple/pkl-go/pkl"
 
 // Class representing the details of a chat interaction with an LLM model, including prompts, responses,
-// file generation, and additional metadata.
+// and configuration options such as tools, JSON output, and timeout settings.
 type ResourceChat struct {
-	// The name of the LLM model used for the chat.
-	Model string `pkl:"model"`
+	// The model to use for the conversation (e.g., "llama3.2").
+	Model string `pkl:"Model"`
 
-	// The role used to instruct the LLM model.
-	Role *string `pkl:"role"`
+	// The role of the speaker in the conversation (e.g., "user", "assistant").
+	Role *string `pkl:"Role"`
 
-	// The prompt text sent to the LLM model.
-	Prompt *string `pkl:"prompt"`
+	// The prompt text to be sent to the LLM model.
+	Prompt *string `pkl:"Prompt"`
 
-	// A scenario is where a series of conditions to be sent for this chat.
-	Scenario *[]*MultiChat `pkl:"scenario"`
+	// A listing of multi-prompt scenarios to be executed in sequence.
+	Scenario *[]*MultiChat `pkl:"Scenario"`
 
-	// Tools that interact with the LLM model
-	Tools *[]*Tool `pkl:"tools"`
+	// A listing of tools available for the LLM to use during the conversation.
+	Tools *[]*Tool `pkl:"Tools"`
 
-	// A listing of file paths or identifiers associated with the chat.
-	Files *[]string `pkl:"files"`
+	// A listing of file paths that the LLM can reference or access.
+	Files *[]string `pkl:"Files"`
 
-	// Whether the LLM's response is in JSON format. Defaults to `false`.
+	// A flag indicating whether the response should be in JSON format.
 	JSONResponse *bool `pkl:"JSONResponse"`
 
-	// A listing of keys expected in the JSON response from the LLM model.
+	// A listing of specific keys to extract from the JSON response.
 	JSONResponseKeys *[]string `pkl:"JSONResponseKeys"`
 
-	// The actual response returned from the LLM model.
-	Response *string `pkl:"response"`
+	// The response text returned by the LLM model.
+	Response *string `pkl:"Response"`
 
-	// The file path where the LLM response of this resource is saved
-	File *string `pkl:"file"`
+	// The file path where the response is saved.
+	File *string `pkl:"File"`
 
 	// The listing of the item iteration results
-	ItemValues *[]string `pkl:"itemValues"`
+	ItemValues *[]string `pkl:"ItemValues"`
 
 	// A timestamp of when the response was generated, represented as an unsigned 64-bit integer.
-	Timestamp *pkl.Duration `pkl:"timestamp"`
+	Timestamp *pkl.Duration `pkl:"Timestamp"`
 
-	// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
-	TimeoutDuration *pkl.Duration `pkl:"timeoutDuration"`
+	// The timeout duration (in seconds) for the LLM request. Defaults to 60 seconds.
+	TimeoutDuration *pkl.Duration `pkl:"TimeoutDuration"`
 }

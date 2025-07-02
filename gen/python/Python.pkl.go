@@ -16,19 +16,20 @@ type Python interface {
 
 var _ Python = (*PythonImpl)(nil)
 
-// This module defines the execution resources for the KDEPS framework.
-// It facilitates the management and execution of Python-based commands,
-// capturing their standard output, standard error, and handling environment
+// Abstractions for Python script execution within KDEPS
+//
+// This module defines the structure for Python execution resources that can be used within the Kdeps framework.
+// It handles Python script execution, environment variable management, capturing outputs,
 // variables as well as exit codes. The module provides utilities for retrieving
-// and managing executable resources identified by unique resource actionIDs.
+// and managing Python execution resources based on their identifiers.
 type PythonImpl struct {
 	*utils.UtilsImpl
 
-	// A mapping of resource actionIDs to their corresponding [ResourcePython] objects.
-	Resources *map[string]*ResourcePython `pkl:"resources"`
+	// A mapping of resource actionIDs to their associated [ResourcePython] objects.
+	Resources *map[string]*ResourcePython `pkl:"Resources"`
 }
 
-// A mapping of resource actionIDs to their corresponding [ResourcePython] objects.
+// A mapping of resource actionIDs to their associated [ResourcePython] objects.
 func (rcv *PythonImpl) GetResources() *map[string]*ResourcePython {
 	return rcv.Resources
 }

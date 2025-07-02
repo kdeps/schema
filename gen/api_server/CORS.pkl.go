@@ -5,32 +5,24 @@ import "github.com/apple/pkl-go/pkl"
 
 // Cross-Origin Resource Sharing (CORS) configuration
 type CORS struct {
-	// Enables or disables CORS support (default: false)
-	EnableCORS bool `pkl:"enableCORS"`
+	// Enable Cross-Origin Resource Sharing (CORS) for the API server
+	EnableCORS bool `pkl:"EnableCORS"`
 
-	// List of allowed origin domains for CORS requests (e.g., "https://example.com")
-	//
-	// If unset, no origins are allowed unless CORS is disabled
-	AllowOrigins *[]string `pkl:"allowOrigins"`
+	// List of allowed origins for CORS
+	AllowOrigins *[]string `pkl:"AllowOrigins"`
 
-	// List of HTTP methods allowed for CORS requests, validated by regex
-	//
-	// If unset, defaults to methods specified in the route configuration
-	AllowMethods *[]string `pkl:"allowMethods"`
+	// List of allowed HTTP methods for CORS
+	AllowMethods *[]string `pkl:"AllowMethods"`
 
-	// List of request headers allowed in CORS requests (e.g., "Content-Type")
-	//
-	// If unset, no additional headers are allowed
-	AllowHeaders *[]string `pkl:"allowHeaders"`
+	// List of allowed headers for CORS
+	AllowHeaders *[]string `pkl:"AllowHeaders"`
 
-	// List of response headers exposed to clients in CORS requests
-	//
-	// If unset, no headers are exposed beyond defaults
-	ExposeHeaders *[]string `pkl:"exposeHeaders"`
+	// List of exposed headers for CORS
+	ExposeHeaders *[]string `pkl:"ExposeHeaders"`
 
-	// Allows credentials (e.g., cookies, HTTP authentication) in CORS requests (default: true)
-	AllowCredentials bool `pkl:"allowCredentials"`
+	// Maximum age for CORS preflight requests (in seconds)
+	MaxAge *pkl.Duration `pkl:"MaxAge"`
 
-	// Maximum duration (in hours) for which CORS preflight responses can be cached (default: 12 hours)
-	MaxAge *pkl.Duration `pkl:"maxAge"`
+	// Allow credentials in CORS requests
+	AllowCredentials bool `pkl:"AllowCredentials"`
 }

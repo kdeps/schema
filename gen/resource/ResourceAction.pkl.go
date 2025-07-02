@@ -13,34 +13,37 @@ import (
 // Class representing an action that can be executed on a resource.
 type ResourceAction struct {
 	// Block for performing PKL expressions.
-	Expr *pkl.Object `pkl:"expr"`
+	Expr *pkl.Object `pkl:"Expr"`
 
 	// Configuration for executing commands.
-	Exec *exec.ResourceExec `pkl:"exec"`
+	Exec *exec.ResourceExec `pkl:"Exec"`
 
 	// Configuration for python scripts.
-	Python *python.ResourcePython `pkl:"python"`
+	Python *python.ResourcePython `pkl:"Python"`
 
 	// Configuration for chat interactions with an LLM.
-	Chat *llm.ResourceChat `pkl:"chat"`
+	Chat *llm.ResourceChat `pkl:"Chat"`
 
 	// A listing of conditions that determine if the action should be skipped.
-	SkipCondition *[]any `pkl:"skipCondition"`
+	SkipCondition *[]any `pkl:"SkipCondition"`
 
 	// A pre-flight validation check to be performed before executing the action.
-	PreflightCheck *ValidationCheck `pkl:"preflightCheck"`
+	PreflightCheck *ValidationCheck `pkl:"PreflightCheck"`
+
+	// A post-flight validation check to be performed after executing the action.
+	PostflightCheck *ValidationCheck `pkl:"PostflightCheck"`
 
 	// A listing of allowed HTTP headers
-	AllowedHeaders *[]string `pkl:"allowedHeaders"`
+	AllowedHeaders *[]string `pkl:"AllowedHeaders"`
 
 	// A listing of allowed HTTP params
-	AllowedParams *[]string `pkl:"allowedParams"`
+	AllowedParams *[]string `pkl:"AllowedParams"`
 
 	// A listing of targeted HTTP methods
-	RestrictToHTTPMethods *[]string `pkl:"restrictToHTTPMethods"`
+	RestrictToHTTPMethods *[]string `pkl:"RestrictToHTTPMethods"`
 
 	// A listing of targeted HTTP routes
-	RestrictToRoutes *[]string `pkl:"restrictToRoutes"`
+	RestrictToRoutes *[]string `pkl:"RestrictToRoutes"`
 
 	// Configuration for HTTP client interactions.
 	HTTPClient *http.ResourceHTTPClient `pkl:"HTTPClient"`

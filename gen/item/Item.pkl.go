@@ -12,7 +12,7 @@ type Item interface {
 
 var _ Item = (*ItemImpl)(nil)
 
-// Abstractions for managing records in a for loop
+// Abstractions for Item iteration records
 //
 // This module provides functions to interact with records representing iterations or elements in a for loop.
 // The module supports retrieving, navigating, and listing records without requiring a specific identifier.

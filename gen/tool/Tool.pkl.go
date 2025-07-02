@@ -12,7 +12,7 @@ type Tool interface {
 
 var _ Tool = (*ToolImpl)(nil)
 
-// Abstractions for Tool records
+// Abstractions for Tool execution
 type ToolImpl struct {
 }
 

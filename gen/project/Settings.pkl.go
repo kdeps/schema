@@ -4,6 +4,7 @@ package project
 import (
 	"github.com/kdeps/schema/gen/api_server"
 	"github.com/kdeps/schema/gen/docker"
+	"github.com/kdeps/schema/gen/project/buildenv"
 	"github.com/kdeps/schema/gen/web_server"
 )
 
@@ -38,5 +39,17 @@ type Settings struct {
 	// These settings define how the Docker agent should be configured for the project.
 	// [Docker.DockerSettings]: Includes properties such as Docker image, container settings, and other
 	// Docker-specific configurations.
-	AgentSettings *docker.DockerSettings `pkl:"agentSettings"`
+	AgentSettings *docker.DockerSettings `pkl:"AgentSettings"`
+
+	// Maximum number of rate limit requests allowed in the workflow.
+	//
+	// This setting controls the rate limiting behavior for workflow execution.
+	// Default value is 100 requests.
+	RateLimitMax int `pkl:"RateLimitMax"`
+
+	// Environment setting for the workflow execution.
+	//
+	// Specifies whether the workflow runs in development or production mode.
+	// Valid values are "dev" or "production".
+	Environment buildenv.BuildEnv `pkl:"Environment"`
 }
