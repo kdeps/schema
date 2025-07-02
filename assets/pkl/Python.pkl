@@ -32,8 +32,12 @@ class ResourcePython {
     /// A mapping of environment variable names to their values.
     Env: Mapping<String(isValidEnv), String>?
 
+    /// Specifies the python environment in which this Python script will execute. Uvu will be used by default, Anaconda if it is
+    /// installed.
+    PythonEnvironment: String?
+
     /// The Python script to be executed.
-    Command: String
+    Script: String
 
     /// The standard error output of the script, if any.
     Stderr: String?

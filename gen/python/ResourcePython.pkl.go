@@ -9,8 +9,12 @@ type ResourcePython struct {
 	// A mapping of environment variable names to their values.
 	Env *map[string]string `pkl:"Env"`
 
+	// Specifies the python environment in which this Python script will execute. Uvu will be used by default, Anaconda if it is
+	// installed.
+	PythonEnvironment *string `pkl:"PythonEnvironment"`
+
 	// The Python script to be executed.
-	Command string `pkl:"Command"`
+	Script string `pkl:"Script"`
 
 	// The standard error output of the script, if any.
 	Stderr *string `pkl:"Stderr"`
