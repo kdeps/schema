@@ -21,10 +21,39 @@ jobs:
       with:
         pkl-version: 0.28.2
     
-    - name: Verify PKL installation
+    - name: Verify PKL installation and install pkl-gen-go
       run: |
         pkl --version
         which pkl
+        
+        # Check if pkl-gen-go is available
+        if command -v pkl-gen-go &> /dev/null; then
+          echo "pkl-gen-go is available"
+          pkl-gen-go --help
+        else
+          echo "pkl-gen-go not found, installing separately..."
+          
+          # Download and install pkl-gen-go from PKL releases
+          echo "Downloading pkl-gen-go..."
+          curl -L -o pkl-gen-go-linux-amd64.tar.gz "https://github.com/apple/pkl/releases/download/0.28.2/pkl-gen-go-linux-amd64.tar.gz"
+          
+          if [ -s pkl-gen-go-linux-amd64.tar.gz ]; then
+            tar -xzf pkl-gen-go-linux-amd64.tar.gz
+            sudo cp pkl-gen-go-linux-amd64/pkl-gen-go /usr/local/bin/pkl-gen-go
+            sudo chmod +x /usr/local/bin/pkl-gen-go
+            echo "pkl-gen-go installed successfully"
+            pkl-gen-go --help
+          else
+            echo "Failed to download pkl-gen-go, trying alternative approach..."
+            # Try to install via Go
+            go install github.com/apple/pkl-go/cmd/pkl-gen-go@latest
+            echo "pkl-gen-go installed via Go"
+          fi
+        fi
+        
+        # Verify both tools are working
+        pkl --version
+        pkl-gen-go --help
     - name: Update release notes
       env:
         VERSION: ${{ github.ref_name }}
