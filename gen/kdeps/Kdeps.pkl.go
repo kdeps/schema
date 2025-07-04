@@ -13,16 +13,16 @@ import (
 // Abstractions for Kdeps Configuration
 type Kdeps struct {
 	// The mode of execution for Kdeps, defaulting to "docker".
-	Mode runmode.RunMode `pkl:"Mode"`
+	Mode *runmode.RunMode `pkl:"Mode"`
 
 	// The GPU type to use for Kdeps, defaulting to "cpu".
-	DockerGPU gpu.GPU `pkl:"DockerGPU"`
+	DockerGPU *gpu.GPU `pkl:"DockerGPU"`
 
 	// The directory where Kdeps files are stored, defaulting to ".kdeps".
-	KdepsDir string `pkl:"KdepsDir"`
+	KdepsDir *string `pkl:"KdepsDir"`
 
 	// The path where Kdeps configurations are stored, defaulting to "user".
-	KdepsPath path.Path `pkl:"KdepsPath"`
+	KdepsPath *path.Path `pkl:"KdepsPath"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Kdeps

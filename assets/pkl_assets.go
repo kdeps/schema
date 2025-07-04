@@ -29,8 +29,8 @@
 // Create a test PKL file that imports the schema:
 //
 //	// test_workflow.pkl
-//	import "/absolute/path/from/workspace/Workflow.pkl" as Workflow
-//	import "/absolute/path/from/workspace/Resource.pkl" as Resource
+//	import "/absolute/path/from/workspace/Workflow.pkl" as workflow
+//	import "/absolute/path/from/workspace/Resource.pkl" as resource
 //
 //	// All cross-references work because files are in same directory
 //	myWorkflow = new Workflow {
@@ -56,8 +56,8 @@
 //
 //	    // Create test PKL content with imports
 //	    testContent := fmt.Sprintf(`
-//	        import "%s" as Workflow
-//	        import "%s" as LLM
+//	        import "%s" as workflow
+//	        import "%s" as llm
 //
 //	        testWorkflow = new Workflow {
 //	            AgentID = "test"

@@ -14,7 +14,7 @@ type Settings struct {
 	//
 	// - `true`: The project runs in API server mode.
 	// - `false`: The project does not run in API server mode. Default is `false`.
-	APIServerMode bool `pkl:"APIServerMode"`
+	APIServerMode *bool `pkl:"APIServerMode"`
 
 	// Settings for configuring the API server, which is optional.
 	//
@@ -26,7 +26,7 @@ type Settings struct {
 	//
 	// - `true`: The project runs in Web server mode.
 	// - `false`: The project does not run in Web server mode. Default is `false`.
-	WebServerMode bool `pkl:"WebServerMode"`
+	WebServerMode *bool `pkl:"WebServerMode"`
 
 	// Settings for configuring the Web server, which is optional.
 	//
@@ -37,7 +37,7 @@ type Settings struct {
 	// Docker-related settings for the project's agent.
 	//
 	// These settings define how the Docker agent should be configured for the project.
-	// [Docker.DockerSettings]: Includes properties such as Docker image, container settings, and other
+	// [Docker.DockerSettings]: Includes properties such as docker image, container settings, and other
 	// Docker-specific configurations.
 	AgentSettings *docker.DockerSettings `pkl:"AgentSettings"`
 
@@ -45,11 +45,11 @@ type Settings struct {
 	//
 	// This setting controls the rate limiting behavior for workflow execution.
 	// Default value is 100 requests.
-	RateLimitMax int `pkl:"RateLimitMax"`
+	RateLimitMax *int `pkl:"RateLimitMax"`
 
 	// Environment setting for the workflow execution.
 	//
 	// Specifies whether the workflow runs in development or production mode.
 	// Valid values are "dev" or "production".
-	Environment buildenv.BuildEnv `pkl:"Environment"`
+	Environment *buildenv.BuildEnv `pkl:"Environment"`
 }

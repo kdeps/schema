@@ -17,13 +17,13 @@ typealias RunMode = "docker" | "local"
 typealias Path = "user" | "project" | "xdg"
 
 /// The mode of execution for Kdeps, defaulting to "docker".
-Mode: RunMode = "docker"
+Mode: RunMode? = "docker"
 
 /// The GPU type to use for Kdeps, defaulting to "cpu".
-DockerGPU: GPU = "cpu"
+DockerGPU: GPU? = "cpu"
 
 /// The directory where Kdeps files are stored, defaulting to ".kdeps".
-KdepsDir: String = ".kdeps"
+KdepsDir: String? = ".kdeps"
 
 /// The path where Kdeps configurations are stored, defaulting to "user".
-KdepsPath: Path = "user"
+KdepsPath: Path? = "user"

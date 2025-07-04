@@ -6,7 +6,7 @@ import "github.com/apple/pkl-go/pkl"
 // Cross-Origin Resource Sharing (CORS) configuration
 type CORS struct {
 	// Enable Cross-Origin Resource Sharing (CORS) for the API server
-	EnableCORS bool `pkl:"EnableCORS"`
+	EnableCORS *bool `pkl:"EnableCORS"`
 
 	// List of allowed origins for CORS
 	AllowOrigins *[]string `pkl:"AllowOrigins"`
@@ -24,5 +24,5 @@ type CORS struct {
 	MaxAge *pkl.Duration `pkl:"MaxAge"`
 
 	// Allow credentials in CORS requests
-	AllowCredentials bool `pkl:"AllowCredentials"`
+	AllowCredentials *bool `pkl:"AllowCredentials"`
 }

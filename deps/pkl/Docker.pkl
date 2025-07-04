@@ -22,17 +22,14 @@ class DockerSettings {
     /// A mapping of environment variable names to their values.
     Params: Mapping<String(isValidParams), String>?
 
-    /// Docker image to be used as the base image
-    Image: String = "kdeps/kdeps"
-
-    /// Sets the Ollama Docker version to be use as the base image
-    OllamaVersion: String = "0.9.2"
+    /// Sets the tag version to be use as the base image
+    OllamaTagVersion: String? = "latest"
 
     /// Install Anaconda Python on the Docker container
-    InstallAnaconda: Boolean = false
+    InstallAnaconda: Boolean? = false
 
     /// Sets the timezone (see the TZ Identifier here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-    Timezone: String = "Etc/UTC"
+    Timezone: String? = "Etc/UTC"
 
     /// Conda packages to install when `InstallAnaconda` is set to true.
     ///
@@ -53,7 +50,7 @@ class DockerSettings {
     /// A list of APT or PPA repos to be added.
     Repositories: Listing<String>?
 
-    /// A mandatory list of models to be used in the Docker environment.
+    /// A mandatory list of LLM models to be used in the Docker environment.
     Models: Listing<String>
 
     /// A mapping of build arguments variable name

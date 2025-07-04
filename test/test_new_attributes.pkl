@@ -7,11 +7,11 @@
 module test.NewAttributes
 
 import "pkl:test"
-import "../deps/pkl/Resource.pkl" as Resource
-import "../deps/pkl/Docker.pkl" as Docker
-import "../deps/pkl/Project.pkl" as Project
-import "../deps/pkl/APIServer.pkl" as APIServer
-import "../deps/pkl/WebServer.pkl" as WebServer
+import "../deps/pkl/Resource.pkl" as resource
+import "../deps/pkl/Docker.pkl" as docker
+import "../deps/pkl/Project.pkl" as project
+import "../deps/pkl/APIServer.pkl" as apiserver
+import "../deps/pkl/WebServer.pkl" as webserver
 
 /// Test ValidationCheck with various retry configurations
 local validationTests = List(

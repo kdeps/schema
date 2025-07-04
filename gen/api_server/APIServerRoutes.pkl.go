@@ -6,9 +6,6 @@ type APIServerRoutes struct {
 	// The URL path for the route
 	Path string `pkl:"Path"`
 
-	// The HTTP method for the route (GET, POST, etc.)
-	Method string `pkl:"Method"`
-
-	// The action ID that this route maps to
-	ActionID string `pkl:"ActionID"`
+	// The HTTP methods for the route (GET, POST, etc.)
+	Methods []string `pkl:"Methods"`
 }

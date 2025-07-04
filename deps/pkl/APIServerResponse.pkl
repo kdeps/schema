@@ -27,8 +27,8 @@ import "pkl:semver"
 import "pkl:shell"
 import "pkl:xml"
 import "pkl:yaml"
-import "Document.pkl" as Document
-import "Utils.pkl" as Utils
+import "Document.pkl" as document
+import "Utils.pkl" as utils
 
 /// Class representing a block of data returned in a successful API response.
 class APIServerResponseBlock {
@@ -69,7 +69,7 @@ class APIServerErrorsBlock {
 ///
 /// - `true`: The request was successful.
 /// - `false`: The request encountered an error.
-Success: Boolean = true
+Success: Boolean? = true
 
 /// Additional metadata related to the API request.
 ///

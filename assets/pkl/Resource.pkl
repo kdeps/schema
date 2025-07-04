@@ -20,12 +20,12 @@ import "pkl:semver"
 import "pkl:shell"
 import "pkl:xml"
 import "pkl:yaml"
-import "Document.pkl" as Document
-import "Utils.pkl" as Utils
-import "Memory.pkl" as Memory
-import "Session.pkl" as Session
-import "Tool.pkl" as Tool
-import "Item.pkl" as Item
+import "Document.pkl" as document
+import "Utils.pkl" as utils
+import "Memory.pkl" as memory
+import "Session.pkl" as session
+import "Tool.pkl" as tool
+import "Item.pkl" as item
 
 import "Project.pkl"
 import "APIServer.pkl"
@@ -56,13 +56,13 @@ hidden isValidDependency = (str) -> if (str.matches(actionStringRegex)) true els
 ActionID: String(isValidActionID)
 
 /// The name of the resource.
-Name: String
+Name: String?
 
 /// A description of the resource, providing additional context.
-Description: String
+Description: String?
 
 /// The category to which the resource belongs.
-Category: String
+Category: String?
 
 /// A listing of dependencies required by the resource, validated against [isValidDependency].
 Requires: Listing<String(isValidDependency)>?
@@ -127,20 +127,20 @@ class ValidationCheck {
         ///
         /// - `true`: The validation check will be retried if it fails.
         /// - `false`: The validation check will not be retried. Default is `false`.
-        Retry: Boolean = false
+        Retry: Boolean? = false
 
         /// The number of times to retry the validation check before considering it a failure.
         ///
         /// This property is only used when [Retry] is set to `true`.
         /// Default value is 3 retry attempts.
-        RetryTimes: Int = 3
+        RetryTimes: Int? = 3
 }
 
 /// Class representing an error returned from an API validation check.
 class APIError {
         /// The error code associated with the API error.
-        Code: Int
+        Code: Int?
 
         /// A message providing details about the error.
-        Message: String
+        Message: String?
 }

@@ -145,7 +145,7 @@ func TestTmpDirFunctionality(t *testing.T) {
 
 		// Verify filename
 		if filepath.Base(extractedPath) != "Workflow.pkl" {
-			t.Errorf("Filename should be preserved as Workflow.pkl, got %s", filepath.Base(extractedPath))
+			t.Errorf("Filename should be preserved as workflow.pkl, got %s", filepath.Base(extractedPath))
 		}
 	})
 }

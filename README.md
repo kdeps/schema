@@ -9,19 +9,31 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.3.0
+### Latest Release: v0.3.1
 *Released: 2025-07-02*
 
 
+📦 **Updates**
+  - **upgrade deprecated gha plugin** (`29f15fa`)
+
 📝 **Other Changes**
-  - **Uniform schema with Retry Logic and Docker Enhancements (#19)** (`64f620e`)
-    * use uniform schema naming conventions (attr as capitalized, func as pascalCased)
-  - **** (`* uniform schema`)
+  - **renamed Command->Script and CondaEnvironment->PythonEnvironment** (`b7d3688`)
+  - **install pkl-gen-go in gha for running pkl tests** (`aaadde8`)
+  - **install pkl-gen-go in gha for running pkl tests** (`5317aa2`)
+  - **fix gha build** (`650674f`)
+  - **enhance workflows to gen relnotes on gha trigger** (`f088834`)
 
 ### Complete Release History
 
 *Detailed changelog showing all changes from the beginning of the project*
 
+
+## v0.3.0 (*2025-07-02*)
+
+📝 **Other Changes**
+  - **Uniform schema with Retry Logic and Docker Enhancements (#19)** (`64f620e`)
+    * use uniform schema naming conventions (attr as capitalized, func as pascalCased)
+  - **** (`* uniform schema`)
 
 ## v0.2.40 (*2025-06-11*)
 
@@ -341,13 +353,8 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## v0.1.40 (*2025-01-10*)
 
-📝 **Other Changes**
-  - **change request function from param("..") -> params("..")** (`541ab82`)
-
-## v0.1.39 (*2025-01-09*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 130
+- Total commits: 131
 - Project inception
 
 **📝 All Changes Since Project Start:**
@@ -415,6 +422,7 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Update CNAME** (`ae8b694`)
 
 📝 **Other Changes**
+  - **change request function from param("..") -> params("..")** (`541ab82`)
   - **import upstream PKL modules and KDEPS PKL helpers in resource & api response** (`ef98d66`)
   - **document renderers respond with null rather than empty string** (`1d78332`)
   - **decode base64 strings by default on all Resource types** (`80f093c`)
@@ -489,4 +497,4 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Initial commit** (`26d33e0`)
 
 ---
-*Generated on 2025-07-02 08:07:21 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-04 08:05:46 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*

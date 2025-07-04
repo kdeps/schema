@@ -6,10 +6,10 @@ import "github.com/apple/pkl-go/pkl"
 // Class representing the configuration settings for the API server.
 type APIServerSettings struct {
 	// The IP address the server binds to (default: "127.0.0.1")
-	HostIP string `pkl:"HostIP"`
+	HostIP *string `pkl:"HostIP"`
 
-	// The port the server listens on (default: 8080)
-	PortNum uint16 `pkl:"PortNum"`
+	// The port the server listens on (default: 3000)
+	PortNum *uint16 `pkl:"PortNum"`
 
 	// The timeout duration (in seconds) for API requests. Defaults to 60 seconds.
 	TimeoutDuration *pkl.Duration `pkl:"TimeoutDuration"`
@@ -22,7 +22,7 @@ type APIServerSettings struct {
 	TrustedProxies *[]string `pkl:"TrustedProxies"`
 
 	// List of routes configured for the server
-	Routes []*APIServerRoutes `pkl:"Routes"`
+	Routes *[]*APIServerRoutes `pkl:"Routes"`
 
 	// CORS settings for the API server
 	CORS *CORS `pkl:"CORS"`

@@ -18,10 +18,10 @@ typealias WebServerType = "static" | "app"
 /// Configuration settings for the web server
 class WebServerSettings {
         /// The IP address the server binds to (default: "127.0.0.1")
-        HostIP: String = "127.0.0.1"
+        HostIP: String? = "127.0.0.1"
 
         /// The port the server listens on (default: 8080)
-        PortNum: UInt16 = 8080
+        PortNum: UInt16? = 8080
 
         /// A list of trusted proxies (IPv4, IPv6, or CIDR ranges).
         /// If set, only requests passing through these proxies will have their `X-Forwarded-For`
@@ -33,7 +33,7 @@ class WebServerSettings {
         /// List of routes configured for the server
         ///
         /// Each route specifies a path and its server behavior
-        Routes: Listing<WebServerRoutes>
+        Routes: Listing<WebServerRoutes>?
 }
 
 /// Configuration for a server route
@@ -46,10 +46,10 @@ class WebServerRoutes {
         AppPort: UInt16? = 8052
 
         /// Type of web server for this route, can either be "app" or "static". (default: "static")
-        ServerType: WebServerType = "static"
+        ServerType: WebServerType? = "static"
 
         /// Public path relative to the "/data/" directory (default: "/web")
-        PublicPath: String = "/web"
+        PublicPath: String? = "/web"
 
         /// Optional command to execute for the route. Only applicable if serverType is "app".
         Command: String?

@@ -53,7 +53,7 @@ hidden isValidVersion = (str) -> if (str.matches(versionStringRegex)) true else 
 AgentID: String(isValidName)
 
 /// A description of the workflow, providing details about its purpose and behavior.
-Description: String
+Description: String?
 
 /// A URI pointing to the website or landing page for the workflow, if available.
 Website: Uri?
