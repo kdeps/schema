@@ -9,9 +9,22 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.3.1
-*Released: 2025-07-02*
+### Latest Release: v0.3.2
+*Released: 2025-07-04*
 
+
+✨ **Enhancements**
+  - **added pklresource and add use sensible defaults to optional fields (#20)** (`1496555`)
+
+📦 **Updates**
+  - **Update release notes for v0.3.1 [skip ci]** (`151b018`)
+
+### Complete Release History
+
+*Detailed changelog showing all changes from the beginning of the project*
+
+
+## v0.3.1 (*2025-07-02*)
 
 📦 **Updates**
   - **upgrade deprecated gha plugin** (`29f15fa`)
@@ -22,11 +35,6 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **install pkl-gen-go in gha for running pkl tests** (`5317aa2`)
   - **fix gha build** (`650674f`)
   - **enhance workflows to gen relnotes on gha trigger** (`f088834`)
-
-### Complete Release History
-
-*Detailed changelog showing all changes from the beginning of the project*
-
 
 ## v0.3.0 (*2025-07-02*)
 
@@ -345,21 +353,14 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## v0.1.41 (*2025-01-11*)
 
-✨ **Enhancements**
-  - **added README.md and relnote generator** (`6c6987c`)
-
-📝 **Other Changes**
-  - **return stderr if not empty on stdout function** (`4ae7fb9`)
-
-## v0.1.40 (*2025-01-10*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 131
+- Total commits: 133
 - Project inception
 
 **📝 All Changes Since Project Start:**
 
 ✨ **Enhancements**
+  - **added README.md and relnote generator** (`6c6987c`)
   - **added document pkl module for parsing and creating json, yaml and xml docs** (`ea3a56a`)
   - **added Data resource helper for getting agent data file path** (`efb337e`)
   - **Added file attribute where each associated resource value was saved** (`33eb094`)
@@ -422,6 +423,7 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Update CNAME** (`ae8b694`)
 
 📝 **Other Changes**
+  - **return stderr if not empty on stdout function** (`4ae7fb9`)
   - **change request function from param("..") -> params("..")** (`541ab82`)
   - **import upstream PKL modules and KDEPS PKL helpers in resource & api response** (`ef98d66`)
   - **document renderers respond with null rather than empty string** (`1d78332`)
@@ -497,4 +499,4 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Initial commit** (`26d33e0`)
 
 ---
-*Generated on 2025-07-04 08:05:46 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-04 06:16:34 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
