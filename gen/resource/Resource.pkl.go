@@ -18,13 +18,13 @@ type Resource struct {
 	ActionID string `pkl:"ActionID"`
 
 	// The name of the resource.
-	Name string `pkl:"Name"`
+	Name *string `pkl:"Name"`
 
 	// A description of the resource, providing additional context.
-	Description string `pkl:"Description"`
+	Description *string `pkl:"Description"`
 
 	// The category to which the resource belongs.
-	Category string `pkl:"Category"`
+	Category *string `pkl:"Category"`
 
 	// A listing of dependencies required by the resource, validated against [isValidDependency].
 	Requires *[]string `pkl:"Requires"`

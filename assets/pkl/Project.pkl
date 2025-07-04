@@ -25,7 +25,7 @@ class Settings {
         ///
         /// - `true`: The project runs in API server mode.
         /// - `false`: The project does not run in API server mode. Default is `false`.
-        APIServerMode: Boolean = false
+        APIServerMode: Boolean? = false
 
         /// Settings for configuring the API server, which is optional.
         ///
@@ -37,7 +37,7 @@ class Settings {
         ///
         /// - `true`: The project runs in Web server mode.
         /// - `false`: The project does not run in Web server mode. Default is `false`.
-        WebServerMode: Boolean = false
+        WebServerMode: Boolean? = false
 
         /// Settings for configuring the Web server, which is optional.
         ///
@@ -48,19 +48,19 @@ class Settings {
         /// Docker-related settings for the project's agent.
         ///
         /// These settings define how the Docker agent should be configured for the project.
-        /// [Docker.DockerSettings]: Includes properties such as Docker image, container settings, and other
+        /// [Docker.DockerSettings]: Includes properties such as docker image, container settings, and other
         /// Docker-specific configurations.
-        AgentSettings: Docker.DockerSettings
+        AgentSettings: Docker.DockerSettings?
 
         /// Maximum number of rate limit requests allowed in the workflow.
         ///
         /// This setting controls the rate limiting behavior for workflow execution.
         /// Default value is 100 requests.
-        RateLimitMax: Int = 100
+        RateLimitMax: Int? = 100
 
         /// Environment setting for the workflow execution.
         ///
         /// Specifies whether the workflow runs in development or production mode.
         /// Valid values are "dev" or "production".
-        Environment: BuildEnv = "dev"
+        Environment: BuildEnv? = "dev"
 }

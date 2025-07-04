@@ -12,21 +12,21 @@
 module test.Functions
 
 import "pkl:test"
-import "../deps/pkl/Utils.pkl" as Utils
-import "../deps/pkl/Data.pkl" as Data
-import "../deps/pkl/Skip.pkl" as Skip
-import "../deps/pkl/Document.pkl" as Document
-import "../deps/pkl/Item.pkl" as Item
-import "../deps/pkl/LLM.pkl" as LLM
-import "../deps/pkl/Exec.pkl" as Exec
-import "../deps/pkl/Python.pkl" as Python
-import "../deps/pkl/HTTP.pkl" as HTTP
-import "../deps/pkl/APIServerRequest.pkl" as APIRequest
-import "../deps/pkl/Kdeps.pkl" as Kdeps
-import "../deps/pkl/Workflow.pkl" as Workflow
-import "../deps/pkl/Resource.pkl" as Resource
-import "../deps/pkl/Docker.pkl" as Docker
-import "../deps/pkl/Project.pkl" as Project
+import "../deps/pkl/Utils.pkl" as utils
+import "../deps/pkl/Data.pkl" as data
+import "../deps/pkl/Skip.pkl" as skip
+import "../deps/pkl/Document.pkl" as document
+import "../deps/pkl/Item.pkl" as item
+import "../deps/pkl/LLM.pkl" as llm
+import "../deps/pkl/Exec.pkl" as exec
+import "../deps/pkl/Python.pkl" as python
+import "../deps/pkl/HTTP.pkl" as http
+import "../deps/pkl/APIServerRequest.pkl" as apirequest
+import "../deps/pkl/Kdeps.pkl" as kdeps
+import "../deps/pkl/Workflow.pkl" as workflow
+import "../deps/pkl/Resource.pkl" as resource
+import "../deps/pkl/Docker.pkl" as docker
+import "../deps/pkl/Project.pkl" as project
 
 /// Test APIServerRequest.pkl functions
 local testRequest = new APIRequest {

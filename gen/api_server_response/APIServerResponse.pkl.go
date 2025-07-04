@@ -8,7 +8,7 @@ import (
 )
 
 type APIServerResponse interface {
-	GetSuccess() bool
+	GetSuccess() *bool
 
 	GetMeta() *APIServerResponseMetaBlock
 
@@ -39,7 +39,7 @@ type APIServerResponseImpl struct {
 	//
 	// - `true`: The request was successful.
 	// - `false`: The request encountered an error.
-	Success bool `pkl:"Success"`
+	Success *bool `pkl:"Success"`
 
 	// Additional metadata related to the API request.
 	//
@@ -64,7 +64,7 @@ type APIServerResponseImpl struct {
 //
 // - `true`: The request was successful.
 // - `false`: The request encountered an error.
-func (rcv *APIServerResponseImpl) GetSuccess() bool {
+func (rcv *APIServerResponseImpl) GetSuccess() *bool {
 	return rcv.Success
 }
 

@@ -13,10 +13,10 @@ type WebServerRoutes struct {
 	AppPort *uint16 `pkl:"AppPort"`
 
 	// Type of web server for this route, can either be "app" or "static". (default: "static")
-	ServerType webservertype.WebServerType `pkl:"ServerType"`
+	ServerType *webservertype.WebServerType `pkl:"ServerType"`
 
 	// Public path relative to the "/data/" directory (default: "/web")
-	PublicPath string `pkl:"PublicPath"`
+	PublicPath *string `pkl:"PublicPath"`
 
 	// Optional command to execute for the route. Only applicable if serverType is "app".
 	Command *string `pkl:"Command"`

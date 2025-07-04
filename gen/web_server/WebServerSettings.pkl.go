@@ -4,10 +4,10 @@ package webserver
 // Configuration settings for the web server
 type WebServerSettings struct {
 	// The IP address the server binds to (default: "127.0.0.1")
-	HostIP string `pkl:"HostIP"`
+	HostIP *string `pkl:"HostIP"`
 
 	// The port the server listens on (default: 8080)
-	PortNum uint16 `pkl:"PortNum"`
+	PortNum *uint16 `pkl:"PortNum"`
 
 	// A list of trusted proxies (IPv4, IPv6, or CIDR ranges).
 	// If set, only requests passing through these proxies will have their `X-Forwarded-For`
@@ -19,5 +19,5 @@ type WebServerSettings struct {
 	// List of routes configured for the server
 	//
 	// Each route specifies a path and its server behavior
-	Routes []*WebServerRoutes `pkl:"Routes"`
+	Routes *[]*WebServerRoutes `pkl:"Routes"`
 }

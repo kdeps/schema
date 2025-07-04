@@ -13,11 +13,11 @@ type ValidationCheck struct {
 	//
 	// - `true`: The validation check will be retried if it fails.
 	// - `false`: The validation check will not be retried. Default is `false`.
-	Retry bool `pkl:"Retry"`
+	Retry *bool `pkl:"Retry"`
 
 	// The number of times to retry the validation check before considering it a failure.
 	//
 	// This property is only used when [Retry] is set to `true`.
 	// Default value is 3 retry attempts.
-	RetryTimes int `pkl:"RetryTimes"`
+	RetryTimes *int `pkl:"RetryTimes"`
 }

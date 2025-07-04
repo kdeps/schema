@@ -7,17 +7,14 @@ type DockerSettings struct {
 	// A mapping of environment variable names to their values.
 	Params *map[string]string `pkl:"Params"`
 
-	// Docker image to be used as the base image
-	Image string `pkl:"Image"`
-
-	// Sets the Ollama Docker version to be use as the base image
-	OllamaVersion string `pkl:"OllamaVersion"`
+	// Sets the tag version to be use as the base image
+	OllamaTagVersion *string `pkl:"OllamaTagVersion"`
 
 	// Install Anaconda Python on the Docker container
-	InstallAnaconda bool `pkl:"InstallAnaconda"`
+	InstallAnaconda *bool `pkl:"InstallAnaconda"`
 
 	// Sets the timezone (see the TZ Identifier here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-	Timezone string `pkl:"Timezone"`
+	Timezone *string `pkl:"Timezone"`
 
 	// Conda packages to install when `InstallAnaconda` is set to true.
 	//
@@ -38,7 +35,7 @@ type DockerSettings struct {
 	// A list of APT or PPA repos to be added.
 	Repositories *[]string `pkl:"Repositories"`
 
-	// A mandatory list of models to be used in the Docker environment.
+	// A mandatory list of LLM models to be used in the Docker environment.
 	Models []string `pkl:"Models"`
 
 	// A mapping of build arguments variable name

@@ -16,10 +16,10 @@ import "APIServerRequest.pkl"
 /// Class representing the configuration settings for the API server.
 class APIServerSettings {
         /// The IP address the server binds to (default: "127.0.0.1")
-        HostIP: String = "127.0.0.1"
+        HostIP: String? = "127.0.0.1"
 
-        /// The port the server listens on (default: 8080)
-        PortNum: UInt16 = 8080
+        /// The port the server listens on (default: 3000)
+        PortNum: UInt16? = 3000
 
         /// The timeout duration (in seconds) for API requests. Defaults to 60 seconds.
         TimeoutDuration: Duration? = 60.s
@@ -32,10 +32,10 @@ class APIServerSettings {
         TrustedProxies: Listing<String>?
 
         /// List of routes configured for the server
-        Routes: Listing<APIServerRoutes>
+        Routes: Listing<APIServerRoutes>?
 
         /// CORS settings for the API server
-        CORS: CORS
+        CORS: CORS?
 }
 
 /// Class representing a route in the API server configuration.
@@ -51,11 +51,8 @@ class APIServerRoutes {
         /// The URL path for the route
         Path: String
 
-        /// The HTTP method for the route (GET, POST, etc.)
-        Method: String(isValidHTTPMethod)
-
-        /// The action ID that this route maps to
-        ActionID: String
+        /// The HTTP methods for the route (GET, POST, etc.)
+        Methods: Listing<String(isValidHTTPMethod)>
 }
 
 /// Cross-Origin Resource Sharing (CORS) configuration
@@ -70,7 +67,7 @@ class CORS {
         throw("Unsupported HTTP method. Use: GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD")
 
         /// Enable Cross-Origin Resource Sharing (CORS) for the API server
-        EnableCORS: Boolean = false
+        EnableCORS: Boolean? = false
 
         /// List of allowed origins for CORS
         AllowOrigins: Listing<String>?
@@ -88,5 +85,5 @@ class CORS {
         MaxAge: Duration?
 
         /// Allow credentials in CORS requests
-        AllowCredentials: Boolean = true
+        AllowCredentials: Boolean? = true
 }

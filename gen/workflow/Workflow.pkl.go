@@ -11,7 +11,7 @@ import (
 type Workflow interface {
 	GetAgentID() string
 
-	GetDescription() string
+	GetDescription() *string
 
 	GetWebsite() *string
 
@@ -50,7 +50,7 @@ type WorkflowImpl struct {
 	AgentID string `pkl:"AgentID"`
 
 	// A description of the workflow, providing details about its purpose and behavior.
-	Description string `pkl:"Description"`
+	Description *string `pkl:"Description"`
 
 	// A URI pointing to the website or landing page for the workflow, if available.
 	Website *string `pkl:"Website"`
@@ -89,7 +89,7 @@ func (rcv *WorkflowImpl) GetAgentID() string {
 }
 
 // A description of the workflow, providing details about its purpose and behavior.
-func (rcv *WorkflowImpl) GetDescription() string {
+func (rcv *WorkflowImpl) GetDescription() *string {
 	return rcv.Description
 }
 

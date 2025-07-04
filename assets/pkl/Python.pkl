@@ -70,7 +70,8 @@ class ResourcePython {
 function resource(actionID: String): ResourcePython =
     if (Resources.getOrNull(actionID) != null) Resources[actionID] else new ResourcePython {
         Env {}
-        Command = ""
+        PythonEnvironment = ""
+        Script = ""
         Stderr {}
         Stdout {}
         ExitCode = 0
