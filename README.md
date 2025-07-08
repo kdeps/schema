@@ -9,20 +9,28 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.3.2
-*Released: 2025-07-04*
+### Latest Release: v0.3.3
+*Released: 2025-07-09*
 
+
+📦 **Updates**
+  - **Update release notes for v0.3.2 [skip ci]** (`3b44595`)
+
+📝 **Other Changes**
+  - **use the SQLite based agent reader to return the agentID/actionID (#21)** (`e419bfc`)
+
+### Complete Release History
+
+*Detailed changelog showing all changes from the beginning of the project*
+
+
+## v0.3.2 (*2025-07-04*)
 
 ✨ **Enhancements**
   - **added pklresource and add use sensible defaults to optional fields (#20)** (`1496555`)
 
 📦 **Updates**
   - **Update release notes for v0.3.1 [skip ci]** (`151b018`)
-
-### Complete Release History
-
-*Detailed changelog showing all changes from the beginning of the project*
-
 
 ## v0.3.1 (*2025-07-02*)
 
@@ -347,19 +355,15 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## v0.1.42 (*2025-01-11*)
 
-✨ **Enhancements**
-  - **upgrade minimum pkl version to 0.26.3. added minor fixes on the relnote generator.** (`c80d5ae`)
-  - **Added skip validation helper functions** (`562775e`)
-
-## v0.1.41 (*2025-01-11*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 133
+- Total commits: 135
 - Project inception
 
 **📝 All Changes Since Project Start:**
 
 ✨ **Enhancements**
+  - **upgrade minimum pkl version to 0.26.3. added minor fixes on the relnote generator.** (`c80d5ae`)
+  - **Added skip validation helper functions** (`562775e`)
   - **added README.md and relnote generator** (`6c6987c`)
   - **added document pkl module for parsing and creating json, yaml and xml docs** (`ea3a56a`)
   - **added Data resource helper for getting agent data file path** (`efb337e`)
@@ -499,4 +503,4 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Initial commit** (`26d33e0`)
 
 ---
-*Generated on 2025-07-09 00:06:07 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-08 22:09:54 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
