@@ -13,6 +13,7 @@ open module org.kdeps.pkl.Python
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
+import "Agent.pkl" as agent
 
 /// A mapping of resource actionIDs to their associated [ResourcePython] objects.
 Resources: Mapping<String, ResourcePython>?
@@ -68,15 +69,18 @@ class ResourcePython {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourcePython]: The [ResourcePython] object associated with the resource actionID.
 function resource(actionID: String): ResourcePython =
-    if (Resources.getOrNull(actionID) != null) Resources[actionID] else new ResourcePython {
-        Env {}
-        PythonEnvironment = ""
-        Script = ""
-        Stderr {}
-        Stdout {}
-        ExitCode = 0
-        File = ""
-        ItemValues {}
+  if (Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+    Resources[agent.resolveActionID(actionID)]
+  else
+    new ResourcePython {
+      Env {}
+      PythonEnvironment = ""
+      Script = ""
+      Stderr {}
+      Stdout {}
+      ExitCode = 0
+      File = ""
+      ItemValues {}
     }
 
 /// Retrieves the standard error output associated with the resource [actionID].
@@ -114,7 +118,7 @@ function itemValues(actionID: String): Listing<String> = if (isBase64(resource(a
 /// [envName]: The name of the environment variable to retrieve.
 /// [str]: The value of the environment variable, or an empty string if not found.
 function env(actionID: String, envName: String): String =
-    if (isBase64(resource(actionID).Env[envName]))
-        resource(actionID).Env[envName].base64Decoded
-    else
-        resource(actionID).Env[envName]
+  if (isBase64(resource(agent.resolveActionID(actionID)).Env[envName]))
+    resource(agent.resolveActionID(actionID)).Env[envName].base64Decoded
+  else
+    resource(agent.resolveActionID(actionID)).Env[envName]
