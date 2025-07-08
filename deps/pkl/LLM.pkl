@@ -17,6 +17,7 @@ open module org.kdeps.pkl.LLM
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
+import "Agent.pkl" as agent
 
 /// A mapping of resource actionIDs to their associated [ResourceChat] objects.
 Resources: Mapping<String, ResourceChat>?
@@ -110,18 +111,21 @@ class ToolProperties {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceChat]: The [ResourceChat] object associated with the resource actionID.
 function resource(actionID: String): ResourceChat =
-    if (Resources.getOrNull(actionID) != null) Resources[actionID] else new ResourceChat {
-        Model = "llama3.2"
-        Role {}
-        Prompt {}
-        Scenario {}
-        Tools {}
-        Files {}
-        JSONResponse = false
-        JSONResponseKeys {}
-        Response {}
-        File {}
-        ItemValues {}
+  if (Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+    Resources[agent.resolveActionID(actionID)]
+  else
+    new ResourceChat {
+      Model = "llama3.2"
+      Role {}
+      Prompt {}
+      Scenario {}
+      Tools {}
+      Files {}
+      JSONResponse = false
+      JSONResponseKeys {}
+      Response {}
+      File {}
+      ItemValues {}
     }
 
 /// Retrieves the response text associated with the resource [actionID].
