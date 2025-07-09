@@ -95,21 +95,67 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: build/generated/pkl/packages/*
+    - name: Wait for GitHub download URLs
+      env:
+        VERSION_NUM: ${{ github.ref_name }}
+      run: |
+        set +e
+        export VERSION=$(echo "${VERSION_NUM}" | sed -E 's/^v(.*)$/\1/')
+        
+        echo "Checking if GitHub download URLs are available..."
+        
+        # Wait for the core@VERSION file to become available
+        for attempt in 1 2 3 4 5; do
+          echo "Checking availability attempt $attempt of 5..."
+          
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" -I "https://github.com/kdeps/schema/releases/download/v${VERSION}/core@${VERSION}")
+          
+          if [ "$status_code" = "302" ] || [ "$status_code" = "200" ]; then
+            echo "Download URL is available (status: $status_code)"
+            break
+          else
+            if [ $attempt -lt 5 ]; then
+              wait_time=$((attempt * 30))  # 30s, 60s, 90s, 120s
+              echo "Download URL not ready (status: $status_code), waiting ${wait_time} seconds..."
+              sleep ${wait_time}s
+            else
+              echo "Download URL still not available after all attempts, but proceeding anyway..."
+            fi
+          fi
+        done
+        set -e
     - name: create docs
       env:
         VERSION_NUM: ${{ github.ref_name }}
       run: |
-        # Retry mechanism
+        # Retry mechanism with longer delays
         set +e
         # Extract version number without the leading 'v'
         export VERSION=$(echo "${VERSION_NUM}" | sed -E 's/^v(.*)$/\1/')
-        ./gradlew pkldoc
-        EXIT_CODE=$?
-        if [ $EXIT_CODE -ne 0 ]; then
-          echo "First attempt failed, retrying..."
-          sleep 30s
+        
+        echo "Attempting to generate docs (may need to wait for GitHub download URLs to become available)..."
+        
+        # Try up to 5 times with increasing delays
+        for attempt in 1 2 3 4 5; do
+          echo "Attempt $attempt of 5..."
           ./gradlew pkldoc
-        fi
+          EXIT_CODE=$?
+          
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "pkldoc generation succeeded on attempt $attempt"
+            break
+          else
+            if [ $attempt -lt 5 ]; then
+              # Wait longer between attempts, with exponential backoff
+              wait_time=$((attempt * 60))  # 60s, 120s, 180s, 240s
+              echo "Attempt $attempt failed, waiting ${wait_time} seconds before retry..."
+              sleep ${wait_time}s
+            else
+              echo "All attempts failed. GitHub download URLs may not be available yet."
+              exit 1
+            fi
+          fi
+        done
         set -e
     - name: setup pages
       uses: actions/configure-pages@v4
