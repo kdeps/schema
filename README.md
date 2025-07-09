@@ -9,9 +9,30 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.3.4
+### Latest Release: v0.3.5
 *Released: 2025-07-09*
 
+
+📦 **Updates**
+  - **Update release notes for v0.3.4 [skip ci]** (`b29bdcb`)
+
+📝 **Other Changes**
+  - **Docgen fix (#23)** (`9ded533`)
+    * add the ability to call the resource directly, without the use of @(...) template convention
+  - **** (`* Fix GitHub release timing issue in workflow`)
+  - **** (`- Add proactive URL availability check before pkldoc generation`)
+  - **** (`- Improve retry mechanism with exponential backoff (60s, 120s, 180s, 240s)`)
+  - **** (`- Increase retry attempts from 2 to 5 for better reliability`)
+  - **** (`- Addresses issue where GitHub download URLs aren't immediately available after release creation`)
+  - **** (`This fixes the 404 errors experienced during v0.3.4 release where pkldoc generation`)
+  - **** (`failed because GitHub's download URLs weren't ready yet.`)
+
+### Complete Release History
+
+*Detailed changelog showing all changes from the beginning of the project*
+
+
+## v0.3.4 (*2025-07-09*)
 
 ✨ **Enhancements**
   - **add the ability to call the resource directly, without the use of @(...) template convention (#22)** (`4a7fdd7`)
@@ -21,11 +42,6 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 📝 **Other Changes**
   - **hotfix: fix GHA PKL test errors** (`afe0151`)
-
-### Complete Release History
-
-*Detailed changelog showing all changes from the beginning of the project*
-
 
 ## v0.3.3 (*2025-07-09*)
 
@@ -355,13 +371,8 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## v0.1.44 (*2025-01-11*)
 
-📝 **Other Changes**
-  - **skip & validation is now a listing of any types** (`89cf401`)
-
-## v0.1.43 (*2025-01-11*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 137
+- Total commits: 138
 - Project inception
 
 **📝 All Changes Since Project Start:**
@@ -434,6 +445,7 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Update CNAME** (`ae8b694`)
 
 📝 **Other Changes**
+  - **skip & validation is now a listing of any types** (`89cf401`)
   - **return stderr if not empty on stdout function** (`4ae7fb9`)
   - **change request function from param("..") -> params("..")** (`541ab82`)
   - **import upstream PKL modules and KDEPS PKL helpers in resource & api response** (`ef98d66`)
@@ -510,4 +522,4 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Initial commit** (`26d33e0`)
 
 ---
-*Generated on 2025-07-09 15:16:48 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-09 15:37:57 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
