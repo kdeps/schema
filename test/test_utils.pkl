@@ -2,7 +2,7 @@
 ///
 /// This demonstrates how to create focused unit tests for individual PKL modules.
 /// This test specifically validates the isBase64 function with comprehensive test cases.
-@ModuleInfo { minPklVersion = "0.28.1" }
+@ModuleInfo { minPklVersion = "0.28.2" }
 
 module test.UtilsTest
 
