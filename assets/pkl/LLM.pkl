@@ -111,28 +111,32 @@ class ToolProperties {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceChat]: The [ResourceChat] object associated with the resource actionID.
 function resource(actionID: String): ResourceChat =
-  if (Resources.getOrNull(agent.resolveActionID(actionID)) != null)
-    Resources[agent.resolveActionID(actionID)]
-  else
-    new ResourceChat {
-      Model = "llama3.2"
-      Role {}
-      Prompt {}
-      Scenario {}
-      Tools {}
-      Files {}
-      JSONResponse = false
-      JSONResponseKeys {}
-      Response {}
-      File {}
-      ItemValues {}
-    }
+    if (Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+        Resources[agent.resolveActionID(actionID)]
+    else
+        new ResourceChat {
+            Model = "llama3.2"
+            Role = null
+            Prompt = null
+            Scenario {}
+            Tools {}
+            Files {}
+            JSONResponse = false
+            JSONResponseKeys {}
+            Response = null
+            File = null
+            ItemValues {}
+        }
 
 /// Retrieves the response text associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response for.
 /// [str]: The response text returned by the LLM model.
-function response(actionID: String): String = if (isBase64(resource(actionID).Response)) resource(actionID).Response.base64Decoded else resource(actionID).Response
+function response(actionID: String): String = 
+    let (res = resource(actionID).Response)
+    if (res != null)
+        if (isBase64(res)) res.base64Decoded else res
+    else ""
 
 /// Retrieves the prompt text associated with the resource [actionID].
 ///

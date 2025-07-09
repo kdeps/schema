@@ -69,7 +69,7 @@ class ResourcePython {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourcePython]: The [ResourcePython] object associated with the resource actionID.
 function resource(actionID: String): ResourcePython =
-  if (Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+  if (Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
     Resources[agent.resolveActionID(actionID)]
   else
     new ResourcePython {
