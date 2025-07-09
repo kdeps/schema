@@ -18,4 +18,7 @@ Files: Mapping<String, Mapping<String, String>>?
 ///
 /// [agentName]: The key of the agent name.
 /// [fileName]: The key of the file to retrieve from the agent.
-function filepath(agentName: String, fileName: String) = if ((Files.getOrNull(agentName).ifNonNull((v) -> v.containsKey(fileName))) ?? false) if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName] else ""
+function filepath(agentName: String, fileName: String) = 
+    if (Files != null && (Files.getOrNull(agentName).ifNonNull((v) -> v.containsKey(fileName))) ?? false) 
+        if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName] 
+    else ""

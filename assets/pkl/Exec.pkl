@@ -63,7 +63,7 @@ class ResourceExec {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceExec]: The [ResourceExec] object associated with the resource actionID.
 function resource(actionID: String): ResourceExec =
-  if (Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+  if (Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
     Resources[agent.resolveActionID(actionID)]
   else
     new ResourceExec {

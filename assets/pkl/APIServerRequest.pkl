@@ -63,7 +63,7 @@ Headers: Mapping<String, String>?
 Files: Mapping<String, APIServerRequestUploads>?
 
 /// Helper variables for file processing
-hidden fileKeys = Files.keys
+hidden fileKeys = Files?.keys ?? List()
 hidden firstFileKey = fileKeys.firstOrNull
 
 /// Class representing metadata for an uploaded file in an API request.
@@ -78,7 +78,7 @@ class APIServerRequestUploads {
 /// Retrieves the decoded request body.
 ///
 /// [str]: The Base64-decoded request body.
-function data(): String = if (Data != "") Data.base64Decoded else ""
+function data(): String = if (Data != null && Data != "") Data.base64Decoded else ""
 
 /// Retrieves the decoded value of the query parameter [name].
 ///
@@ -87,7 +87,7 @@ function data(): String = if (Data != "") Data.base64Decoded else ""
 /// [name]: The query parameter to retrieve.
 /// [str]: The Base64-decoded value of the query parameter.
 function params(name: String): String =
-    if (Params.getOrNull(name) != null) Params[name].base64Decoded else ""
+    if (Params != null && Params.getOrNull(name) != null) Params[name].base64Decoded else ""
 
 /// Retrieves the decoded value of the header [name].
 ///
@@ -96,7 +96,7 @@ function params(name: String): String =
 /// [name]: The header name to retrieve.
 /// [str]: The Base64-decoded value of the header.
 function header(name: String): String =
-    if (Headers.getOrNull(name) != null) Headers[name].base64Decoded else ""
+    if (Headers != null && Headers.getOrNull(name) != null) Headers[name].base64Decoded else ""
 
 /// Retrieves metadata for the uploaded file with the key [name].
 ///
@@ -106,10 +106,11 @@ function header(name: String): String =
 /// [name]: The key of the file to retrieve.
 /// [APIServerRequestUploads]: The metadata for the requested file.
 function file(name: String): APIServerRequestUploads =
-    if (!Files.isEmpty) if (Files.getOrNull(name) != null) Files[name] else Files[firstFileKey] else new APIServerRequestUploads {
-        Filepath = ""
-        Filetype = ""
-    }
+    if (Files != null && !Files.isEmpty) 
+        if (Files.getOrNull(name) != null) Files[name] 
+        else if (firstFileKey != null) Files[firstFileKey] 
+        else new APIServerRequestUploads { Filepath = ""; Filetype = "" }
+    else new APIServerRequestUploads { Filepath = ""; Filetype = "" }
 
 /// Retrieves the MIME type of the uploaded file with the key [name].
 ///
@@ -126,23 +127,23 @@ function filepath(name: String): String = file(name).Filepath
 /// Retrieves the total number of uploaded files.
 ///
 /// [str]: The number of uploaded files as a string.
-function filecount(): String = Files.length
+function filecount(): String = if (Files != null) Files.length.toString() else "0"
 
 /// Retrieves a list of file paths for all uploaded files.
 ///
 /// [Listing]: A list of file paths for uploaded files.
-function fileList(): Listing = Files.values.toList().map((it) -> it.Filepath)
+function fileList(): Listing = if (Files != null) Files.values.toList().map((it) -> it.Filepath) else List()
 
 /// Retrieves a list of MIME types for all uploaded files.
 ///
 /// [Listing]: A list of MIME types for uploaded files.
-function filetypes(): Listing = Files.values.toList().map((it) -> it.Filetype)
+function filetypes(): Listing = if (Files != null) Files.values.toList().map((it) -> it.Filetype) else List()
 
 /// Retrieves a list of file paths for uploaded files that match the given MIME type [mimeType].
 ///
 /// [mimeType]: The MIME type to filter files by.
 /// [Listing]: A list of file paths for files that match the specified MIME type.
-function filesByType(mimeType: String): Listing = Files.values.toList().filter((it) -> it.Filetype == mimeType).map((it) -> it.Filepath)
+function filesByType(mimeType: String): Listing = if (Files != null) Files.values.toList().filter((it) -> it.Filetype == mimeType).map((it) -> it.Filepath) else List()
 
 /// Retrieves the URI path of the request.
 ///
