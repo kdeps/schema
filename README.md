@@ -9,20 +9,31 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.3.3
+### Latest Release: v0.3.4
 *Released: 2025-07-09*
 
+
+✨ **Enhancements**
+  - **add the ability to call the resource directly, without the use of @(...) template convention (#22)** (`4a7fdd7`)
+
+📦 **Updates**
+  - **Update release notes for v0.3.3 [skip ci]** (`72e3482`)
+
+📝 **Other Changes**
+  - **hotfix: fix GHA PKL test errors** (`afe0151`)
+
+### Complete Release History
+
+*Detailed changelog showing all changes from the beginning of the project*
+
+
+## v0.3.3 (*2025-07-09*)
 
 📦 **Updates**
   - **Update release notes for v0.3.2 [skip ci]** (`3b44595`)
 
 📝 **Other Changes**
   - **use the SQLite based agent reader to return the agentID/actionID (#21)** (`e419bfc`)
-
-### Complete Release History
-
-*Detailed changelog showing all changes from the beginning of the project*
-
 
 ## v0.3.2 (*2025-07-04*)
 
@@ -349,14 +360,8 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## v0.1.43 (*2025-01-11*)
 
-📦 **Updates**
-  - **updated README.md** (`809d2c3`)
-  - **bump pkl to 0.27.1** (`8183a18`)
-
-## v0.1.42 (*2025-01-11*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 135
+- Total commits: 137
 - Project inception
 
 **📝 All Changes Since Project Start:**
@@ -414,6 +419,8 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Added initial core schema** (`a61fbf5`)
 
 📦 **Updates**
+  - **updated README.md** (`809d2c3`)
+  - **bump pkl to 0.27.1** (`8183a18`)
   - **Revert "upgrade pkl to 0.27.0; register python resource to resource pkl"** (`77fdf1a`)
     This reverts commit 86a334d697479e307513f759d2a7b0b06f9be35c.
   - **Revert "Update Gradle to 8.10.2"** (`95e60f9`)
@@ -503,4 +510,4 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Initial commit** (`26d33e0`)
 
 ---
-*Generated on 2025-07-09 17:08:28 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-09 15:16:48 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
