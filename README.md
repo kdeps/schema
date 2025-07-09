@@ -9,9 +9,20 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.3.5
+### Latest Release: v0.3.6
 *Released: 2025-07-09*
 
+
+📦 **Updates**
+  - **hotfix: upgrade docbuild step to use pkl 0.28.2** (`96212a0`)
+  - **Update release notes for v0.3.5 [skip ci]** (`2ea6ed3`)
+
+### Complete Release History
+
+*Detailed changelog showing all changes from the beginning of the project*
+
+
+## v0.3.5 (*2025-07-09*)
 
 📦 **Updates**
   - **Update release notes for v0.3.4 [skip ci]** (`b29bdcb`)
@@ -26,11 +37,6 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **** (`- Addresses issue where GitHub download URLs aren't immediately available after release creation`)
   - **** (`This fixes the 404 errors experienced during v0.3.4 release where pkldoc generation`)
   - **** (`failed because GitHub's download URLs weren't ready yet.`)
-
-### Complete Release History
-
-*Detailed changelog showing all changes from the beginning of the project*
-
 
 ## v0.3.4 (*2025-07-09*)
 
@@ -366,13 +372,8 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## v0.1.45 (*2025-01-11*)
 
-📝 **Other Changes**
-  - **removed all deprecated imports** (`7cd9fbe`)
-
-## v0.1.44 (*2025-01-11*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 138
+- Total commits: 139
 - Project inception
 
 **📝 All Changes Since Project Start:**
@@ -445,6 +446,7 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Update CNAME** (`ae8b694`)
 
 📝 **Other Changes**
+  - **removed all deprecated imports** (`7cd9fbe`)
   - **skip & validation is now a listing of any types** (`89cf401`)
   - **return stderr if not empty on stdout function** (`4ae7fb9`)
   - **change request function from param("..") -> params("..")** (`541ab82`)
@@ -522,4 +524,4 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Initial commit** (`26d33e0`)
 
 ---
-*Generated on 2025-07-09 15:37:57 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-09 16:18:14 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
