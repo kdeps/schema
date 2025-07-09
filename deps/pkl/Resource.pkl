@@ -20,6 +20,7 @@ import "pkl:semver"
 import "pkl:shell"
 import "pkl:xml"
 import "pkl:yaml"
+
 import "Document.pkl" as document
 import "Utils.pkl" as utils
 import "Memory.pkl" as memory
@@ -27,13 +28,16 @@ import "Session.pkl" as session
 import "Tool.pkl" as tool
 import "Item.pkl" as item
 
+import "LLM.pkl" as llm
+import "Agent.pkl" as agent
+import "Python.pkl" as python
+import "Exec.pkl" as exec
+import "HTTP.pkl" as client
+import "APIServerRequest.pkl" as request
+
 import "Project.pkl"
 import "APIServer.pkl"
 import "APIServerResponse.pkl"
-import "LLM.pkl"
-import "Exec.pkl"
-import "Python.pkl"
-import "HTTP.pkl"
 
 /// Regex pattern for validating resource actionIDs and dependencies.
 hidden actionStringRegex = Regex(#"^(\w+|@\w+(/[\w-]+)(:[\w.]+)?)$"#)
@@ -79,13 +83,13 @@ class ResourceAction {
         Expr: Dynamic?
 
         /// Configuration for executing commands.
-        Exec: Exec.ResourceExec?
+        Exec: exec.ResourceExec?
 
         /// Configuration for python scripts.
-        Python: Python.ResourcePython?
+        Python: python.ResourcePython?
 
         /// Configuration for chat interactions with an LLM.
-        Chat: LLM.ResourceChat?
+        Chat: llm.ResourceChat?
 
         /// A listing of conditions that determine if the action should be skipped.
         SkipCondition: Listing<Any>?
@@ -109,7 +113,7 @@ class ResourceAction {
         RestrictToRoutes: Listing<String>?
 
         /// Configuration for HTTP client interactions.
-        HTTPClient: HTTP.ResourceHTTPClient?
+        HTTPClient: client.ResourceHTTPClient?
 
         /// Configuration for handling API responses.
         APIResponse: APIServerResponse?
