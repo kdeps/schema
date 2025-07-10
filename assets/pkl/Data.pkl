@@ -31,22 +31,3 @@ function filepath(agentName: String?, fileName: String?): String =
                 if (isBase64(dataRecord[fileName])) dataRecord[fileName].base64Decoded else dataRecord[fileName]
             else ""
         else ""
-
-/// Maps a data file mapping to pklres storage for the given [agentName].
-///
-/// [agentName]: The agent name to store data for.
-/// [files]: The mapping of file names to file paths.
-function mapFiles(agentName: String?, files: Mapping<String, String>?): String =
-  if (agentName != null && files != null)
-    pklres.setPklValue(agentName, "data", "files", files.toString())
-  else ""
-
-/// Maps a single data file to pklres storage for the given [agentName] and [fileName].
-///
-/// [agentName]: The agent name to store data for.
-/// [fileName]: The name of the file to store.
-/// [filePath]: The path of the file to store.
-function mapFile(agentName: String?, fileName: String?, filePath: String?): String =
-  if (agentName != null && fileName != null && filePath != null)
-    pklres.setPklValue(agentName, "data", "file.\(fileName)", filePath)
-  else ""

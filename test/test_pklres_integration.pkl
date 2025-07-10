@@ -1,0 +1,141 @@
+/// Test pklres integration with resource functions
+@ModuleInfo { minPklVersion = "0.28.2" }
+
+module test.PklresIntegration
+
+import "../deps/pkl/Exec.pkl" as exec
+import "../deps/pkl/Python.pkl" as python
+import "../deps/pkl/LLM.pkl" as llm
+import "../deps/pkl/HTTP.pkl" as http
+import "../deps/pkl/Data.pkl" as data
+import "../deps/pkl/PklResource.pkl" as pklres
+
+/// Test that resource functions work with pklres backend
+class PklresIntegrationTests {
+    /// Test that exec resource functions return default values when no data exists
+    execTests: Listing<Boolean> = new Listing {
+        exec.resource("nonexistent") != null
+        exec.resource("nonexistent").Command == ""
+        exec.resource("nonexistent").ExitCode == 0
+        exec.stdout("nonexistent") == ""
+        exec.stderr("nonexistent") == ""
+        exec.exitCode("nonexistent") == 0
+        exec.file("nonexistent") == ""
+        exec.itemValues("nonexistent").isEmpty
+        exec.env("nonexistent", "PATH") == ""
+    }
+
+    /// Test that python resource functions return default values when no data exists
+    pythonTests: Listing<Boolean> = new Listing {
+        python.resource("nonexistent") != null
+        python.resource("nonexistent").Script == ""
+        python.resource("nonexistent").ExitCode == 0
+        python.resource("nonexistent").PythonEnvironment == ""
+        python.stdout("nonexistent") == ""
+        python.stderr("nonexistent") == ""
+        python.exitCode("nonexistent") == 0
+        python.file("nonexistent") == ""
+        python.itemValues("nonexistent").isEmpty
+        python.env("nonexistent", "PYTHONPATH") == ""
+    }
+
+    /// Test that LLM resource functions return default values when no data exists
+    llmTests: Listing<Boolean> = new Listing {
+        llm.resource("nonexistent") != null
+        llm.resource("nonexistent").Model == "llama3.2"
+        llm.resource("nonexistent").JSONResponse == false
+        llm.response("nonexistent") == ""
+        llm.prompt("nonexistent") == ""
+        llm.jsonResponse("nonexistent") == false
+        llm.jsonResponseKeys("nonexistent").isEmpty
+        llm.file("nonexistent") == ""
+        llm.itemValues("nonexistent").isEmpty
+    }
+
+    /// Test that HTTP resource functions return default values when no data exists
+    httpTests: Listing<Boolean> = new Listing {
+        http.resource("nonexistent") != null
+        http.resource("nonexistent").Method == "GET"
+        http.resource("nonexistent").Url == ""
+        http.responseBody("nonexistent") == ""
+        http.file("nonexistent") == ""
+        http.itemValues("nonexistent").isEmpty
+        http.responseHeader("nonexistent", "Content-Type") == ""
+    }
+
+    /// Test that data resource functions work correctly
+    dataTests: Listing<Boolean> = new Listing {
+        data.filepath("nonexistent", "nonexistent") == ""
+    }
+
+    /// Test that pklres functions are available
+    pklresTests: Listing<Boolean> = new Listing {
+        pklres.getPklRecord("nonexistent", "exec") == ""
+        pklres.getPklRecord("nonexistent", "python") == ""
+        pklres.getPklRecord("nonexistent", "llm") == ""
+        pklres.getPklRecord("nonexistent", "http") == ""
+        pklres.getPklRecord("nonexistent", "data") == ""
+        pklres.setPklValue(null, "exec", "command", "test") == ""
+        pklres.setPklValue("test", null, "command", "test") == ""
+        pklres.setPklValue("test", "exec", null, "test") == ""
+        pklres.setPklValue("test", "exec", "command", null) == ""
+        pklres.getPklValue("nonexistent", "exec", "command") == ""
+        pklres.getPklValue(null, "exec", "command") == ""
+        pklres.getPklValue("test", null, "command") == ""
+        pklres.getPklValue("test", "exec", null) == ""
+    }
+
+    /// Combine all test results
+    allTests: Listing<Boolean> = new Listing {
+        ...execTests
+        ...pythonTests
+        ...llmTests
+        ...httpTests
+        ...dataTests
+        ...pklresTests
+    }
+    
+    /// Count total tests
+    totalTests: Int = allTests.length
+    
+    /// Count passed tests
+    passedTests: Int = allTests.count((test) -> test)
+    
+    /// Count failed tests
+    failedTests: Int = totalTests - passedTests
+    
+    /// Success rate
+    successRate: Float = if (totalTests > 0) (passedTests / totalTests) * 100 else 0
+    
+    /// Test output
+    output: Dynamic = new {
+        text = """
+🧪 PKLRES INTEGRATION TEST RESULTS
+==================================
+
+📊 EXECUTION SUMMARY:
+Total Tests: \(totalTests)
+Passed: \(passedTests)
+Failed: \(failedTests)
+Success Rate: \(successRate)%
+
+✅ RESOURCE MODULE TESTS:
+- Exec.pkl: \(execTests.count((test) -> test))/\(execTests.length) tests passed
+- Python.pkl: \(pythonTests.count((test) -> test))/\(pythonTests.length) tests passed
+- LLM.pkl: \(llmTests.count((test) -> test))/\(llmTests.length) tests passed
+- HTTP.pkl: \(httpTests.count((test) -> test))/\(httpTests.length) tests passed
+- Data.pkl: \(dataTests.count((test) -> test))/\(dataTests.length) tests passed
+
+🔧 PKLRES FUNCTION TESTS:
+- PklResource.pkl: \(pklresTests.count((test) -> test))/\(pklresTests.length) tests passed
+
+🎯 OVERALL STATUS: \(if (failedTests == 0) "✅ ALL TESTS PASSING" else "❌ \(failedTests) TESTS FAILING")
+
+This test validates that all resource functions work correctly with pklres backend integration.
+All functions should return appropriate default values when no data exists in pklres storage.
+"""
+    }
+}
+
+/// Run the integration tests
+output = (new PklresIntegrationTests {}).output.text 
