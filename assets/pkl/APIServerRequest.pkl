@@ -40,16 +40,16 @@ hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#
 hidden isValidHTTPMethod = (str) -> if (str.matches(apiMethodRegex)) true else throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
 
 /// The URI path of the incoming request.
-Path: Uri
+Path: String = "/"
 
 /// The Client IP Address
-IP: String
+IP: String = ""
 
 /// The Request ID
-ID: String
+ID: String = ""
 
 /// The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
-Method: String(isValidHTTPMethod)
+Method: String(isValidHTTPMethod) = "GET"
 
 /// The request body, if provided.
 Data: String?
