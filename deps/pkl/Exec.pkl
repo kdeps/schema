@@ -15,9 +15,11 @@ extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 import "Agent.pkl" as agent
+import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourceExec] objects.
-Resources: Mapping<String, ResourceExec>?
+/// This mapping is populated from pklres storage.
+Resources: Mapping<String, ResourceExec> = new Mapping {}
 
 /// Class representing an executable resource, which includes the command to be executed,
 /// environment variables, and execution details such as outputs and exit codes.
@@ -63,18 +65,22 @@ class ResourceExec {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceExec]: The [ResourceExec] object associated with the resource actionID.
 function resource(actionID: String?): ResourceExec =
-  if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+  if (actionID != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
     Resources[agent.resolveActionID(actionID)]
   else
-    new ResourceExec {
-      Env = null
-      Command = ""
-      Stderr = null
-      Stdout = null
-      ExitCode = 0
-      File = null
-      ItemValues = null
-    }
+    let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "exec"))
+    if (!pklText.isEmpty)
+      eval(pklText) as ResourceExec
+    else
+      new ResourceExec {
+        Env = null
+        Command = ""
+        Stderr = null
+        Stdout = null
+        ExitCode = 0
+        File = null
+        ItemValues = null
+      }
 
 /// Retrieves the standard error output associated with the resource [actionID].
 ///
@@ -140,4 +146,49 @@ function env(actionID: String?, envName: String?): String =
       let (envValue = res[envName])
       if (isBase64(envValue)) envValue.base64Decoded else envValue
     else ""
+  else ""
+
+/// Maps a [ResourceExec] object to pklres storage for the given [actionID].
+///
+/// [actionID]: The actionID of the resource to store.
+/// [resourceExec]: The ResourceExec object to store.
+function mapResource(actionID: String?, resourceExec: ResourceExec?): String =
+  if (actionID != null && resourceExec != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "exec", "resource", resourceExec.toString())
+  else ""
+
+/// Maps individual ResourceExec properties to pklres storage.
+function mapCommand(actionID: String?, command: String?): String =
+  if (actionID != null && command != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "exec", "command", command)
+  else ""
+
+function mapStdout(actionID: String?, stdout: String?): String =
+  if (actionID != null && stdout != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "exec", "stdout", stdout)
+  else ""
+
+function mapStderr(actionID: String?, stderr: String?): String =
+  if (actionID != null && stderr != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "exec", "stderr", stderr)
+  else ""
+
+function mapExitCode(actionID: String?, exitCode: Int?): String =
+  if (actionID != null && exitCode != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "exec", "exitCode", exitCode.toString())
+  else ""
+
+function mapFile(actionID: String?, file: String?): String =
+  if (actionID != null && file != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "exec", "file", file)
+  else ""
+
+function mapItemValues(actionID: String?, itemValues: Listing<String>?): String =
+  if (actionID != null && itemValues != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "exec", "itemValues", itemValues.toString())
+  else ""
+
+function mapEnv(actionID: String?, envName: String?, envValue: String?): String =
+  if (actionID != null && envName != null && envValue != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "exec", "env.\(envName)", envValue)
   else ""

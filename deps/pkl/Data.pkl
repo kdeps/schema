@@ -7,9 +7,11 @@ open module org.kdeps.pkl.Data
 
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "PklResource.pkl" as pklres
 
 /// Files in the data folder mapped with the agent name and version
-Files: Mapping<String, Mapping<String, String>>?
+/// This mapping is populated from pklres storage.
+Files: Mapping<String, Mapping<String, String>> = new Mapping {}
 
 /// Retrieves data file path of a given [agentName] and [fileName]
 ///
@@ -19,6 +21,32 @@ Files: Mapping<String, Mapping<String, String>>?
 /// [agentName]: The key of the agent name.
 /// [fileName]: The key of the file to retrieve from the agent.
 function filepath(agentName: String?, fileName: String?): String = 
-    if (agentName != null && fileName != null && Files != null && (Files.getOrNull(agentName)?.ifNonNull((v) -> v.containsKey(fileName))) == true) 
-        if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName] 
-    else ""
+    if (agentName != null && fileName != null && Files.getOrNull(agentName)?.ifNonNull((v) -> v.containsKey(fileName)) == true)
+        if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName]
+    else
+        let (pklText = pklres.getPklRecord(agentName, "data"))
+        if (!pklText.isEmpty)
+            let (dataRecord = eval(pklText) as Mapping<String, String>)
+            if (dataRecord.containsKey(fileName))
+                if (isBase64(dataRecord[fileName])) dataRecord[fileName].base64Decoded else dataRecord[fileName]
+            else ""
+        else ""
+
+/// Maps a data file mapping to pklres storage for the given [agentName].
+///
+/// [agentName]: The agent name to store data for.
+/// [files]: The mapping of file names to file paths.
+function mapFiles(agentName: String?, files: Mapping<String, String>?): String =
+  if (agentName != null && files != null)
+    pklres.setPklValue(agentName, "data", "files", files.toString())
+  else ""
+
+/// Maps a single data file to pklres storage for the given [agentName] and [fileName].
+///
+/// [agentName]: The agent name to store data for.
+/// [fileName]: The name of the file to store.
+/// [filePath]: The path of the file to store.
+function mapFile(agentName: String?, fileName: String?, filePath: String?): String =
+  if (agentName != null && fileName != null && filePath != null)
+    pklres.setPklValue(agentName, "data", "file.\(fileName)", filePath)
+  else ""
