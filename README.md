@@ -9,18 +9,26 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.3.6
-*Released: 2025-07-09*
+### Latest Release: v0.3.7
+*Released: 2025-07-10*
 
 
 📦 **Updates**
-  - **hotfix: upgrade docbuild step to use pkl 0.28.2** (`96212a0`)
-  - **Update release notes for v0.3.5 [skip ci]** (`2ea6ed3`)
+  - **Update release notes for v0.3.6 [skip ci]** (`9674ee4`)
+
+📝 **Other Changes**
+  - **import on amends upstream (#24)** (`6881c26`)
 
 ### Complete Release History
 
 *Detailed changelog showing all changes from the beginning of the project*
 
+
+## v0.3.6 (*2025-07-09*)
+
+📦 **Updates**
+  - **hotfix: upgrade docbuild step to use pkl 0.28.2** (`96212a0`)
+  - **Update release notes for v0.3.5 [skip ci]** (`2ea6ed3`)
 
 ## v0.3.5 (*2025-07-09*)
 
@@ -367,13 +375,8 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## v0.1.46 (*2025-01-12*)
 
-📝 **Other Changes**
-  - **reprioritize request skip validations** (`672a02a`)
-
-## v0.1.45 (*2025-01-11*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 139
+- Total commits: 140
 - Project inception
 
 **📝 All Changes Since Project Start:**
@@ -446,6 +449,7 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Update CNAME** (`ae8b694`)
 
 📝 **Other Changes**
+  - **reprioritize request skip validations** (`672a02a`)
   - **removed all deprecated imports** (`7cd9fbe`)
   - **skip & validation is now a listing of any types** (`89cf401`)
   - **return stderr if not empty on stdout function** (`4ae7fb9`)
@@ -524,4 +528,4 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
   - **Initial commit** (`26d33e0`)
 
 ---
-*Generated on 2025-07-10 01:28:28 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-10 02:01:45 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
