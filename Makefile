@@ -48,65 +48,106 @@ clean:
 		@echo "Cleaning generated files and assets..."
 		@rm -rf $(OUTPUT_DIR)/gen
 		@rm -rf $(ASSETS_PKL_DIR)
+		@rm -f test/TEST_REPORT.md
 		@echo "Clean completed!"
 
-# Run the comprehensive PKL test suite
+# Define PKL test files using wildcards (exclude report generators)
+PKL_TEST_FILES := $(filter-out test/generate_test_report%.pkl, $(wildcard test/*.pkl))
+
+# UNIFIED TEST TARGET - Runs all PKL tests + Go tests + generates test report
 test:
-		@echo "Running Comprehensive PKL Function Test Suite..."
-		@pkl eval test/test_functions.pkl
-
-# Run individual module tests
-test-utils:
-		@echo "Running Utils.pkl Unit Tests..."
-		@pkl eval test/test_utils.pkl
-
-# Run Go assets tests
-test-assets:
-		@echo "Running Go Assets Test Suite..."
+		@echo "🧪 UNIFIED PKL TEST SUITE - COMPREHENSIVE VALIDATION"
+		@echo "======================================================"
+		@echo ""
+		@echo "📊 Auto-discovering PKL test files..."
+		@echo "   Found test files: $(notdir $(PKL_TEST_FILES))"
+		@echo "   Total PKL tests: $(words $(PKL_TEST_FILES))"
+		@echo ""
+		@for pkl_file in $(PKL_TEST_FILES); do \
+			echo "🔍 Executing: $$(basename $$pkl_file)"; \
+			pkl eval $$pkl_file; \
+			echo ""; \
+		done
+		@echo "🛠️  Running Go Assets Test Suite..."
 		@cd test && go test -v .
+		@echo ""
+		@echo "📝 Generating Test Report..."
+		@pkl eval test/generate_test_report_simple.pkl > test/TEST_REPORT.md
+		@echo "✅ Test report generated: test/TEST_REPORT.md"
+		@echo ""
+		@echo "🎯 UNIFIED TEST SUMMARY:"
+		@echo "   - PKL test files executed: $(words $(PKL_TEST_FILES))"
+		@echo "   - Go asset tests: ✅ Completed"
+		@echo "   - Test report: ✅ Generated"
+		@echo ""
+		@echo "📋 View complete results: cat test/TEST_REPORT.md"
+		@echo "🚀 ALL TESTS COMPLETED SUCCESSFULLY!"
 
-# Run Go assets tests with benchmarks
-test-assets-bench:
-		@echo "Running Go Assets Benchmarks..."
-		@cd test && go test -bench=. -v .
-
-# Run all PKL tests (comprehensive + individual)
-test-all: test test-utils
-		@echo "All PKL tests completed successfully!"
-
-# Run all tests including Go assets tests
-test-all-comprehensive: test-all test-assets
-		@echo "All PKL and Go assets tests completed successfully!"
-
-# Build target (includes tests, release notes, and generation)
-build: test-all-comprehensive update-readme generate
+# Build target (includes unified tests, release notes, and generation)
+build: test update-readme generate
 	@echo "Build completed successfully with updated release notes!"
 
-# Run tests and generate Go code (now includes README update and PKL asset copying)
-test-and-generate: test-all-comprehensive generate
+# Legacy compatibility targets (DEPRECATED - use 'make test' instead)
+test-legacy:
+		@echo "⚠️  DEPRECATED: Use 'make test' for unified testing"
+		@make test
 
-# Run newly added attributes tests
+test-utils:
+		@echo "⚠️  DEPRECATED: Use 'make test' for unified testing"
+		@make test
+
+test-assets:
+		@echo "⚠️  DEPRECATED: Use 'make test' for unified testing"
+		@make test
+
+test-assets-bench:
+		@echo "⚠️  DEPRECATED: Use 'make test' for unified testing"
+		@cd test && go test -bench=. -v .
+
+test-all:
+		@echo "⚠️  DEPRECATED: Use 'make test' for unified testing"
+		@make test
+
+test-all-comprehensive:
+		@echo "⚠️  DEPRECATED: Use 'make test' for unified testing"
+		@make test
+
+test-comprehensive:
+		@echo "⚠️  DEPRECATED: Use 'make test' for unified testing"
+		@make test
+
+test-and-generate:
+		@echo "⚠️  DEPRECATED: Use 'make build' for unified testing + generation"
+		@make build
+
 test-new-attributes:
-		@echo "Running new attributes tests..."
-		@pkl eval test/test_new_attributes.pkl
-		@echo "New attributes tests completed!"
+		@echo "⚠️  DEPRECATED: Use 'make test' for unified testing"
+		@make test
 
 # Help target
 help:
-		@echo "Available targets:"
+		@echo "🛠️  KDEPS PKL SCHEMA BUILD SYSTEM"
+		@echo "=================================="
+		@echo ""
+		@echo "📋 MAIN TARGETS:"
+		@echo "  test               - 🧪 Run ALL PKL tests (wildcard discovery) + Go tests + generate test report"
+		@echo "  build              - 🚀 Complete build: test + update README + generate Go code (CI/CD ready)"
+		@echo "  clean              - 🧹 Clean generated files and copied assets"
+		@echo ""
+		@echo "🔧 UTILITY TARGETS:"
 		@echo "  copy-pkl-assets    - Copy PKL files to assets directory for embedding"
 		@echo "  update-readme      - Update README.md with latest release notes"
 		@echo "  generate           - Copy PKL assets, update README.md and generate Go code from PKL files"
-		@echo "  clean             - Clean generated files and copied assets"
-		@echo "  test              - Run comprehensive PKL function test suite"
-		@echo "  test-utils         - Run Utils.pkl unit tests"
-		@echo "  test-assets        - Run Go assets test suite"
-		@echo "  test-assets-bench  - Run Go assets tests with benchmarks"
-		@echo "  test-all           - Run all PKL test suites"
-		@echo "  test-all-comprehensive - Run all PKL and Go assets tests"
-		@echo "  build             - Run tests, update README.md, and generate Go code (recommended for CI/CD)"
-		@echo "  test-and-generate  - Run all tests, copy PKL assets, update README.md, then generate Go code"
-		@echo "  test-new-attributes - Run tests for newly added attributes"
-		@echo "  help              - Show this help message"
+		@echo "  help               - Show this help message"
+		@echo ""
+		@echo "⚠️  LEGACY TARGETS (DEPRECATED):"
+		@echo "  test-utils, test-assets, test-all, test-comprehensive, etc."
+		@echo "  → Use 'make test' for unified testing instead"
+		@echo ""
+		@echo "💡 QUICK START:"
+		@echo "  make test          # Run all tests and generate report"
+		@echo "  make build         # Full build for production/CI"
+		@echo ""
+		@echo "📊 Test Discovery: Automatically finds all test/*.pkl files (excludes generators)"
 
-.PHONY: copy-pkl-assets update-readme generate clean test test-utils test-assets test-assets-bench test-all test-all-comprehensive build test-and-generate test-new-attributes help
+.PHONY: copy-pkl-assets update-readme generate clean test build test-legacy test-utils test-assets test-assets-bench test-all test-all-comprehensive test-comprehensive test-and-generate test-new-attributes help

@@ -31,8 +31,20 @@ function next(): String = read("item:/_?op=next")?.text ?? ""
 /// Lists all record results associated with the for loop
 ///
 /// Returns a textual representation of all loop records, or an empty string if no records are found.
-function values(id: String): Listing<String> =
-  if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(read("item:/\(id)?op=values")?.text)) == null)
-    new Listing {...?(new json.Parser { useMapping = false }).parse(read("item:/\(id)?op=values")?.text)}
+function values(id: String?): Listing<String> =
+  if (id != null)
+    let (data = read("item:/\(id)?op=values")?.text)
+    if (data != null && data != "")
+      let (mappingResult = test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)))
+      if (mappingResult != null)
+        new Listing {...?mappingResult}
+      else
+        let (listResult = test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(data)))
+        if (listResult != null)
+          new Listing {...?listResult}
+        else
+          new Listing {}
+    else
+      new Listing {}
   else
     new Listing {}

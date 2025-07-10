@@ -23,78 +23,92 @@ import "pkl:yaml"
 /// If the data cannot be parsed as JSON, returns the raw string data.
 /// [data]: The JSON string to parse.
 /// Returns the parsed JSON data or the original string if parsing fails.
-function jsonParser(data: String) =
-  if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)) == null)
-    (new json.Parser { useMapping = false }).parse(data)
+function jsonParser(data: String?) =
+  if (data != null)
+    if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)) != null)
+      (new json.Parser { useMapping = true }).parse(data)
+    else if (test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(data)) != null)
+      (new json.Parser { useMapping = false }).parse(data)
+    else
+      data
   else
-    data
+    ""
 
 /// Parse JSON data using the JSON parser with object-based mapping.
 ///
 /// [data]: The JSON string to parse.
 /// Returns the parsed JSON data as an object structure.
-function jsonParserMapping(data: String) =
-  if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)) == null)
-    (new json.Parser { useMapping = true }).parse(data)
+function jsonParserMapping(data: String?) =
+  if (data != null)
+    if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)) != null)
+      (new json.Parser { useMapping = true }).parse(data)
+    else
+      data
   else
-    data
+    ""
 
 /// Renders a JSON document.
 ///
 /// [value]: The value to render as a JSON document.
 /// Returns the JSON representation of the value, or the original value if rendering fails.
-function jsonRenderDocument(value: Any) =
-  if (test.catchOrNull(() -> (new JsonRenderer {}).renderDocument(value)) == null)
-    (new JsonRenderer {}).renderDocument(value)
+function jsonRenderDocument(value: Any?) =
+  if (value != null)
+    let (result = test.catchOrNull(() -> (new JsonRenderer {}).renderDocument(value)))
+    if (result != null) result else value
   else
-    value
+    ""
 
 /// Renders a JSON value.
 ///
 /// [value]: The value to render as JSON.
 /// Returns the JSON representation of the value, or the original value if rendering fails.
-function jsonRenderValue(value: Any) =
-  if (test.catchOrNull(() -> (new JsonRenderer {}).renderValue(value)) == null)
-    (new JsonRenderer {}).renderValue(value)
+function jsonRenderValue(value: Any?) =
+  if (value != null)
+    let (result = test.catchOrNull(() -> (new JsonRenderer {}).renderValue(value)))
+    if (result != null) result else value
   else
-    value
+    ""
 
 /// Renders a YAML document.
 ///
 /// [value]: The value to render as a YAML document.
 /// Returns the YAML representation of the value, or the original value if rendering fails.
-function yamlRenderDocument(value: Any) =
-  if (test.catchOrNull(() -> (new YamlRenderer {}).renderDocument(value)) == null)
-    (new YamlRenderer {}).renderDocument(value)
+function yamlRenderDocument(value: Any?) =
+  if (value != null)
+    let (result = test.catchOrNull(() -> (new YamlRenderer {}).renderDocument(value)))
+    if (result != null) result else value
   else
-    value
+    ""
 
 /// Renders a YAML value.
 ///
 /// [value]: The value to render as YAML.
 /// Returns the YAML representation of the value, or the original value if rendering fails.
-function yamlRenderValue(value: Any) =
-  if (test.catchOrNull(() -> (new YamlRenderer {}).renderValue(value)) == null)
-    (new YamlRenderer {}).renderValue(value)
+function yamlRenderValue(value: Any?) =
+  if (value != null)
+    let (result = test.catchOrNull(() -> (new YamlRenderer {}).renderValue(value)))
+    if (result != null) result else value
   else
-    value
+    ""
 
 /// Renders an XML document.
 ///
 /// [value]: The value to render as an XML document.
 /// Returns the XML representation of the value, or the original value if rendering fails.
-function xmlRenderDocument(value: Any) =
-  if (test.catchOrNull(() -> (new PListRenderer {}).renderDocument(value)) == null)
-    (new PListRenderer {}).renderDocument(value)
+function xmlRenderDocument(value: Any?) =
+  if (value != null)
+    let (result = test.catchOrNull(() -> (new PListRenderer {}).renderDocument(value)))
+    if (result != null) result else value
   else
-    value
+    ""
 
 /// Renders an XML value.
 ///
 /// [value]: The value to render as XML.
 /// Returns the XML representation of the value, or the original value if rendering fails.
-function xmlRenderValue(value: Any) =
-  if (test.catchOrNull(() -> (new PListRenderer {}).renderValue(value)) == null)
-    (new PListRenderer {}).renderValue(value)
+function xmlRenderValue(value: Any?) =
+  if (value != null)
+    let (result = test.catchOrNull(() -> (new PListRenderer {}).renderValue(value)))
+    if (result != null) result else value
   else
-    value
+    ""

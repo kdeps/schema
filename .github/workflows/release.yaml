@@ -65,6 +65,24 @@ jobs:
         # Verify both tools are working
         pkl --version
         pkl-gen-go --help
+        
+    - name: Setup Go (for assets tests)
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+        
+    - name: Run unified PKL test suite
+      run: |
+        echo "Running unified PKL test suite before release..."
+        make test
+        
+    - name: Upload PKL test report
+      uses: actions/upload-artifact@v4
+      with:
+        name: pkl-test-report-release
+        path: test/TEST_REPORT.md
+        retention-days: 90
+        
     - name: Update release notes
       env:
         VERSION: ${{ github.ref_name }}
