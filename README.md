@@ -21,7 +21,7 @@ make build         # Complete build with testing
 
 ## Release Notes
 
-### Latest Release: v0.3.7
+### Latest Release: v0.3.8
 *Released: 2025-07-10*
 
 **🔬 Validation Status:**
@@ -30,16 +30,57 @@ make build         # Complete build with testing
 🧪 **PKL Test Suite** - 8 test modules with comprehensive coverage
 
 
+🚀 **Features**
+  - **feat: comprehensive PKL test suite and validation system (#25)** (`4027874`)
+    - 🧪 Complete PKL Function Test Suite (186+ tests, 100% success rate)
+
 📦 **Updates**
-  - **Update release notes for v0.3.6 [skip ci]** (`9674ee4`)
+  - **Update release notes for v0.3.7 [skip ci]** (`d1a4711`)
 
 📝 **Other Changes**
-  - **import on amends upstream (#24)** (`6881c26`)
+  - **** (`  - Comprehensive function tests across 12 PKL modules`)
+  - **** (`  - Null safety validation with complete coverage`)
+  - **** (`  - State management tests for external integration`)
+  - **** (`  - Base64 edge case validation and API testing`)
+  - **** (`  - Fixed Utils.isBase64 logic and APIServerRequest error handling`)
+  - **** (`  - Resolved type consistency issues (List vs Listing, nullable defaults)`)
+  - **** (`- 📊 Unified Test System & Reporting`)
+  - **** (`  - Moved test report to test/TEST_REPORT.md (removed 'dynamic' terminology)`)
+  - **** (`  - Wildcard PKL test discovery with automatic execution`)
+  - **** (`  - Real-time test execution with accurate reporting`)
+  - **** (`  - Integrated Go asset tests for comprehensive validation`)
+  - **** (`  - Enhanced Makefile with unified 'make test' command`)
+  - **** (`- 🚀 GitHub Actions Integration`)
+  - **** (`  - Updated build.yaml and release.yaml workflows`)
+  - **** (`  - Automated PKL test execution in CI/CD pipeline`)
+  - **** (`  - Test report artifacts uploaded for every build`)
+  - **** (`  - Cross-platform validation (Ubuntu, macOS)`)
+  - **** (`- 📝 Enhanced Documentation & Scripts`)
+  - **** (`  - Updated README.md with test validation section and direct links`)
+  - **** (`  - Enhanced release notes script with automatic test status detection`)
+  - **** (`  - Added continuous validation messaging and quality transparency`)
+  - **** (`  - Comprehensive validation status shown in all releases`)
+  - **** (`- 🛡️ Production Readiness`)
+  - **** (`  - 100% test success rate across all modules`)
+  - **** (`  - Complete null safety implementation`)
+  - **** (`  - Robust error handling and edge case coverage`)
+  - **** (`  - Automated validation ensures release quality`)
+  - **** (`  - Legacy compatibility with deprecation warnings`)
+  - **** (`This establishes a production-ready PKL schema with comprehensive`)
+  - **** (`testing, automation, and quality assurance systems.`)
 
 ### Complete Release History
 
 *Detailed changelog showing all changes from the beginning of the project*
 
+
+## v0.3.7 (*2025-07-10*)
+
+📦 **Updates**
+  - **Update release notes for v0.3.6 [skip ci]** (`9674ee4`)
+
+📝 **Other Changes**
+  - **import on amends upstream (#24)** (`6881c26`)
 
 ## v0.3.6 (*2025-07-09*)
 
@@ -384,16 +425,8 @@ make build         # Complete build with testing
 
 ## v0.2.0 (*2025-01-23*)
 
-📦 **Updates**
-  - **updated .gitattributes** (`e9ea189`)
-
-📝 **Other Changes**
-  - **Use uniform naming convention for {Http,Api,Id,Json} -> {HTTP,API,ID,JSON}** (`d8841da`)
-
-## v0.1.46 (*2025-01-12*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 140
+- Total commits: 142
 - Project inception
 
 **📝 All Changes Since Project Start:**
@@ -451,6 +484,7 @@ make build         # Complete build with testing
   - **Added initial core schema** (`a61fbf5`)
 
 📦 **Updates**
+  - **updated .gitattributes** (`e9ea189`)
   - **updated README.md** (`809d2c3`)
   - **bump pkl to 0.27.1** (`8183a18`)
   - **Revert "upgrade pkl to 0.27.0; register python resource to resource pkl"** (`77fdf1a`)
@@ -466,6 +500,7 @@ make build         # Complete build with testing
   - **Update CNAME** (`ae8b694`)
 
 📝 **Other Changes**
+  - **Use uniform naming convention for {Http,Api,Id,Json} -> {HTTP,API,ID,JSON}** (`d8841da`)
   - **reprioritize request skip validations** (`672a02a`)
   - **removed all deprecated imports** (`7cd9fbe`)
   - **skip & validation is now a listing of any types** (`89cf401`)
@@ -562,4 +597,4 @@ This PKL schema project maintains high quality through:
 **Quality Assurance**: Every release is thoroughly tested before deployment.
 
 ---
-*Generated on 2025-07-10 12:31:44 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-10 10:38:36 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
