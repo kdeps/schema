@@ -11,6 +11,8 @@ import (
 type HTTP interface {
 	utils.Utils
 
+	GetRequestID() *string
+
 	GetResources() *map[string]*ResourceHTTPClient
 }
 
@@ -24,8 +26,16 @@ var _ HTTP = (*HTTPImpl)(nil)
 type HTTPImpl struct {
 	*utils.UtilsImpl
 
+	// The current request ID for pklres operations (injected by Go code)
+	RequestID *string `pkl:"requestID"`
+
 	// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
 	Resources *map[string]*ResourceHTTPClient `pkl:"Resources"`
+}
+
+// The current request ID for pklres operations (injected by Go code)
+func (rcv *HTTPImpl) GetRequestID() *string {
+	return rcv.RequestID
 }
 
 // A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.

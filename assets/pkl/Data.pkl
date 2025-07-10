@@ -7,18 +7,81 @@ open module org.kdeps.pkl.Data
 
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "Agent.pkl" as agent
+import "PklResource.pkl" as pklres
+
+/// The current request ID for pklres operations (injected by Go code)
+requestID: String?
 
 /// Files in the data folder mapped with the agent name and version
 Files: Mapping<String, Mapping<String, String>>?
 
+/// Class representing a data resource implementation
+class DataImpl {
+    /// Files in the data folder mapped with the agent name and version
+    Files: Mapping<String, Mapping<String, String>>?
+}
+
+/// Retrieves the [DataImpl] associated with the given [agentName].
+///
+/// Always uses pklres as the source of truth. Evaluates the PKL text from pklres and returns the result.
+/// If no data is found, returns a blank DataImpl with default values.
+/// [agentName]: The agent name to retrieve data for.
+/// [DataImpl]: The [DataImpl] object associated with the agent name.
+function resource(agentName: String?): DataImpl =
+  if (agentName != null && requestID != null)
+    let (pklText = fromPklres(agentName))
+    if (pklText != "")
+      eval(pklText) as DataImpl
+    else
+      new DataImpl {
+        Files = new Mapping {}
+      }
+  else
+    new DataImpl {
+      Files = new Mapping {}
+    }
+
 /// Retrieves data file path of a given [agentName] and [fileName]
 ///
-/// If the file with the specified key does not exist, returns metadata for the first available file,
-/// or returns an empty file metadata object if no files are data.
-///
+/// Always uses pklres as the source of truth. Evaluates the PKL text from pklres and returns the result.
 /// [agentName]: The key of the agent name.
 /// [fileName]: The key of the file to retrieve from the agent.
-function filepath(agentName: String, fileName: String) = 
-    if (Files != null && (Files.getOrNull(agentName).ifNonNull((v) -> v.containsKey(fileName))) ?? false) 
-        if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName] 
+function filepath(agentName: String?, fileName: String?): String = 
+    if (agentName != null && fileName != null && requestID != null)
+        let (pklText = fromPklres(agentName))
+        if (pklText != "")
+            let (dataObj = eval(pklText) as DataImpl)
+            if (dataObj.Files != null && dataObj.Files.containsKey(agentName) && dataObj.Files[agentName].containsKey(fileName))
+                if (isBase64(dataObj.Files[agentName][fileName])) 
+                    dataObj.Files[agentName][fileName].base64Decoded 
+                else 
+                    dataObj.Files[agentName][fileName]
+            else
+                ""
+        else
+            ""
+    else
+        ""
+
+/// Retrieves Data resource data directly from pklres storage
+///
+/// [agentName]: Optional agent name within the Data resource.
+function fromPklres(agentName: String?): String = 
+    if (requestID != null && agentName != null)
+        pklres.getPklRecord(requestID, "data", agent.resolveActionID(agentName))
+    else if (requestID != null)
+        pklres.getPklRecord(requestID, "data", null)
+    else ""
+
+/// Stores Data resource data directly to pklres storage
+///
+/// [agentName]: Optional agent name within the Data resource.
+/// [data]: The Data to store.
+function toPklres(agentName: String?, data: String?): String = 
+    if (requestID != null && data != null)
+        if (agentName != null)
+            pklres.setPklRecord(requestID, "data", agent.resolveActionID(agentName), data)
+        else
+            pklres.setPklRecord(requestID, "data", null, data)
     else ""

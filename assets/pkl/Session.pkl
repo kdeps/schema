@@ -13,7 +13,7 @@ import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pk
 /// Returns the textual content of the session entry, or an empty string if not found.
 ///
 /// [id]: The identifier of the session record.
-function getRecord(id: String): String = read("session:/\(id)")?.text ?? ""
+function getRecord(id: String?): String = if (id != null) read("session:/\(id)")?.text ?? "" else ""
 
 /// Sets or updates a session record with a new [value]
 ///
@@ -21,14 +21,17 @@ function getRecord(id: String): String = read("session:/\(id)")?.text ?? ""
 ///
 /// [id]: The identifier of the session record.
 /// [value]: The value to store.
-function setRecord(id: String, value: String): String = read("session:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+function setRecord(id: String?, value: String?): String = 
+  if (id != null && value != null) 
+    read("session:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? "" 
+  else ""
 
 /// Deletes a session record by its [id]
 ///
 /// Returns a confirmation message or an empty string if the record was not found.
 ///
 /// [id]: The identifier of the session record.
-function deleteRecord(id: String): String = read("session:/\(id)?op=delete")?.text ?? ""
+function deleteRecord(id: String?): String = if (id != null) read("session:/\(id)?op=delete")?.text ?? "" else ""
 
 /// Clears all session records
 ///

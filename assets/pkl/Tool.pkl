@@ -13,7 +13,7 @@ import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pk
 /// Returns the script output (stdout/stderr) as confirmation.
 ///
 /// [id]: The identifier of the script execution.
-function getOutput(id: String): String = read("tool:/\(id)")?.text ?? ""
+function getOutput(id: String?): String = if (id != null) read("tool:/\(id)")?.text ?? "" else ""
 
 /// Executes a script with the given [id], [script] content, and [params]
 ///
@@ -22,11 +22,14 @@ function getOutput(id: String): String = read("tool:/\(id)")?.text ?? ""
 /// [id]: The identifier for the script execution.
 /// [script]: The script content to execute.
 /// [params]: The parameters to pass to the script.
-function runScript(id: String, script: String, params: String): String = read("tool:/\(id)?op=run&script=\(URI.encodeComponent(script))&params=\(URI.encodeComponent(params))")?.text ?? ""
+function runScript(id: String?, script: String?, params: String?): String = 
+  if (id != null && script != null && params != null) 
+    read("tool:/\(id)?op=run&script=\(URI.encodeComponent(script))&params=\(URI.encodeComponent(params))")?.text ?? "" 
+  else ""
 
 /// Appends the current script output to the history for the given [id]
 ///
 /// Returns the full history of outputs for the script execution as confirmation.
 ///
 /// [id]: The identifier for the script execution.
-function history(id: String): String = read("tool:/\(id)?op=history")?.text ?? ""
+function history(id: String?): String = if (id != null) read("tool:/\(id)?op=history")?.text ?? "" else ""

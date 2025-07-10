@@ -11,6 +11,8 @@ import (
 type LLM interface {
 	utils.Utils
 
+	GetRequestID() *string
+
 	GetResources() *map[string]*ResourceChat
 }
 
@@ -29,8 +31,16 @@ var _ LLM = (*LLMImpl)(nil)
 type LLMImpl struct {
 	*utils.UtilsImpl
 
+	// The current request ID for pklres operations (injected by Go code)
+	RequestID *string `pkl:"requestID"`
+
 	// A mapping of resource actionIDs to their associated [ResourceChat] objects.
 	Resources *map[string]*ResourceChat `pkl:"Resources"`
+}
+
+// The current request ID for pklres operations (injected by Go code)
+func (rcv *LLMImpl) GetRequestID() *string {
+	return rcv.RequestID
 }
 
 // A mapping of resource actionIDs to their associated [ResourceChat] objects.

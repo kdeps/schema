@@ -23,9 +23,9 @@ This report executes all PKL function test suites and provides real-time validat
 
 📊 EXECUTION SUMMARY:
 Total Tests: 63
-Passed: 63
-Failed: 0
-Success Rate: 100.0%
+Passed: 62
+Failed: 1
+Success Rate: 98.0%
 
 📋 MODULE TEST COVERAGE:
 ✅ Document.pkl - 9/9 (JSON/YAML/XML parsing & rendering)
@@ -35,13 +35,15 @@ Success Rate: 100.0%
 ✅ Tool.pkl - 3/3 (tool execution)
 ✅ Item.pkl - 4/4 (item iteration)
 ✅ LLM.pkl - 7/7 (LLM interactions)
-✅ Agent.pkl - 2/2 (agent resolution)
+❌ Agent.pkl - 1/2 (agent resolution)
 ✅ Python.pkl - 7/7 (Python execution)
 ✅ Exec.pkl - 7/7 (shell execution)
 ✅ HTTP.pkl - 5/5 (HTTP client)
 ✅ APIServerRequest.pkl - 7/7 (request handling)
 
-🎯 OVERALL STATUS: ✅ ALL TESTS PASSING
+🎯 OVERALL STATUS: ❌ 1 TESTS FAILING
+
+🔍 Failed Test Categories:
 
 
 
@@ -49,9 +51,7 @@ Success Rate: 100.0%
 
 
 
-
-
-
+❌ Agent.pkl: 1/2
 
 
 
@@ -107,27 +107,27 @@ All results reflect real-time function behavior, not predetermined values.
 
 📊 EXECUTION SUMMARY:
 Total State Management Tests: 45
-Passed: 45
-Failed: 0
-Success Rate: 100.0%
+Passed: 34
+Failed: 11
+Success Rate: 75.0%
 
 💾 MODULE TEST COVERAGE:
-✅ Memory.pkl - 10/10 (persistent storage)
-✅ Session.pkl - 10/10 (session storage)  
-✅ Tool.pkl - 9/9 (script execution)
-✅ Agent.pkl - 10/10 (agent resolution)
+❌ Memory.pkl - 7/10 (persistent storage)
+❌ Session.pkl - 7/10 (session storage)  
+❌ Tool.pkl - 6/9 (script execution)
+❌ Agent.pkl - 8/10 (agent resolution)
 
 🔗 SPECIALIZED TESTING:
 ✅ Integration & consistency - 3/3
 ✅ Resilience & error handling - 3/3
 
-🎯 OVERALL STATE MANAGEMENT STATUS: ✅ ALL TESTS PASSING
+🎯 OVERALL STATE MANAGEMENT STATUS: ❌ 11 TESTS FAILING
 
-
-
-
-
-
+🔍 Failed Test Categories:
+❌ Memory.pkl: 7/10
+❌ Session.pkl: 7/10
+❌ Tool.pkl: 6/9
+❌ Agent.pkl: 8/10
 
 
 

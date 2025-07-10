@@ -1,0 +1,110 @@
+/// Abstractions for PKL records stored in SQLite3
+@ModuleInfo { minPklVersion = "0.28.2" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/pkl_resource" }
+
+open module org.kdeps.pkl.PklResource
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
+
+/// Retrieves a PKL record by its [id], [type], and optional [key]
+///
+/// Returns the textual content of the PKL record, or an empty string if not found.
+/// For records without keys, omit the key parameter.
+///
+/// [id]: The identifier of the PKL record.
+/// [type]: The type/category of the PKL record.
+/// [key]: Optional key within the record (for structured data).
+function getPklRecord(id: String?, typ: String?, key: String?): String = 
+  if (id != null && typ != null) 
+    if (key != null)
+      read("pklres:///\(id)?type=\(typ)&key=\(key)")?.text ?? ""
+    else
+      read("pklres:///\(id)?type=\(typ)")?.text ?? ""
+  else ""
+
+/// Sets or updates a PKL record with a new [value]
+///
+/// Returns the set value as confirmation.
+/// For simple records, omit the key parameter and the value will be stored directly.
+/// For structured records, specify a key to store the value under that key.
+///
+/// [id]: The identifier of the PKL record.
+/// [type]: The type/category of the PKL record.
+/// [key]: Optional key within the record (for structured data).
+/// [value]: The value to store.
+function setPklRecord(id: String?, typ: String?, key: String?, value: String?): String = 
+  if (id != null && typ != null && value != null) 
+    if (key != null)
+      read("pklres:///\(id)?type=\(typ)&key=\(key)&op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+    else
+      read("pklres:///\(id)?type=\(typ)&op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+  else ""
+
+/// Gets a PKL record value by [key] (for structured records)
+///
+/// Returns the key value or empty string if not found.
+/// This is equivalent to getPklRecord with a key parameter.
+///
+/// [id]: The identifier of the PKL record.
+/// [type]: The type/category of the PKL record.
+/// [key]: The key within the record.
+function getPklValue(id: String?, typ: String?, key: String?): String = 
+  if (id != null && typ != null && key != null) 
+    read("pklres:///\(id)?type=\(typ)&key=\(key)")?.text ?? ""
+  else ""
+
+/// Sets a PKL record value by [key] (for structured records)
+///
+/// Returns the set value as confirmation.
+/// This is equivalent to setPklRecord with a key parameter.
+///
+/// [id]: The identifier of the PKL record.
+/// [type]: The type/category of the PKL record.  
+/// [key]: The key within the record.
+/// [value]: The value to store.
+function setPklValue(id: String?, typ: String?, key: String?, value: String?): String = 
+  if (id != null && typ != null && key != null && value != null) 
+    read("pklres:///\(id)?type=\(typ)&key=\(key)&op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+  else ""
+
+/// Deletes a PKL record or a specific key within a record
+///
+/// Returns a confirmation message.
+/// If key is provided, deletes only that key from the record.
+/// If key is omitted, deletes the entire record.
+///
+/// [id]: The identifier of the PKL record.
+/// [type]: The type/category of the PKL record.
+/// [key]: Optional key to delete within the record.
+function deletePklRecord(id: String?, typ: String?, key: String?): String = 
+  if (id != null && typ != null) 
+    if (key != null)
+      read("pklres:///\(id)?type=\(typ)&key=\(key)&op=delete")?.text ?? ""
+    else
+      read("pklres:///\(id)?type=\(typ)&op=delete")?.text ?? ""
+  else ""
+
+/// Clears all PKL records of a specific [type] or all records
+///
+/// Returns a confirmation message with the number of cleared records.
+/// If type is provided, clears only records of that type.
+/// If type is "_", clears all records regardless of type.
+///
+/// [type]: The type to clear, or "_" for all types.
+function clearPklRecords(typ: String?): String = 
+  if (typ != null) 
+    read("pklres:///_?type=\(typ)&op=clear")?.text ?? ""
+  else ""
+
+/// Lists all PKL record IDs of a specific [type]
+///
+/// Returns a JSON array of record IDs.
+/// Useful for discovering available records.
+///
+/// [type]: The type/category to list records for.
+function listPklRecords(typ: String?): String = 
+  if (typ != null) 
+    read("pklres:///_?type=\(typ)&op=list")?.text ?? "[]"
+  else "[]"
