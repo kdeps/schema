@@ -68,57 +68,83 @@ class ResourcePython {
 ///
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourcePython]: The [ResourcePython] object associated with the resource actionID.
-function resource(actionID: String): ResourcePython =
-  if (Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+function resource(actionID: String?): ResourcePython =
+  if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
     Resources[agent.resolveActionID(actionID)]
   else
     new ResourcePython {
-      Env {}
+      Env = null
       PythonEnvironment = ""
       Script = ""
-      Stderr {}
-      Stdout {}
+      Stderr = null
+      Stdout = null
       ExitCode = 0
-      File = ""
-      ItemValues {}
+      File = null
+      ItemValues = null
     }
 
 /// Retrieves the standard error output associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the stderr for.
 /// [str]: The standard error output of the Python script.
-function stderr(actionID: String): String = if (isBase64(resource(actionID).Stderr)) resource(actionID).Stderr.base64Decoded else resource(actionID).Stderr
+function stderr(actionID: String?): String = 
+    let (res = resource(actionID).Stderr)
+    if (res != null)
+        if (isBase64(res)) res.base64Decoded else res
+    else ""
 
 /// Retrieves the standard output associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the stdout for.
 /// [str]: The standard output of the Python script, or the stderr if stdout is empty.
-function stdout(actionID: String): String = if (!stderr(actionID).isEmpty) stderr(actionID) else if (isBase64(resource(actionID).Stdout)) resource(actionID).Stdout.base64Decoded else resource(actionID).Stdout
+function stdout(actionID: String?): String = 
+    if (!stderr(actionID).isEmpty) 
+        stderr(actionID) 
+    else 
+        let (res = resource(actionID).Stdout)
+        if (res != null)
+            if (isBase64(res)) res.base64Decoded else res
+        else ""
 
 /// Retrieves the exit code associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the exit code for.
 /// [int]: The exit code of the Python script.
-function exitCode(actionID: String): Int = if (isBase64(resource(actionID).ExitCode)) resource(actionID).ExitCode.base64Decoded else resource(actionID).ExitCode
+function exitCode(actionID: String?): Int = 
+    let (res = resource(actionID).ExitCode)
+    if (res != null)
+        res
+    else 0
 
 /// Retrieves the file path containing the script output associated with the specified resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the file for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(actionID: String): String = if (isBase64(resource(actionID).File)) resource(actionID).File.base64Decoded else resource(actionID).File
+function file(actionID: String?): String = 
+    let (res = resource(actionID).File)
+    if (res != null)
+        if (isBase64(res)) res.base64Decoded else res
+    else ""
 
 /// Retrieves the item iteration results for the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the item values.
-function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).ItemValues)) resource(actionID).ItemValues.base64Decoded else resource(actionID).ItemValues
+function itemValues(actionID: String?): Listing<String> = 
+    let (res = resource(actionID).ItemValues)
+    if (res != null)
+        res
+    else new Listing {}
 
 /// Retrieves the environment variable [envName] associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the environment variable for.
 /// [envName]: The name of the environment variable to retrieve.
 /// [str]: The value of the environment variable, or an empty string if not found.
-function env(actionID: String, envName: String): String =
-  if (isBase64(resource(agent.resolveActionID(actionID)).Env[envName]))
-    resource(agent.resolveActionID(actionID)).Env[envName].base64Decoded
-  else
-    resource(agent.resolveActionID(actionID)).Env[envName]
+function env(actionID: String?, envName: String?): String =
+  if (actionID != null && envName != null)
+    let (res = resource(agent.resolveActionID(actionID)).Env)
+    if (res != null && res.getOrNull(envName) != null)
+      let (envValue = res[envName])
+      if (isBase64(envValue)) envValue.base64Decoded else envValue
+    else ""
+  else ""

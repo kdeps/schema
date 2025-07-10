@@ -73,46 +73,61 @@ class ResponseBlock {
 ///
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceHTTPClient]: The [ResourceHTTPClient] object associated with the resource actionID.
-function resource(actionID: String): ResourceHTTPClient =
-  if (Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+function resource(actionID: String?): ResourceHTTPClient =
+  if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
     Resources[agent.resolveActionID(actionID)]
   else
     new ResourceHTTPClient {
       Method = "GET"
       Url = ""
-      Data {}
-      Headers {}
-      Params {}
-      Response {}
-      File = ""
-      ItemValues {}
+      Data = null
+      Headers = null
+      Params = null
+      Response = null
+      File = null
+      ItemValues = null
     }
 
 /// Retrieves the body of the response associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response body for.
 /// [str]: The body of the response from the HTTP request.
-function responseBody(actionID: String): String = if (isBase64(resource(actionID).Response.Body)) resource(actionID).Response.Body.base64Decoded else resource(actionID).Response.Body
+function responseBody(actionID: String?): String = 
+    let (res = resource(actionID).Response)
+    if (res != null && res.Body != null)
+        if (isBase64(res.Body)) res.Body.base64Decoded else res.Body
+    else ""
 
 /// Retrieves the file path containing the response body associated with the specified resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response body for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(actionID: String): String = if (isBase64(resource(actionID).File)) resource(actionID).File.base64Decoded else resource(actionID).File
+function file(actionID: String?): String = 
+    let (res = resource(actionID).File)
+    if (res != null)
+        if (isBase64(res)) res.base64Decoded else res
+    else ""
 
 /// Retrieves the item iteration responses for the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the item values.
 /// [Listing<String>]: A listing of expected item iteration output.
-function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).ItemValues)) resource(actionID).ItemValues.base64Decoded else resource(actionID).ItemValues
+function itemValues(actionID: String?): Listing<String> = 
+    let (res = resource(actionID).ItemValues)
+    if (res != null)
+        res
+    else new Listing {}
 
 /// Retrieves the specified response header associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response header for.
 /// [headeractionID]: The name of the header to retrieve.
 /// [str]: The value of the specified response header, or an empty string if not found.
-function responseHeader(actionID: String, headeractionID: String): String =
-  if (isBase64(resource(agent.resolveActionID(actionID)).Response.Headers[headeractionID]))
-    resource(agent.resolveActionID(actionID)).Response.Headers[headeractionID].base64Decoded
-  else
-    resource(agent.resolveActionID(actionID)).Response.Headers[headeractionID]
+function responseHeader(actionID: String?, headeractionID: String?): String =
+  if (actionID != null && headeractionID != null)
+    let (res = resource(agent.resolveActionID(actionID)).Response)
+    if (res != null && res.Headers != null && res.Headers.getOrNull(headeractionID) != null)
+      let (headerValue = res.Headers[headeractionID])
+      if (isBase64(headerValue)) headerValue.base64Decoded else headerValue
+    else ""
+  else ""

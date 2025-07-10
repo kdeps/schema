@@ -1,0 +1,344 @@
+/// Base64 Edge Case Test Suite for PKL Functions
+///
+/// This test suite focuses on Base64 encoding/decoding edge cases
+/// and validates proper handling across all modules that process Base64 data.
+///
+/// Tests cover: boundary conditions, malformed data, special characters,
+/// and integration with APIServerRequest Base64 decoding.
+@ModuleInfo { minPklVersion = "0.28.2" }
+
+module test.Base64EdgeCaseTests
+
+import "pkl:test"
+import "../deps/pkl/Utils.pkl"
+import "../deps/pkl/APIServerRequest.pkl"
+
+/// Base64 test data constants
+local validBase64Examples = List(
+    "SGVsbG8gV29ybGQ=",                    // "Hello World"
+    "VGhpcyBpcyBhIHRlc3Q=",               // "This is a test"
+    "eyJ0ZXN0IjoidmFsdWUifQ==",           // {"test":"value"}
+    "MTIzNDU2Nzg5MA==",                   // "1234567890"
+    "QQ==",                               // "A" (single character)
+    "QUI=",                               // "AB" (two characters)
+    "QUJD",                               // "ABC" (three characters)
+    "SGVsbG8gV29ybGQ",                    // "Hello World" without padding (still valid)
+    "QQ",                                 // Two characters (valid)
+    "QQQ",                                // Three characters (valid)
+    "QQQQ",                               // Four characters (valid)
+    "null",                               // "null" (valid Base64)
+    "QWJj+/=="                            // Standard Base64 with + and /
+)
+
+local invalidBase64Examples = List(
+    "Hello World",                        // Plain text
+    "",                                   // Empty string
+    "SGVsbG8gV29ybGQ===",                 // Too much padding
+    "Hello$World",                        // Invalid character $
+    "Hello@World!",                       // Invalid characters @ and !
+    "SGVs bG8g V29y bGQ=",                // Spaces within Base64
+    "SGVsbG8gV29ybGQ=\n",                 // Newline character
+    "SGVsbG8gV29ybGQ=\t",                 // Tab character
+    "undefined",                          // String "undefined"
+    "Q",                                  // Single character (invalid length)
+    "QQ=",                               // Incorrect padding
+    "QQ===",                             // Too much padding
+    "QQ== ",                             // Trailing space
+    " QQ==",                             // Leading space
+    "QQ$=",                              // Invalid character $
+    "QQ@=",                              // Invalid character @
+    "QQ!=",                              // Invalid character !
+    "QQ%=",                              // Invalid character %
+    "SGVs bG8=",                          // Invalid with space
+    "SGVsbG8=\n",                         // Invalid with newline
+    "SGVsbG8===",                         // Invalid with extra padding
+    "Q Q==",                             // Invalid with space in middle
+    "QWJj-_=="                           // URL-safe Base64 (not standard Base64)
+)
+
+/// Mock APIServerRequest with various Base64 scenarios
+local base64TestRequest = new APIServerRequest {
+    Path = "http://localhost:8080/test"
+    IP = "127.0.0.1"
+    ID = "base64-test-123"
+    Method = "POST"
+    Data = "eyJtZXNzYWdlIjoiSGVsbG8gV29ybGQiLCJudW1iZXIiOjEyM30="  // {"message":"Hello World","number":123}
+    Params {
+        ["valid"] = "VGVzdA=="                    // "Test"
+        ["empty"] = ""                            // Empty string
+        ["invalid"] = "Not@Base64!"               // Invalid Base64
+        ["special"] = "8J+YgA=="                  // "😀" (emoji in Base64)
+        ["json"] = "eyJrZXkiOiJ2YWx1ZSJ9"        // {"key":"value"}
+        ["long"] = "TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdA=="  // Long text
+    }
+    Headers {
+        ["Content-Type"] = "YXBwbGljYXRpb24vanNvbg=="              // "application/json"
+        ["Authorization"] = "QmVhcmVyIGFiYzEyMw=="                 // "Bearer abc123"
+        ["X-Custom"] = "Y3VzdG9tLXZhbHVl"                        // "custom-value"
+        ["Invalid-Header"] = "Invalid@Header!"                    // Invalid Base64
+        ["Empty-Header"] = ""                                     // Empty
+    }
+    Files {}
+}
+
+/// Comprehensive Base64 edge case tests
+facts {
+    
+    // ===== Utils.isBase64 Comprehensive Testing =====
+    
+    ["Utils.isBase64 correctly identifies all valid Base64 examples"] {
+        validBase64Examples.every((example) -> Utils.isBase64(example) == true)
+    }
+    
+    ["Utils.isBase64 correctly identifies all invalid Base64 examples"] {
+        invalidBase64Examples.every((example) -> Utils.isBase64(example) == false)
+    }
+    
+    ["Utils.isBase64 handles boundary cases"] {
+        Utils.isBase64("") == false &&                    // Empty string
+        Utils.isBase64("Q") == false &&                   // Single character, no padding
+        Utils.isBase64("QQ") == true &&                   // Two characters, valid
+        Utils.isBase64("QQQ") == true &&                  // Three characters, valid
+        Utils.isBase64("QQQQ") == true                    // Four characters, valid
+    }
+    
+    ["Utils.isBase64 handles special padding scenarios"] {
+        Utils.isBase64("QQ==") == true &&                 // Correct padding
+        Utils.isBase64("QUI=") == true &&                 // Correct padding
+        Utils.isBase64("QUJD") == true &&                 // No padding needed
+        Utils.isBase64("QQ=") == false &&                 // Incorrect padding
+        Utils.isBase64("QQ===") == false                  // Too much padding
+    }
+    
+    ["Utils.isBase64 handles whitespace and special characters"] {
+        Utils.isBase64("QQ==\n") == false &&              // Newline
+        Utils.isBase64("QQ==\t") == false &&              // Tab
+        Utils.isBase64("Q Q==") == false                  // Space in middle
+    }
+    
+    // ===== APIServerRequest Base64 Decoding Tests =====
+    
+    ["APIServerRequest.data correctly decodes Base64 JSON"] {
+        base64TestRequest.data() == "{\"message\":\"Hello World\",\"number\":123}"
+    }
+    
+    ["APIServerRequest.params correctly decodes valid Base64 parameters"] {
+        base64TestRequest.params("valid") == "Test" &&
+        base64TestRequest.params("special") == "😀" &&
+        base64TestRequest.params("json") == "{\"key\":\"value\"}"
+    }
+    
+    ["APIServerRequest.params handles empty and invalid Base64 parameters"] {
+        base64TestRequest.params("empty") == "" &&
+        base64TestRequest.params("invalid") == "Not@Base64!"  // Returns as-is for invalid
+    }
+    
+    ["APIServerRequest.params handles long Base64 strings"] {
+        base64TestRequest.params("long") == "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+    }
+    
+    ["APIServerRequest.header correctly decodes valid Base64 headers"] {
+        base64TestRequest.header("Content-Type") == "application/json" &&
+        base64TestRequest.header("Authorization") == "Bearer abc123" &&
+        base64TestRequest.header("X-Custom") == "custom-value"
+    }
+    
+    ["APIServerRequest.header handles invalid Base64 headers"] {
+        base64TestRequest.header("Invalid-Header") == "Invalid@Header!" &&  // Returns as-is
+        base64TestRequest.header("Empty-Header") == ""                      // Empty string
+    }
+    
+    ["APIServerRequest.header handles non-existent headers"] {
+        base64TestRequest.header("Non-Existent") == ""
+    }
+    
+    // ===== Edge Case Integration Tests =====
+    
+    ["Base64 validation and decoding are consistent"] {
+        // Test that Utils.isBase64 and actual decoding behavior align
+        let (validParam = "VGVzdA==")
+        let (invalidParam = "Not@Base64!")
+        
+        Utils.isBase64(validParam) == true &&
+        base64TestRequest.params("valid") == "Test" &&
+        Utils.isBase64(invalidParam) == false &&
+        base64TestRequest.params("invalid") == invalidParam
+    }
+    
+    ["Empty and null handling is consistent across Base64 functions"] {
+        Utils.isBase64("") == false &&
+        Utils.isBase64(null) == false &&
+        base64TestRequest.params("empty") == "" &&
+        base64TestRequest.params(null) == ""
+    }
+    
+    ["Special character Base64 encoding/decoding works"] {
+        // Test various Unicode characters
+        base64TestRequest.params("special") == "😀"  // Emoji
+    }
+    
+    ["Long Base64 strings are handled correctly"] {
+        let (longDecoded = base64TestRequest.params("long"))
+        longDecoded.length > 50 &&  // Verify it's actually decoded
+        longDecoded.contains("Lorem ipsum")
+    }
+    
+    ["Base64 with JSON content is properly decoded"] {
+        let (jsonDecoded = base64TestRequest.params("json"))
+        jsonDecoded == "{\"key\":\"value\"}"
+    }
+    
+    // ===== Boundary and Error Condition Tests =====
+    
+    ["Base64 functions handle malformed data gracefully"] {
+        // Test various malformed Base64 scenarios
+        Utils.isBase64("SGVs bG8=") == false &&           // Spaces
+        Utils.isBase64("SGVsbG8=\n") == false &&          // Newlines
+        Utils.isBase64("SGVsbG8===") == false             // Extra padding
+    }
+    
+    ["Base64 functions handle edge case lengths"] {
+        Utils.isBase64("Q") == false &&                   // Length 1
+        Utils.isBase64("QQ") == false &&                  // Length 2
+        Utils.isBase64("QQQ") == false &&                 // Length 3
+        Utils.isBase64("QQQQ") == true                    // Length 4 (valid)
+    }
+    
+    ["Base64 functions are case-sensitive"] {
+        Utils.isBase64("QWJj") == true &&                 // Valid
+        Utils.isBase64("qwjd") == true &&                 // Valid (lowercase)
+        Utils.isBase64("QwJd") == true                    // Valid (mixed case)
+    }
+}
+
+/// Base64 test execution and counting
+local validationTests = List(
+    validBase64Examples.every((example) -> Utils.isBase64(example) == true),
+    invalidBase64Examples.every((example) -> Utils.isBase64(example) == false)
+)
+
+local boundaryTests = List(
+    Utils.isBase64("") == false,
+    Utils.isBase64("Q") == false,
+    Utils.isBase64("QQ") == true,
+    Utils.isBase64("QQQ") == true,
+    Utils.isBase64("QQQQ") == true
+)
+
+local paddingTests = List(
+    Utils.isBase64("QQ==") == true,
+    Utils.isBase64("QUI=") == true,
+    Utils.isBase64("QUJD") == true,
+    Utils.isBase64("QQ=") == false,
+    Utils.isBase64("QQ===") == false
+)
+
+local specialCharTests = List(
+    Utils.isBase64("QQ==\n") == false,
+    Utils.isBase64("QQ==\t") == false,
+    Utils.isBase64("Q Q==") == false
+)
+
+local apiDecodingTests = List(
+    base64TestRequest.data() == "{\"message\":\"Hello World\",\"number\":123}",
+    base64TestRequest.params("valid") == "Test",
+    base64TestRequest.params("special") == "😀",
+    base64TestRequest.params("json") == "{\"key\":\"value\"}",
+    base64TestRequest.params("empty") == "",
+    base64TestRequest.params("invalid") == "Not@Base64!",
+    base64TestRequest.params("long") == "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+    base64TestRequest.header("Content-Type") == "application/json",
+    base64TestRequest.header("Authorization") == "Bearer abc123",
+    base64TestRequest.header("X-Custom") == "custom-value",
+    base64TestRequest.header("Invalid-Header") == "Invalid@Header!",
+    base64TestRequest.header("Empty-Header") == "",
+    base64TestRequest.header("Non-Existent") == ""
+)
+
+local integrationTests = List(
+    let (validParam = "VGVzdA==") 
+    let (invalidParam = "Not@Base64!")
+    Utils.isBase64(validParam) == true &&
+    base64TestRequest.params("valid") == "Test" &&
+    Utils.isBase64(invalidParam) == false &&
+    base64TestRequest.params("invalid") == invalidParam,
+    
+    Utils.isBase64("") == false &&
+    Utils.isBase64(null) == false &&
+    base64TestRequest.params("empty") == "" &&
+    base64TestRequest.params(null) == "",
+    
+    base64TestRequest.params("special") == "😀",
+    
+    let (longDecoded = base64TestRequest.params("long"))
+    longDecoded.length > 50 && longDecoded.contains("Lorem ipsum"),
+    
+    let (jsonDecoded = base64TestRequest.params("json"))
+    jsonDecoded == "{\"key\":\"value\"}"
+)
+
+local edgeCaseTests = List(
+    Utils.isBase64("QWJj") == true,
+    Utils.isBase64("qwjd") == true,
+    Utils.isBase64("QwJd") == true
+)
+
+/// Calculate Base64 test statistics
+local allBase64Tests = validationTests + boundaryTests + paddingTests + specialCharTests + apiDecodingTests + integrationTests + edgeCaseTests
+local totalTests = allBase64Tests.length
+local passedTests = allBase64Tests.filter((result) -> result == true).length
+local failedTests = totalTests - passedTests
+local successRate = if (totalTests > 0) (passedTests / totalTests * 100).floor else 0
+
+local function getTestStatus(tests: List): String = if (tests.every((test) -> test == true)) "✅" else "❌"
+local function getTestSummary(tests: List): String = 
+    let (passed = tests.filter((test) -> test == true).length)
+    let (total = tests.length)
+    "\(passed)/\(total)"
+
+/// Dynamic Base64 test results
+output {
+    text = """
+    🔐 BASE64 EDGE CASE TEST RESULTS (DYNAMIC)
+    ===========================================
+    
+    📊 EXECUTION SUMMARY:
+    Total Base64 Tests: \(totalTests)
+    Passed: \(passedTests)
+    Failed: \(failedTests)
+    Success Rate: \(successRate)%
+    
+    🔍 BASE64 VALIDATION TESTING:
+    \(getTestStatus(validationTests)) Utils.isBase64 validation - \(getTestSummary(validationTests))
+    \(getTestStatus(boundaryTests)) Boundary condition handling - \(getTestSummary(boundaryTests))
+    \(getTestStatus(paddingTests)) Padding scenario validation - \(getTestSummary(paddingTests))
+    \(getTestStatus(specialCharTests)) Special character handling - \(getTestSummary(specialCharTests))
+    \(getTestStatus(edgeCaseTests)) Edge case resilience - \(getTestSummary(edgeCaseTests))
+    
+    📡 APISERVERREQUEST BASE64 DECODING:
+    \(getTestStatus(apiDecodingTests)) Request decoding functions - \(getTestSummary(apiDecodingTests))
+    
+    🎯 INTEGRATION & CONSISTENCY:
+    \(getTestStatus(integrationTests)) Cross-module integration - \(getTestSummary(integrationTests))
+    
+    🎯 OVERALL BASE64 STATUS: \(if (failedTests == 0) "✅ ALL TESTS PASSING" else "❌ " + failedTests.toString() + " TESTS FAILING")
+    
+    \(if (failedTests > 0) "🔍 Failed Test Categories:" else "")
+    \(if (!validationTests.every((test) -> test == true)) "❌ Validation: " + getTestSummary(validationTests) else "")
+    \(if (!boundaryTests.every((test) -> test == true)) "❌ Boundary: " + getTestSummary(boundaryTests) else "")
+    \(if (!paddingTests.every((test) -> test == true)) "❌ Padding: " + getTestSummary(paddingTests) else "")
+    \(if (!specialCharTests.every((test) -> test == true)) "❌ Special Chars: " + getTestSummary(specialCharTests) else "")
+    \(if (!apiDecodingTests.every((test) -> test == true)) "❌ API Decoding: " + getTestSummary(apiDecodingTests) else "")
+    \(if (!integrationTests.every((test) -> test == true)) "❌ Integration: " + getTestSummary(integrationTests) else "")
+    \(if (!edgeCaseTests.every((test) -> test == true)) "❌ Edge Cases: " + getTestSummary(edgeCaseTests) else "")
+    
+    📋 TEST COVERAGE DETAILS:
+    - Valid Base64 examples: \(validBase64Examples.length) test cases
+    - Invalid Base64 examples: \(invalidBase64Examples.length) test cases
+    - Comprehensive boundary testing with real-time validation
+    - Dynamic edge case detection and error handling verification
+    
+    This Base64 validation suite computes results dynamically from actual test execution.
+    All metrics reflect real function behavior, ensuring robust Base64 handling.
+    """
+} 

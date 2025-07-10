@@ -90,20 +90,17 @@ jobs:
         echo "Release notes generation validated successfully!"
         rm test_release_notes.md
         
-    - name: Run PKL tests
+    - name: Run unified PKL test suite
       run: |
-        echo "Running PKL test suite..."
-        make test-all
+        echo "Running unified PKL test suite with report generation..."
+        make test
         
-    - name: Run Go assets tests
-      run: |
-        echo "Running Go assets tests..."
-        make test-assets
-        
-    - name: Run new attributes tests
-      run: |
-        echo "Running new attributes tests..."
-        make test-new-attributes
+    - name: Upload PKL test report
+      uses: actions/upload-artifact@v4
+      with:
+        name: pkl-test-report
+        path: test/TEST_REPORT.md
+        retention-days: 30
         
     - name: Build and generate code
       run: |

@@ -110,29 +110,29 @@ class ToolProperties {
 ///
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceChat]: The [ResourceChat] object associated with the resource actionID.
-function resource(actionID: String): ResourceChat =
-    if (Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+function resource(actionID: String?): ResourceChat =
+    if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
         Resources[agent.resolveActionID(actionID)]
     else
         new ResourceChat {
             Model = "llama3.2"
             Role = null
             Prompt = null
-            Scenario {}
-            Tools {}
-            Files {}
+            Scenario = null
+            Tools = null
+            Files = null
             JSONResponse = false
-            JSONResponseKeys {}
+            JSONResponseKeys = null
             Response = null
             File = null
-            ItemValues {}
+            ItemValues = null
         }
 
 /// Retrieves the response text associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response for.
 /// [str]: The response text returned by the LLM model.
-function response(actionID: String): String = 
+function response(actionID: String?): String = 
     let (res = resource(actionID).Response)
     if (res != null)
         if (isBase64(res)) res.base64Decoded else res
@@ -142,27 +142,47 @@ function response(actionID: String): String =
 ///
 /// [actionID]: The actionID of the resource to retrieve the prompt for.
 /// [str]: The prompt text sent to the LLM model.
-function prompt(actionID: String): String = if (isBase64(resource(actionID).Prompt)) resource(actionID).Prompt.base64Decoded else resource(actionID).Prompt
+function prompt(actionID: String?): String = 
+    let (res = resource(actionID).Prompt)
+    if (res != null)
+        if (isBase64(res)) res.base64Decoded else res
+    else ""
 
 /// Retrieves whether the LLM's response for the resource [actionID] is in JSON format.
 ///
 /// [actionID]: The actionID of the resource to check for JSON response.
 /// [bool]: True if the response is in JSON format, otherwise False.
-function jsonResponse(actionID: String): Boolean = if (isBase64(resource(actionID).JSONResponse)) resource(actionID).JSONResponse.base64Decoded else resource(actionID).JSONResponse
+function jsonResponse(actionID: String?): Boolean = 
+    let (res = resource(actionID).JSONResponse)
+    if (res != null)
+        res
+    else false
 
 /// Retrieves the JSON response keys for the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the JSON response keys for.
 /// [Listing<String>]: A listing of the JSON response keys.
-function jsonResponseKeys(actionID: String): Listing<String> = if (isBase64(resource(actionID).JSONResponseKeys)) resource(actionID).JSONResponseKeys.base64Decoded else resource(actionID).JSONResponseKeys
+function jsonResponseKeys(actionID: String?): Listing<String> = 
+    let (res = resource(actionID).JSONResponseKeys)
+    if (res != null)
+        res
+    else new Listing {}
 
 /// Retrieves the item iteration responses for the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the item values.
-function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).ItemValues)) resource(actionID).ItemValues.base64Decoded else resource(actionID).ItemValues
+function itemValues(actionID: String?): Listing<String> = 
+    let (res = resource(actionID).ItemValues)
+    if (res != null)
+        res
+    else new Listing {}
 
 /// Retrieves the file path containing the LLM response associated with the specified resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(actionID: String): String = if (isBase64(resource(actionID).File)) resource(actionID).File.base64Decoded else resource(actionID).File
+function file(actionID: String?): String = 
+    let (res = resource(actionID).File)
+    if (res != null)
+        if (isBase64(res)) res.base64Decoded else res
+    else ""
