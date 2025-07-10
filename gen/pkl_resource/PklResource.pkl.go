@@ -12,7 +12,7 @@ type PklResource interface {
 
 var _ PklResource = (*PklResourceImpl)(nil)
 
-// Abstractions for PKL records stored in SQLite3
+// Abstractions for PKL records
 type PklResourceImpl struct {
 }
 

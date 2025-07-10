@@ -11,9 +11,7 @@ import (
 type Exec interface {
 	utils.Utils
 
-	GetRequestID() *string
-
-	GetResources() *map[string]*ResourceExec
+	GetResources() map[string]*ResourceExec
 }
 
 var _ Exec = (*ExecImpl)(nil)
@@ -28,20 +26,14 @@ var _ Exec = (*ExecImpl)(nil)
 type ExecImpl struct {
 	*utils.UtilsImpl
 
-	// The current request ID for pklres operations (injected by Go code)
-	RequestID *string `pkl:"requestID"`
-
 	// A mapping of resource actionIDs to their associated [ResourceExec] objects.
-	Resources *map[string]*ResourceExec `pkl:"Resources"`
-}
-
-// The current request ID for pklres operations (injected by Go code)
-func (rcv *ExecImpl) GetRequestID() *string {
-	return rcv.RequestID
+	// This mapping is populated from pklres storage.
+	Resources map[string]*ResourceExec `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceExec] objects.
-func (rcv *ExecImpl) GetResources() *map[string]*ResourceExec {
+// This mapping is populated from pklres storage.
+func (rcv *ExecImpl) GetResources() map[string]*ResourceExec {
 	return rcv.Resources
 }
 

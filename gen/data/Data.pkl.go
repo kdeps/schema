@@ -11,9 +11,7 @@ import (
 type Data interface {
 	utils.Utils
 
-	GetRequestID() *string
-
-	GetFiles() *map[string]map[string]string
+	GetFiles() map[string]map[string]string
 }
 
 var _ Data = (*DataImpl)(nil)
@@ -22,20 +20,14 @@ var _ Data = (*DataImpl)(nil)
 type DataImpl struct {
 	*utils.UtilsImpl
 
-	// The current request ID for pklres operations (injected by Go code)
-	RequestID *string `pkl:"requestID"`
-
 	// Files in the data folder mapped with the agent name and version
-	Files *map[string]map[string]string `pkl:"Files"`
-}
-
-// The current request ID for pklres operations (injected by Go code)
-func (rcv *DataImpl) GetRequestID() *string {
-	return rcv.RequestID
+	// This mapping is populated from pklres storage.
+	Files map[string]map[string]string `pkl:"Files"`
 }
 
 // Files in the data folder mapped with the agent name and version
-func (rcv *DataImpl) GetFiles() *map[string]map[string]string {
+// This mapping is populated from pklres storage.
+func (rcv *DataImpl) GetFiles() map[string]map[string]string {
 	return rcv.Files
 }
 

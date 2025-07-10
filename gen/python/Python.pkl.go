@@ -11,9 +11,7 @@ import (
 type Python interface {
 	utils.Utils
 
-	GetRequestID() *string
-
-	GetResources() *map[string]*ResourcePython
+	GetResources() map[string]*ResourcePython
 }
 
 var _ Python = (*PythonImpl)(nil)
@@ -27,20 +25,14 @@ var _ Python = (*PythonImpl)(nil)
 type PythonImpl struct {
 	*utils.UtilsImpl
 
-	// The current request ID for pklres operations (injected by Go code)
-	RequestID *string `pkl:"requestID"`
-
 	// A mapping of resource actionIDs to their associated [ResourcePython] objects.
-	Resources *map[string]*ResourcePython `pkl:"Resources"`
-}
-
-// The current request ID for pklres operations (injected by Go code)
-func (rcv *PythonImpl) GetRequestID() *string {
-	return rcv.RequestID
+	// This mapping is populated from pklres storage.
+	Resources map[string]*ResourcePython `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourcePython] objects.
-func (rcv *PythonImpl) GetResources() *map[string]*ResourcePython {
+// This mapping is populated from pklres storage.
+func (rcv *PythonImpl) GetResources() map[string]*ResourcePython {
 	return rcv.Resources
 }
 

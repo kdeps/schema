@@ -13,9 +13,11 @@ extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 import "Agent.pkl" as agent
+import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-Resources: Mapping<String, ResourceHTTPClient>?
+/// This mapping is populated from pklres storage.
+Resources: Mapping<String, ResourceHTTPClient> = new Mapping {}
 
 /// Class representing an HTTP client resource, which includes details
 /// about the HTTP method, URL, request data, headers, and response.
@@ -74,19 +76,23 @@ class ResponseBlock {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceHTTPClient]: The [ResourceHTTPClient] object associated with the resource actionID.
 function resource(actionID: String?): ResourceHTTPClient =
-  if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+  if (actionID != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
     Resources[agent.resolveActionID(actionID)]
   else
-    new ResourceHTTPClient {
-      Method = "GET"
-      Url = ""
-      Data = null
-      Headers = null
-      Params = null
-      Response = null
-      File = null
-      ItemValues = null
-    }
+    let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "http"))
+    if (!pklText.isEmpty)
+      eval(pklText) as ResourceHTTPClient
+    else
+      new ResourceHTTPClient {
+        Method = "GET"
+        Url = ""
+        Data = null
+        Headers = null
+        Params = null
+        Response = null
+        File = null
+        ItemValues = null
+      }
 
 /// Retrieves the body of the response associated with the resource [actionID].
 ///
@@ -130,4 +136,64 @@ function responseHeader(actionID: String?, headeractionID: String?): String =
       let (headerValue = res.Headers[headeractionID])
       if (isBase64(headerValue)) headerValue.base64Decoded else headerValue
     else ""
+  else ""
+
+/// Maps a [ResourceHTTPClient] object to pklres storage for the given [actionID].
+///
+/// [actionID]: The actionID of the resource to store.
+/// [resourceHTTPClient]: The ResourceHTTPClient object to store.
+function mapResource(actionID: String?, resourceHTTPClient: ResourceHTTPClient?): String =
+  if (actionID != null && resourceHTTPClient != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "resource", resourceHTTPClient.toString())
+  else ""
+
+/// Maps individual ResourceHTTPClient properties to pklres storage.
+function mapMethod(actionID: String?, method: String?): String =
+  if (actionID != null && method != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "method", method)
+  else ""
+
+function mapUrl(actionID: String?, url: Uri?): String =
+  if (actionID != null && url != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "url", url.toString())
+  else ""
+
+function mapData(actionID: String?, data: Listing<String>?): String =
+  if (actionID != null && data != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "data", data.toString())
+  else ""
+
+function mapHeaders(actionID: String?, headers: Mapping<String, String>?): String =
+  if (actionID != null && headers != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "headers", headers.toString())
+  else ""
+
+function mapParams(actionID: String?, params: Mapping<String, String>?): String =
+  if (actionID != null && params != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "params", params.toString())
+  else ""
+
+function mapResponse(actionID: String?, response: ResponseBlock?): String =
+  if (actionID != null && response != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "response", response.toString())
+  else ""
+
+function mapFile(actionID: String?, file: String?): String =
+  if (actionID != null && file != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "file", file)
+  else ""
+
+function mapItemValues(actionID: String?, itemValues: Listing<String>?): String =
+  if (actionID != null && itemValues != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "itemValues", itemValues.toString())
+  else ""
+
+function mapResponseBody(actionID: String?, responseBody: String?): String =
+  if (actionID != null && responseBody != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "responseBody", responseBody)
+  else ""
+
+function mapResponseHeaders(actionID: String?, responseHeaders: Mapping<String, String>?): String =
+  if (actionID != null && responseHeaders != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "http", "responseHeaders", responseHeaders.toString())
   else ""

@@ -18,9 +18,11 @@ extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 import "Agent.pkl" as agent
+import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-Resources: Mapping<String, ResourceChat>?
+/// This mapping is populated from pklres storage.
+Resources: Mapping<String, ResourceChat> = new Mapping {}
 
 /// Class representing the details of a chat interaction with an LLM model, including prompts, responses,
 /// and configuration options such as tools, JSON output, and timeout settings.
@@ -111,22 +113,26 @@ class ToolProperties {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceChat]: The [ResourceChat] object associated with the resource actionID.
 function resource(actionID: String?): ResourceChat =
-    if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+    if (actionID != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
         Resources[agent.resolveActionID(actionID)]
     else
-        new ResourceChat {
-            Model = "llama3.2"
-            Role = null
-            Prompt = null
-            Scenario = null
-            Tools = null
-            Files = null
-            JSONResponse = false
-            JSONResponseKeys = null
-            Response = null
-            File = null
-            ItemValues = null
-        }
+        let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "llm"))
+        if (!pklText.isEmpty)
+            eval(pklText) as ResourceChat
+        else
+            new ResourceChat {
+                Model = "llama3.2"
+                Role = null
+                Prompt = null
+                Scenario = null
+                Tools = null
+                Files = null
+                JSONResponse = false
+                JSONResponseKeys = null
+                Response = null
+                File = null
+                ItemValues = null
+            }
 
 /// Retrieves the response text associated with the resource [actionID].
 ///
@@ -186,3 +192,68 @@ function file(actionID: String?): String =
     if (res != null)
         if (isBase64(res)) res.base64Decoded else res
     else ""
+
+/// Maps a [ResourceChat] object to pklres storage for the given [actionID].
+///
+/// [actionID]: The actionID of the resource to store.
+/// [resourceChat]: The ResourceChat object to store.
+function mapResource(actionID: String?, resourceChat: ResourceChat?): String =
+  if (actionID != null && resourceChat != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "resource", resourceChat.toString())
+  else ""
+
+/// Maps individual ResourceChat properties to pklres storage.
+function mapModel(actionID: String?, model: String?): String =
+  if (actionID != null && model != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "model", model)
+  else ""
+
+function mapRole(actionID: String?, role: String?): String =
+  if (actionID != null && role != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "role", role)
+  else ""
+
+function mapPrompt(actionID: String?, prompt: String?): String =
+  if (actionID != null && prompt != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "prompt", prompt)
+  else ""
+
+function mapResponse(actionID: String?, response: String?): String =
+  if (actionID != null && response != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "response", response)
+  else ""
+
+function mapJSONResponse(actionID: String?, jsonResponse: Boolean?): String =
+  if (actionID != null && jsonResponse != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "jsonResponse", jsonResponse.toString())
+  else ""
+
+function mapJSONResponseKeys(actionID: String?, jsonResponseKeys: Listing<String>?): String =
+  if (actionID != null && jsonResponseKeys != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "jsonResponseKeys", jsonResponseKeys.toString())
+  else ""
+
+function mapFile(actionID: String?, file: String?): String =
+  if (actionID != null && file != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "file", file)
+  else ""
+
+function mapItemValues(actionID: String?, itemValues: Listing<String>?): String =
+  if (actionID != null && itemValues != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "itemValues", itemValues.toString())
+  else ""
+
+function mapScenario(actionID: String?, scenario: Listing<MultiChat>?): String =
+  if (actionID != null && scenario != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "scenario", scenario.toString())
+  else ""
+
+function mapTools(actionID: String?, tools: Listing<Tool>?): String =
+  if (actionID != null && tools != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "tools", tools.toString())
+  else ""
+
+function mapFiles(actionID: String?, files: Listing<String>?): String =
+  if (actionID != null && files != null)
+    pklres.setPklValue(agent.resolveActionID(actionID), "llm", "files", files.toString())
+  else ""
