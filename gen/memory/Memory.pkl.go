@@ -5,15 +5,18 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/utils"
 )
 
 type Memory interface {
+	utils.Utils
 }
 
 var _ Memory = (*MemoryImpl)(nil)
 
 // Abstractions for Memory records
 type MemoryImpl struct {
+	*utils.UtilsImpl
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Memory

@@ -13,7 +13,10 @@ import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pk
 /// Returns the textual content of the session entry, or an empty string if not found.
 ///
 /// [id]: The identifier of the session record.
-function getPklRecord(id: String, typ: String): String = read("pklres:/\(id)?type=\(typ)")?.text ?? ""
+function getPklRecord(id: String?, typ: String?): String = 
+  if (id != null && typ != null) 
+    read("pklres:/\(id)?type=\(typ)")?.text ?? "" 
+  else ""
 
 /// Sets or updates a session record with a new [value]
 ///
@@ -21,7 +24,10 @@ function getPklRecord(id: String, typ: String): String = read("pklres:/\(id)?typ
 ///
 /// [id]: The identifier of the session record.
 /// [value]: The value to store.
-function setPklValue(id: String, typ: String, key: String, value: String): String = read("pklres:/\(id)?type=\(typ)?key=\(key)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+function setPklValue(id: String?, typ: String?, key: String?, value: String?): String = 
+  if (id != null && typ != null && key != null && value != null) 
+    read("pklres:/\(id)?type=\(typ)?key=\(key)?op=set&value=\(URI.encodeComponent(value))")?.text ?? "" 
+  else ""
 
 /// Get a pkl key record
 ///
@@ -29,4 +35,7 @@ function setPklValue(id: String, typ: String, key: String, value: String): Strin
 ///
 /// [id]: The identifier of the session record.
 /// [value]: The value to store.
-function getPklValue(id: String, typ: String, key: String): String = read("pklres:/\(id)?type=\(typ)?key=\(key)?op=get")?.text ?? ""
+function getPklValue(id: String?, typ: String?, key: String?): String = 
+  if (id != null && typ != null && key != null) 
+    read("pklres:/\(id)?type=\(typ)?key=\(key)?op=get")?.text ?? "" 
+  else ""

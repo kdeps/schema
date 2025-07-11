@@ -11,7 +11,7 @@ import (
 type Data interface {
 	utils.Utils
 
-	GetFiles() *map[string]map[string]string
+	GetFiles() map[string]map[string]string
 }
 
 var _ Data = (*DataImpl)(nil)
@@ -21,11 +21,13 @@ type DataImpl struct {
 	*utils.UtilsImpl
 
 	// Files in the data folder mapped with the agent name and version
-	Files *map[string]map[string]string `pkl:"Files"`
+	// This mapping is populated from pklres storage.
+	Files map[string]map[string]string `pkl:"Files"`
 }
 
 // Files in the data folder mapped with the agent name and version
-func (rcv *DataImpl) GetFiles() *map[string]map[string]string {
+// This mapping is populated from pklres storage.
+func (rcv *DataImpl) GetFiles() map[string]map[string]string {
 	return rcv.Files
 }
 

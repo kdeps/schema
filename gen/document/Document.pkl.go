@@ -5,9 +5,11 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/utils"
 )
 
 type Document interface {
+	utils.Utils
 }
 
 var _ Document = (*DocumentImpl)(nil)
@@ -16,6 +18,7 @@ var _ Document = (*DocumentImpl)(nil)
 //
 // Tools for Parsing and Generating JSON, YAML and XML documents
 type DocumentImpl struct {
+	*utils.UtilsImpl
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Document

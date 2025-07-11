@@ -9,5 +9,8 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 
 /// Resolves an actionID using the agent reader.
 /// Returns the fully qualified actionID (e.g., @agentID/actionID:version)
-function resolveActionID(actionID: String): String =
-  read("agent:/\(actionID)")?.text ?? actionID 
+function resolveActionID(actionID: String?): String =
+  if (actionID != null && actionID != "") 
+    read("agent:/\(actionID)")?.text ?? actionID 
+  else 
+    actionID ?? ""

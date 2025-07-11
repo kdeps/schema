@@ -272,7 +272,7 @@ output {
     🆕 RESOURCE ACTION ENHANCEMENTS:
     ✅ PostflightCheck: Optional post-execution validation
     ✅ Independent retry settings for pre/post checks
-    ✅ Backwards compatibility with existing PreflightCheck
+    ✅ Backward support with existing PreflightCheck
     ✅ Null handling for optional checks
     
     🆕 DOCKER SETTINGS ENHANCEMENTS:
@@ -289,7 +289,7 @@ output {
     
     🆕 INTEGRATION & EDGE CASES:
     ✅ All new attributes work together seamlessly
-    ✅ Backwards compatibility maintained
+    ✅ Backward support maintained
     ✅ Edge cases handled properly (zero values, high values)
     ✅ Type safety enforced for BuildEnv
     

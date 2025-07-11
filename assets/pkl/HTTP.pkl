@@ -13,9 +13,11 @@ extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 import "Agent.pkl" as agent
+import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-Resources: Mapping<String, ResourceHTTPClient>?
+/// This mapping is populated from pklres storage.
+Resources: Mapping<String, ResourceHTTPClient> = new Mapping {}
 
 /// Class representing an HTTP client resource, which includes details
 /// about the HTTP method, URL, request data, headers, and response.
@@ -74,19 +76,33 @@ class ResponseBlock {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceHTTPClient]: The [ResourceHTTPClient] object associated with the resource actionID.
 function resource(actionID: String?): ResourceHTTPClient =
-  if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+  if (actionID != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
     Resources[agent.resolveActionID(actionID)]
   else
-    new ResourceHTTPClient {
-      Method = "GET"
-      Url = ""
-      Data = null
-      Headers = null
-      Params = null
-      Response = null
-      File = null
-      ItemValues = null
-    }
+    let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "http"))
+    if (!pklText.isEmpty)
+      // Return default ResourceHTTPClient
+      new ResourceHTTPClient {
+        Method = "GET"
+        Url = ""
+        Data = null
+        Headers = null
+        Params = null
+        Response = null
+        File = null
+        ItemValues = null
+      }
+    else
+      new ResourceHTTPClient {
+        Method = "GET"
+        Url = ""
+        Data = null
+        Headers = null
+        Params = null
+        Response = null
+        File = null
+        ItemValues = null
+      }
 
 /// Retrieves the body of the response associated with the resource [actionID].
 ///

@@ -7,9 +7,11 @@ open module org.kdeps.pkl.Data
 
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "PklResource.pkl" as pklres
 
 /// Files in the data folder mapped with the agent name and version
-Files: Mapping<String, Mapping<String, String>>?
+/// This mapping is populated from pklres storage.
+Files: Mapping<String, Mapping<String, String>> = new Mapping {}
 
 /// Retrieves data file path of a given [agentName] and [fileName]
 ///
@@ -18,7 +20,10 @@ Files: Mapping<String, Mapping<String, String>>?
 ///
 /// [agentName]: The key of the agent name.
 /// [fileName]: The key of the file to retrieve from the agent.
-function filepath(agentName: String, fileName: String) = 
-    if (Files != null && (Files.getOrNull(agentName).ifNonNull((v) -> v.containsKey(fileName))) ?? false) 
-        if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName] 
-    else ""
+function filepath(agentName: String?, fileName: String?): String = 
+    if (agentName != null && fileName != null && Files.getOrNull(agentName)?.ifNonNull((v) -> v.containsKey(fileName)) == true)
+        if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName]
+    else
+        // pklres.getPklRecord returns a string, not a mapping
+        // Return empty string when data is not in Files mapping
+        ""

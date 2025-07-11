@@ -427,7 +427,7 @@ output {
     ✅ Project Settings: RateLimitMax attribute with default value 100
     ✅ Project Settings: Environment attribute with default "dev"
     ✅ BuildEnv: Type alias supporting "dev" and "prod" values
-    ✅ Version Updates: PKL 0.28.2 and pkl-go 0.10.0 compatibility
+    ✅ Version Updates: PKL 0.28.2 and pkl-go 0.10.0 integration
     
     All camelCase function names are working correctly!
     All new attributes have proper defaults and validation!
@@ -438,6 +438,6 @@ output {
        - PKL workspace setup for external testing
        - File extraction with preserved names  
        - TmpDir handling for predictable testing
-       - Cross-import compatibility validation
+       - Cross-import validation
     """
 } 

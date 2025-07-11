@@ -13,16 +13,16 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 ///
 /// [it]: The file path to check.
 /// Returns `true` if the file exists, `false` otherwise.
-function ifFileExists(it: String) = read?(it) != null
+function ifFileExists(it: String?) = if (it != null && it != "") read?(it) != null else false
 
 /// Checks if a folder exists and contains files at the given path.
 ///
 /// [it]: The folder path to check.
 /// Returns `true` if the folder exists and has files, `false` otherwise.
-function ifFolderExists(it: String) = read*(it).keys.length > 0
+function ifFolderExists(it: String?) = if (it != null && it != "") read*(it).keys.length > 0 else false
 
 /// Checks if a file exists and is empty at the given path.
 ///
 /// [it]: The file path to check.
 /// Returns `true` if the file exists and is empty, `false` otherwise.
-function ifFileIsEmpty(it: String) = ifFileExists(it) && read?(it).base64Decoded.isEmpty
+function ifFileIsEmpty(it: String?) = if (it != null && it != "") ifFileExists(it) && read?(it)?.base64Decoded?.isEmpty == true else false

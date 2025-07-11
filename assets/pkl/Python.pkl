@@ -14,9 +14,11 @@ extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 import "Agent.pkl" as agent
+import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourcePython] objects.
-Resources: Mapping<String, ResourcePython>?
+/// This mapping is populated from pklres storage.
+Resources: Mapping<String, ResourcePython> = new Mapping {}
 
 /// Class representing a Python execution resource, which includes the script to be executed,
 /// environment variables, and execution details such as outputs and exit codes.
@@ -69,19 +71,33 @@ class ResourcePython {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourcePython]: The [ResourcePython] object associated with the resource actionID.
 function resource(actionID: String?): ResourcePython =
-  if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+  if (actionID != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
     Resources[agent.resolveActionID(actionID)]
   else
-    new ResourcePython {
-      Env = null
-      PythonEnvironment = ""
-      Script = ""
-      Stderr = null
-      Stdout = null
-      ExitCode = 0
-      File = null
-      ItemValues = null
-    }
+    let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "python"))
+    if (!pklText.isEmpty)
+      // Return default ResourcePython
+      new ResourcePython {
+        Env = null
+        PythonEnvironment = ""
+        Script = ""
+        Stderr = null
+        Stdout = null
+        ExitCode = 0
+        File = null
+        ItemValues = null
+      }
+    else
+      new ResourcePython {
+        Env = null
+        PythonEnvironment = ""
+        Script = ""
+        Stderr = null
+        Stdout = null
+        ExitCode = 0
+        File = null
+        ItemValues = null
+      }
 
 /// Retrieves the standard error output associated with the resource [actionID].
 ///

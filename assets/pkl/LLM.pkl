@@ -18,9 +18,11 @@ extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 import "Agent.pkl" as agent
+import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-Resources: Mapping<String, ResourceChat>?
+/// This mapping is populated from pklres storage.
+Resources: Mapping<String, ResourceChat> = new Mapping {}
 
 /// Class representing the details of a chat interaction with an LLM model, including prompts, responses,
 /// and configuration options such as tools, JSON output, and timeout settings.
@@ -111,22 +113,39 @@ class ToolProperties {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceChat]: The [ResourceChat] object associated with the resource actionID.
 function resource(actionID: String?): ResourceChat =
-    if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+    if (actionID != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
         Resources[agent.resolveActionID(actionID)]
     else
-        new ResourceChat {
-            Model = "llama3.2"
-            Role = null
-            Prompt = null
-            Scenario = null
-            Tools = null
-            Files = null
-            JSONResponse = false
-            JSONResponseKeys = null
-            Response = null
-            File = null
-            ItemValues = null
-        }
+        let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "llm"))
+        if (!pklText.isEmpty)
+            // Return default ResourceChat
+            new ResourceChat {
+                Model = "llama3.2"
+                Role = null
+                Prompt = null
+                Scenario = null
+                Tools = null
+                Files = null
+                JSONResponse = false
+                JSONResponseKeys = null
+                Response = null
+                File = null
+                ItemValues = null
+            }
+        else
+            new ResourceChat {
+                Model = "llama3.2"
+                Role = null
+                Prompt = null
+                Scenario = null
+                Tools = null
+                Files = null
+                JSONResponse = false
+                JSONResponseKeys = null
+                Response = null
+                File = null
+                ItemValues = null
+            }
 
 /// Retrieves the response text associated with the resource [actionID].
 ///

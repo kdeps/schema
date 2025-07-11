@@ -15,9 +15,11 @@ extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 import "Agent.pkl" as agent
+import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourceExec] objects.
-Resources: Mapping<String, ResourceExec>?
+/// This mapping is populated from pklres storage.
+Resources: Mapping<String, ResourceExec> = new Mapping {}
 
 /// Class representing an executable resource, which includes the command to be executed,
 /// environment variables, and execution details such as outputs and exit codes.
@@ -63,18 +65,31 @@ class ResourceExec {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceExec]: The [ResourceExec] object associated with the resource actionID.
 function resource(actionID: String?): ResourceExec =
-  if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
+  if (actionID != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
     Resources[agent.resolveActionID(actionID)]
   else
-    new ResourceExec {
-      Env = null
-      Command = ""
-      Stderr = null
-      Stdout = null
-      ExitCode = 0
-      File = null
-      ItemValues = null
-    }
+    let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "exec"))
+    if (!pklText.isEmpty)
+      // Return default ResourceExec
+      new ResourceExec {
+        Env = null
+        Command = ""
+        Stderr = null
+        Stdout = null
+        ExitCode = 0
+        File = null
+        ItemValues = null
+      }
+    else
+      new ResourceExec {
+        Env = null
+        Command = ""
+        Stderr = null
+        Stdout = null
+        ExitCode = 0
+        File = null
+        ItemValues = null
+      }
 
 /// Retrieves the standard error output associated with the resource [actionID].
 ///
