@@ -1,10 +1,6 @@
 package test
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"net/http/httptest"
 	"sync"
 	"testing"
 	"time"
@@ -12,61 +8,21 @@ import (
 
 func TestMonitoringSystem(t *testing.T) {
 	t.Run("NewMonitoringSystem", func(t *testing.T) {
-		config := &MonitoringConfig{
-			DashboardPort:   8080,
-			MetricsInterval: 1 * time.Second,
-			EnableWebUI:     false, // Disable for testing
-			EnableAlerts:    true,
-			RetentionPeriod: 1 * time.Hour,
-			AlertThresholds: AlertThresholds{
-				FailureRatePercent: 0.1,
-				TestDurationMs:     5000, // 5 seconds in ms
-				MemoryUsagePercent: 0.8,
-				CPUUsagePercent:    0.9,
-			},
-		}
-
-		monitoring := NewMonitoringSystem(config)
+		monitoring := NewMonitoringSystem()
 		defer monitoring.Close()
 
 		if monitoring == nil {
 			t.Fatal("Expected monitoring system to be created")
 		}
 
-		if monitoring.config != config {
-			t.Error("Expected config to match provided config")
-		}
-	})
-
-	t.Run("RecordMetric", func(t *testing.T) {
-		monitoring := NewMonitoringSystem(nil)
-		defer monitoring.Close()
-
-		// Record a test metric
-		monitoring.RecordMetric("test_metric", 42.5, map[string]string{"type": "test"})
-
-		// Get metrics and verify
-		metrics := monitoring.GetMetrics()
-		if len(metrics) == 0 {
-			t.Fatal("Expected metrics to be recorded")
-		}
-
-		metric, exists := metrics["test_metric"]
-		if !exists {
-			t.Fatal("Expected test_metric to exist")
-		}
-
-		if metric.LastValue != 42.5 {
-			t.Errorf("Expected last value to be 42.5, got %f", metric.LastValue)
-		}
-
-		if len(metric.DataPoints) != 1 {
-			t.Errorf("Expected 1 data point, got %d", len(metric.DataPoints))
+		alerts := monitoring.GetAlerts()
+		if len(alerts) != 0 {
+			t.Error("Expected no alerts initially")
 		}
 	})
 
 	t.Run("CreateAlert", func(t *testing.T) {
-		monitoring := NewMonitoringSystem(nil)
+		monitoring := NewMonitoringSystem()
 		defer monitoring.Close()
 
 		// Create an alert
@@ -74,8 +30,8 @@ func TestMonitoringSystem(t *testing.T) {
 
 		// Get alerts and verify
 		alerts := monitoring.GetAlerts()
-		if len(alerts) == 0 {
-			t.Fatal("Expected alerts to be created")
+		if len(alerts) != 1 {
+			t.Fatal("Expected 1 alert to be created")
 		}
 
 		alert := alerts[0]
@@ -90,10 +46,18 @@ func TestMonitoringSystem(t *testing.T) {
 		if alert.Message != "Test alert message" {
 			t.Errorf("Expected alert message to be 'Test alert message', got %s", alert.Message)
 		}
+
+		if alert.Acknowledged {
+			t.Error("Expected alert to not be acknowledged initially")
+		}
+
+		if alert.Resolved {
+			t.Error("Expected alert to not be resolved initially")
+		}
 	})
 
 	t.Run("AcknowledgeAlert", func(t *testing.T) {
-		monitoring := NewMonitoringSystem(nil)
+		monitoring := NewMonitoringSystem()
 		defer monitoring.Close()
 
 		// Create an alert
@@ -111,194 +75,22 @@ func TestMonitoringSystem(t *testing.T) {
 		monitoring.AcknowledgeAlert(alertID)
 
 		// Verify acknowledgment
-		alerts = monitoring.GetAlerts()
-		for _, alert := range alerts {
-			if alert.ID == alertID && !alert.Acknowledged {
-				t.Error("Expected alert to be acknowledged")
-			}
+		alert := monitoring.GetAlertByID(alertID)
+		if alert == nil {
+			t.Fatal("Expected alert to be found")
+		}
+
+		if !alert.Acknowledged {
+			t.Error("Expected alert to be acknowledged")
 		}
 	})
 
-	t.Run("MetricsTrendCalculation", func(t *testing.T) {
-		monitoring := NewMonitoringSystem(nil)
+	t.Run("ResolveAlert", func(t *testing.T) {
+		monitoring := NewMonitoringSystem()
 		defer monitoring.Close()
 
-		// Record increasing values
-		monitoring.RecordMetric("trend_test", 10.0, nil)
-		monitoring.RecordMetric("trend_test", 20.0, nil)
-		monitoring.RecordMetric("trend_test", 30.0, nil)
-
-		metrics := monitoring.GetMetrics()
-		metric := metrics["trend_test"]
-
-		if metric.Trend != "increasing" {
-			t.Errorf("Expected trend to be 'increasing', got %s", metric.Trend)
-		}
-
-		// Record decreasing values
-		monitoring.RecordMetric("trend_test", 25.0, nil)
-		monitoring.RecordMetric("trend_test", 15.0, nil)
-
-		metrics = monitoring.GetMetrics()
-		metric = metrics["trend_test"]
-
-		if metric.Trend != "decreasing" {
-			t.Errorf("Expected trend to be 'decreasing', got %s", metric.Trend)
-		}
-	})
-
-	t.Run("MetricsCleanup", func(t *testing.T) {
-		config := &MonitoringConfig{
-			RetentionPeriod: 1 * time.Millisecond, // Very short retention for testing
-		}
-		monitoring := NewMonitoringSystem(config)
-		defer monitoring.Close()
-
-		// Record a metric
-		monitoring.RecordMetric("cleanup_test", 42.0, nil)
-
-		// Wait for cleanup
-		time.Sleep(10 * time.Millisecond)
-
-		// Record another metric to trigger cleanup
-		monitoring.RecordMetric("cleanup_test", 43.0, nil)
-
-		metrics := monitoring.GetMetrics()
-		metric := metrics["cleanup_test"]
-
-		// Should have only the recent data point
-		if len(metric.DataPoints) != 1 {
-			t.Errorf("Expected 1 data point after cleanup, got %d", len(metric.DataPoints))
-		}
-	})
-}
-
-func TestMonitoringDashboard(t *testing.T) {
-	t.Run("DashboardHandler", func(t *testing.T) {
-		monitoring := NewMonitoringSystem(&MonitoringConfig{
-			EnableWebUI: false, // We'll test the handler directly
-		})
-		defer monitoring.Close()
-
-		// Create a test request
-		req := httptest.NewRequest("GET", "/", nil)
-		w := httptest.NewRecorder()
-
-		// Call the dashboard handler
-		monitoring.dashboardHandler(w, req)
-
-		// Check response
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status 200, got %d", w.Code)
-		}
-
-		// Check that it returns HTML
-		contentType := w.Header().Get("Content-Type")
-		if contentType != "" && contentType != "text/html; charset=utf-8" {
-			t.Errorf("Expected HTML content type, got %s", contentType)
-		}
-	})
-
-	t.Run("MetricsAPIHandler", func(t *testing.T) {
-		monitoring := NewMonitoringSystem(&MonitoringConfig{
-			EnableWebUI: false,
-		})
-		defer monitoring.Close()
-
-		// Record some test metrics
-		monitoring.RecordMetric("api_test", 123.45, map[string]string{"test": "value"})
-
-		// Create a test request
-		req := httptest.NewRequest("GET", "/api/metrics", nil)
-		w := httptest.NewRecorder()
-
-		// Call the metrics API handler
-		monitoring.metricsAPIHandler(w, req)
-
-		// Check response
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status 200, got %d", w.Code)
-		}
-
-		// Check content type
-		contentType := w.Header().Get("Content-Type")
-		if contentType != "application/json" {
-			t.Errorf("Expected JSON content type, got %s", contentType)
-		}
-
-		// Parse response
-		var metrics map[string]*MetricSeries
-		if err := json.NewDecoder(w.Body).Decode(&metrics); err != nil {
-			t.Fatalf("Failed to decode JSON response: %v", err)
-		}
-
-		// Verify metrics
-		if len(metrics) == 0 {
-			t.Fatal("Expected metrics in response")
-		}
-
-		metric, exists := metrics["api_test"]
-		if !exists {
-			t.Fatal("Expected api_test metric in response")
-		}
-
-		if metric.LastValue != 123.45 {
-			t.Errorf("Expected last value 123.45, got %f", metric.LastValue)
-		}
-	})
-
-	t.Run("AlertsAPIHandler", func(t *testing.T) {
-		monitoring := NewMonitoringSystem(&MonitoringConfig{
-			EnableWebUI: false,
-		})
-		defer monitoring.Close()
-
-		// Create some test alerts
-		monitoring.CreateAlert("api_alert", "critical", "API test alert")
-
-		// Create a test request
-		req := httptest.NewRequest("GET", "/api/alerts", nil)
-		w := httptest.NewRecorder()
-
-		// Call the alerts API handler
-		monitoring.alertsAPIHandler(w, req)
-
-		// Check response
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status 200, got %d", w.Code)
-		}
-
-		// Check content type
-		contentType := w.Header().Get("Content-Type")
-		if contentType != "application/json" {
-			t.Errorf("Expected JSON content type, got %s", contentType)
-		}
-
-		// Parse response
-		var alerts []*Alert
-		if err := json.NewDecoder(w.Body).Decode(&alerts); err != nil {
-			t.Fatalf("Failed to decode JSON response: %v", err)
-		}
-
-		// Verify alerts
-		if len(alerts) == 0 {
-			t.Fatal("Expected alerts in response")
-		}
-
-		alert := alerts[0]
-		if alert.Type != "api_alert" {
-			t.Errorf("Expected alert type 'api_alert', got %s", alert.Type)
-		}
-	})
-
-	t.Run("AcknowledgeAlertHandler", func(t *testing.T) {
-		monitoring := NewMonitoringSystem(&MonitoringConfig{
-			EnableWebUI: false,
-		})
-		defer monitoring.Close()
-
-		// Create a test alert
-		monitoring.CreateAlert("ack_alert", "warning", "Acknowledge test alert")
+		// Create an alert
+		monitoring.CreateAlert("test_alert", "warning", "Test alert message")
 
 		// Get the alert ID
 		alerts := monitoring.GetAlerts()
@@ -308,24 +100,132 @@ func TestMonitoringDashboard(t *testing.T) {
 
 		alertID := alerts[0].ID
 
-		// Create a test request
-		req := httptest.NewRequest("POST", "/api/alerts/acknowledge?id="+alertID, nil)
-		w := httptest.NewRecorder()
+		// Resolve the alert
+		monitoring.ResolveAlert(alertID)
 
-		// Call the acknowledge handler
-		monitoring.acknowledgeAlertHandler(w, req)
-
-		// Check response
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status 200, got %d", w.Code)
+		// Verify resolution
+		alert := monitoring.GetAlertByID(alertID)
+		if alert == nil {
+			t.Fatal("Expected alert to be found")
 		}
 
-		// Verify acknowledgment
-		alerts = monitoring.GetAlerts()
-		for _, alert := range alerts {
-			if alert.ID == alertID && !alert.Acknowledged {
-				t.Error("Expected alert to be acknowledged")
+		if !alert.Resolved {
+			t.Error("Expected alert to be resolved")
+		}
+	})
+
+	t.Run("GetAlertByID", func(t *testing.T) {
+		monitoring := NewMonitoringSystem()
+		defer monitoring.Close()
+
+		// Create an alert
+		monitoring.CreateAlert("test_alert", "warning", "Test alert message")
+
+		// Get the alert ID
+		alerts := monitoring.GetAlerts()
+		if len(alerts) == 0 {
+			t.Fatal("Expected alerts to be created")
+		}
+
+		alertID := alerts[0].ID
+
+		// Get alert by ID
+		alert := monitoring.GetAlertByID(alertID)
+		if alert == nil {
+			t.Fatal("Expected alert to be found")
+		}
+
+		if alert.ID != alertID {
+			t.Errorf("Expected alert ID to be %s, got %s", alertID, alert.ID)
+		}
+
+		// Test non-existent alert
+		nonExistentAlert := monitoring.GetAlertByID("non_existent")
+		if nonExistentAlert != nil {
+			t.Error("Expected non-existent alert to return nil")
+		}
+	})
+
+	t.Run("GetAlertsByType", func(t *testing.T) {
+		monitoring := NewMonitoringSystem()
+		defer monitoring.Close()
+
+		// Create multiple alerts of different types
+		monitoring.CreateAlert("type_a", "warning", "Alert A1")
+		monitoring.CreateAlert("type_b", "error", "Alert B1")
+		monitoring.CreateAlert("type_a", "info", "Alert A2")
+		monitoring.CreateAlert("type_c", "critical", "Alert C1")
+
+		// Get alerts by type
+		typeAAlerts := monitoring.GetAlertsByType("type_a")
+		if len(typeAAlerts) != 2 {
+			t.Errorf("Expected 2 type_a alerts, got %d", len(typeAAlerts))
+		}
+
+		typeBAlerts := monitoring.GetAlertsByType("type_b")
+		if len(typeBAlerts) != 1 {
+			t.Errorf("Expected 1 type_b alert, got %d", len(typeBAlerts))
+		}
+
+		// Verify all type_a alerts have correct type
+		for _, alert := range typeAAlerts {
+			if alert.Type != "type_a" {
+				t.Errorf("Expected alert type to be 'type_a', got %s", alert.Type)
 			}
+		}
+	})
+
+	t.Run("GetAlertsBySeverity", func(t *testing.T) {
+		monitoring := NewMonitoringSystem()
+		defer monitoring.Close()
+
+		// Create multiple alerts of different severities
+		monitoring.CreateAlert("test", "warning", "Warning alert")
+		monitoring.CreateAlert("test", "error", "Error alert")
+		monitoring.CreateAlert("test", "warning", "Another warning")
+		monitoring.CreateAlert("test", "critical", "Critical alert")
+
+		// Get alerts by severity
+		warningAlerts := monitoring.GetAlertsBySeverity("warning")
+		if len(warningAlerts) != 2 {
+			t.Errorf("Expected 2 warning alerts, got %d", len(warningAlerts))
+		}
+
+		errorAlerts := monitoring.GetAlertsBySeverity("error")
+		if len(errorAlerts) != 1 {
+			t.Errorf("Expected 1 error alert, got %d", len(errorAlerts))
+		}
+
+		// Verify all warning alerts have correct severity
+		for _, alert := range warningAlerts {
+			if alert.Severity != "warning" {
+				t.Errorf("Expected alert severity to be 'warning', got %s", alert.Severity)
+			}
+		}
+	})
+
+	t.Run("ClearAlerts", func(t *testing.T) {
+		monitoring := NewMonitoringSystem()
+		defer monitoring.Close()
+
+		// Create multiple alerts
+		monitoring.CreateAlert("test1", "warning", "Alert 1")
+		monitoring.CreateAlert("test2", "error", "Alert 2")
+		monitoring.CreateAlert("test3", "info", "Alert 3")
+
+		// Verify alerts exist
+		alerts := monitoring.GetAlerts()
+		if len(alerts) != 3 {
+			t.Errorf("Expected 3 alerts, got %d", len(alerts))
+		}
+
+		// Clear all alerts
+		monitoring.ClearAlerts()
+
+		// Verify alerts are cleared
+		alerts = monitoring.GetAlerts()
+		if len(alerts) != 0 {
+			t.Errorf("Expected 0 alerts after clearing, got %d", len(alerts))
 		}
 	})
 }
@@ -333,100 +233,109 @@ func TestMonitoringDashboard(t *testing.T) {
 func TestMonitoringIntegration(t *testing.T) {
 	t.Run("IntegrationWithTestSuite", func(t *testing.T) {
 		// Create monitoring system
-		monitoring := NewMonitoringSystem(&MonitoringConfig{
-			EnableWebUI:  false,
-			EnableAlerts: true,
-		})
+		monitoring := NewMonitoringSystem()
 		defer monitoring.Close()
+
+		// Create test suite
+		testSuite := NewTestSuite()
 
 		// Simulate test execution
-		startTime := time.Now()
-
-		// Record test start
-		monitoring.RecordMetric("test_duration", 0, map[string]string{"status": "started"})
-
-		// Simulate test execution time
-		time.Sleep(10 * time.Millisecond)
-
-		// Record test completion
-		duration := time.Since(startTime).Seconds()
-		monitoring.RecordMetric("test_duration", duration, map[string]string{"status": "completed"})
-
-		// Record test results
-		monitoring.RecordMetric("test_success_rate", 0.95, map[string]string{"type": "unit"})
-		monitoring.RecordMetric("test_failure_rate", 0.05, map[string]string{"type": "unit"})
-
-		// Verify metrics were recorded
-		metrics := monitoring.GetMetrics()
-
-		if _, exists := metrics["test_duration"]; !exists {
-			t.Error("Expected test_duration metric to be recorded")
+		testCases := []struct {
+			name   string
+			status string
+			error  string
+		}{
+			{"Test1", "PASS", ""},
+			{"Test2", "FAIL", "Assertion failed"},
+			{"Test3", "SKIP", "Skipped due to dependency"},
+			{"Test4", "PASS", ""},
 		}
 
-		if _, exists := metrics["test_success_rate"]; !exists {
-			t.Error("Expected test_success_rate metric to be recorded")
-		}
+		for _, tc := range testCases {
+			// Record test result
+			result := TestResult{
+				Name:     tc.name,
+				Status:   tc.status,
+				Duration: 1500 * time.Millisecond, // 1.5 seconds
+				Error:    nil,
+				Message:  tc.error,
+			}
 
-		if _, exists := metrics["test_failure_rate"]; !exists {
-			t.Error("Expected test_failure_rate metric to be recorded")
-		}
-	})
+			// Add to test suite metrics
+			testSuite.metrics.mu.Lock()
+			testSuite.metrics.TestResults[tc.name] = result
+			testSuite.metrics.TotalTests++
+			switch tc.status {
+			case "PASS":
+				testSuite.metrics.PassedTests++
+			case "FAIL":
+				testSuite.metrics.FailedTests++
+			case "SKIP":
+				testSuite.metrics.SkippedTests++
+			}
+			testSuite.metrics.mu.Unlock()
 
-	t.Run("AlertThresholds", func(t *testing.T) {
-		config := &MonitoringConfig{
-			EnableWebUI:  false,
-			EnableAlerts: true,
-			AlertThresholds: AlertThresholds{
-				FailureRatePercent: 0.1, // 10%
-				MemoryUsagePercent: 0.8, // 80%
-				CPUUsagePercent:    0.9, // 90%
-			},
-		}
-
-		monitoring := NewMonitoringSystem(config)
-		defer monitoring.Close()
-
-		// Trigger alerts by exceeding thresholds
-		monitoring.RecordMetric("test_failure_rate", 0.15, nil) // 15% > 10%
-		monitoring.RecordMetric("memory_usage", 0.85, nil)      // 85% > 80%
-		monitoring.RecordMetric("cpu_usage", 0.95, nil)         // 95% > 90%
-
-		// Wait for alert monitoring to run
-		time.Sleep(100 * time.Millisecond)
-
-		// Check for alerts
-		alerts := monitoring.GetAlerts()
-		if len(alerts) == 0 {
-			t.Log("No alerts generated (this may be expected if alert monitoring hasn't run yet)")
-		} else {
-			t.Logf("Generated %d alerts", len(alerts))
-			for _, alert := range alerts {
-				t.Logf("Alert: %s - %s", alert.Type, alert.Message)
+			// Create alerts for failures
+			if tc.status == "FAIL" {
+				monitoring.CreateAlert("test_failure", "error",
+					"Test failed: "+tc.name+" - "+tc.error)
 			}
 		}
-	})
-}
 
-func TestMonitoringPerformance(t *testing.T) {
-	t.Run("ConcurrentMetricRecording", func(t *testing.T) {
-		monitoring := NewMonitoringSystem(nil)
+		// Verify test suite
+		metrics := testSuite.GetMetrics()
+		if metrics.TotalTests != 4 {
+			t.Errorf("Expected 4 total tests, got %d", metrics.TotalTests)
+		}
+
+		if metrics.PassedTests != 2 {
+			t.Errorf("Expected 2 passed tests, got %d", metrics.PassedTests)
+		}
+
+		if metrics.FailedTests != 1 {
+			t.Errorf("Expected 1 failed test, got %d", metrics.FailedTests)
+		}
+
+		if metrics.SkippedTests != 1 {
+			t.Errorf("Expected 1 skipped test, got %d", metrics.SkippedTests)
+		}
+
+		// Verify alerts
+		alerts := monitoring.GetAlerts()
+		if len(alerts) != 1 {
+			t.Errorf("Expected 1 alert for test failure, got %d", len(alerts))
+		}
+
+		failureAlerts := monitoring.GetAlertsByType("test_failure")
+		if len(failureAlerts) != 1 {
+			t.Errorf("Expected 1 test_failure alert, got %d", len(failureAlerts))
+		}
+
+		alert := failureAlerts[0]
+		if alert.Severity != "error" {
+			t.Errorf("Expected alert severity to be 'error', got %s", alert.Severity)
+		}
+	})
+
+	t.Run("ConcurrentAlertCreation", func(t *testing.T) {
+		monitoring := NewMonitoringSystem()
 		defer monitoring.Close()
 
-		const numGoroutines = 100
-		const metricsPerGoroutine = 10
+		const numGoroutines = 10
+		const alertsPerGoroutine = 5
 
 		var wg sync.WaitGroup
 		wg.Add(numGoroutines)
 
-		// Start concurrent metric recording
+		// Start concurrent alert creation
 		for i := 0; i < numGoroutines; i++ {
 			go func(id int) {
 				defer wg.Done()
-				for j := 0; j < metricsPerGoroutine; j++ {
-					metricName := fmt.Sprintf("concurrent_metric_%d", id)
-					monitoring.RecordMetric(metricName, float64(j), map[string]string{"goroutine": fmt.Sprintf("%d", id)})
-					// Add a small sleep to reduce contention
-					time.Sleep(time.Microsecond)
+				for j := 0; j < alertsPerGoroutine; j++ {
+					alertType := "concurrent_alert"
+					severity := "info"
+					message := "Concurrent alert from goroutine " + string(rune(id+'0'))
+					monitoring.CreateAlert(alertType, severity, message)
 				}
 			}(i)
 		}
@@ -434,80 +343,67 @@ func TestMonitoringPerformance(t *testing.T) {
 		// Wait for all goroutines to finish
 		wg.Wait()
 
-		// Add a small delay to ensure all metrics are processed
-		time.Sleep(100 * time.Millisecond)
-
-		// Verify all metrics were recorded
-		metrics := monitoring.GetMetrics()
-		expectedMetrics := numGoroutines * metricsPerGoroutine
-		totalDataPoints := 0
-		for _, series := range metrics {
-			totalDataPoints += len(series.DataPoints)
+		// Verify all alerts were created
+		alerts := monitoring.GetAlerts()
+		expectedTotal := numGoroutines * alertsPerGoroutine
+		if len(alerts) != expectedTotal {
+			t.Errorf("Expected %d total alerts, got %d", expectedTotal, len(alerts))
 		}
 
-		// Allow for some lost data points due to race conditions
-		if totalDataPoints < int(float64(expectedMetrics)*0.8) {
-			t.Errorf("Expected at least %d total data points (80%% of %d), got %d",
-				int(float64(expectedMetrics)*0.8), expectedMetrics, totalDataPoints)
+		// Verify all alerts have correct type
+		concurrentAlerts := monitoring.GetAlertsByType("concurrent_alert")
+		if len(concurrentAlerts) != expectedTotal {
+			t.Errorf("Expected %d concurrent_alert alerts, got %d", expectedTotal, len(concurrentAlerts))
 		}
 	})
 
-	t.Run("MemoryUsage", func(t *testing.T) {
-		monitoring := NewMonitoringSystem(&MonitoringConfig{
-			RetentionPeriod: 1 * time.Hour,
-		})
+	t.Run("AlertLifecycle", func(t *testing.T) {
+		monitoring := NewMonitoringSystem()
 		defer monitoring.Close()
 
-		// Record many metrics
-		const numMetrics = 10000
-		for i := 0; i < numMetrics; i++ {
-			monitoring.RecordMetric("memory_test", float64(i), map[string]string{"index": fmt.Sprintf("%d", i)})
+		// Create an alert
+		monitoring.CreateAlert("lifecycle_test", "warning", "Test alert for lifecycle")
+
+		// Get the alert
+		alerts := monitoring.GetAlerts()
+		if len(alerts) == 0 {
+			t.Fatal("Expected alert to be created")
 		}
 
-		// Verify metrics are accessible
-		metrics := monitoring.GetMetrics()
-		if len(metrics) == 0 {
-			t.Fatal("Expected metrics to be recorded")
+		alertID := alerts[0].ID
+		alert := monitoring.GetAlertByID(alertID)
+
+		// Verify initial state
+		if alert.Acknowledged {
+			t.Error("Expected alert to not be acknowledged initially")
 		}
 
-		// Check that cleanup doesn't break functionality
-		monitoring.RecordMetric("memory_test", float64(numMetrics), nil)
-
-		metrics = monitoring.GetMetrics()
-		if len(metrics) == 0 {
-			t.Fatal("Expected metrics to remain after cleanup")
-		}
-	})
-}
-
-// Benchmark tests for monitoring system
-func BenchmarkMonitoringSystem(b *testing.B) {
-	monitoring := NewMonitoringSystem(nil)
-	defer monitoring.Close()
-
-	b.Run("RecordMetric", func(b *testing.B) {
-		b.ResetTimer()
-		for i := 0; i < b.N; i++ {
-			monitoring.RecordMetric("benchmark_metric", float64(i), map[string]string{"benchmark": "true"})
-		}
-	})
-
-	b.Run("GetMetrics", func(b *testing.B) {
-		// Pre-populate with some metrics
-		for i := 0; i < 1000; i++ {
-			monitoring.RecordMetric("benchmark_get", float64(i), nil)
+		if alert.Resolved {
+			t.Error("Expected alert to not be resolved initially")
 		}
 
-		b.ResetTimer()
-		for i := 0; i < b.N; i++ {
-			monitoring.GetMetrics()
-		}
-	})
+		// Acknowledge the alert
+		monitoring.AcknowledgeAlert(alertID)
+		alert = monitoring.GetAlertByID(alertID)
 
-	b.Run("CreateAlert", func(b *testing.B) {
-		b.ResetTimer()
-		for i := 0; i < b.N; i++ {
-			monitoring.CreateAlert("benchmark_alert", "info", fmt.Sprintf("Alert %d", i))
+		if !alert.Acknowledged {
+			t.Error("Expected alert to be acknowledged")
+		}
+
+		if alert.Resolved {
+			t.Error("Expected alert to not be resolved yet")
+		}
+
+		// Resolve the alert
+		monitoring.ResolveAlert(alertID)
+		alert = monitoring.GetAlertByID(alertID)
+
+		if !alert.Acknowledged {
+			t.Error("Expected alert to remain acknowledged")
+		}
+
+		if !alert.Resolved {
+			t.Error("Expected alert to be resolved")
 		}
 	})
 }

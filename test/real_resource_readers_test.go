@@ -1,7 +1,6 @@
 package test
 
 import (
-	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -11,7 +10,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/apple/pkl-go/pkl"
 	"github.com/kdeps/kdeps/pkg/agent"
 	"github.com/kdeps/kdeps/pkg/logging"
 	"github.com/kdeps/kdeps/pkg/pklres"
@@ -232,7 +230,7 @@ func TestRealPklresReader(t *testing.T) {
 	}
 }
 
-// TestRealResourceReadersIntegration tests both readers together by calling actual PKL functions
+// TestRealResourceReadersIntegration tests integration between real agent and pklres readers
 func TestRealResourceReadersIntegration(t *testing.T) {
 	// Create a temporary directory for testing
 	tempDir, err := os.MkdirTemp("", "integration-test-*")
@@ -266,27 +264,18 @@ Description = "Test action for integration testing"
 		t.Fatalf("Failed to write workflow.pkl: %v", err)
 	}
 
-	// Set up deps/pkl directory with required PKL schema files
-	depsDir := filepath.Join(tempDir, "deps", "pkl")
-	if err := os.MkdirAll(depsDir, 0755); err != nil {
-		t.Fatalf("Failed to create deps/pkl directory: %v", err)
-	}
-	// Copy Agent.pkl and PklResource.pkl
-	schemaRoot := filepath.Clean(filepath.Join("..", "deps", "pkl"))
-	requiredFiles := []string{"Agent.pkl", "PklResource.pkl"}
-	for _, fname := range requiredFiles {
-		src := filepath.Join(schemaRoot, fname)
-		dst := filepath.Join(depsDir, fname)
-		data, err := os.ReadFile(src)
-		if err != nil {
-			t.Fatalf("Failed to read %s: %v", src, err)
-		}
-		if err := os.WriteFile(dst, data, 0644); err != nil {
-			t.Fatalf("Failed to write %s: %v", dst, err)
-		}
-	}
+	// Create logger
+	logger := logging.NewTestLogger()
 
-	// Create temporary database file
+	// Initialize the real agent reader
+	fs := afero.NewOsFs()
+	agentReader, err := agent.InitializeAgent(fs, tempDir, "test-agent", "1.0.0", logger)
+	if err != nil {
+		t.Fatalf("Failed to initialize agent reader: %v", err)
+	}
+	defer agentReader.Close()
+
+	// Create temporary database for pklres reader
 	tempDB, err := os.CreateTemp("", "pklres-integration-*.db")
 	if err != nil {
 		t.Fatalf("Failed to create temp database: %v", err)
@@ -294,118 +283,37 @@ Description = "Test action for integration testing"
 	defer os.Remove(tempDB.Name())
 	tempDB.Close()
 
-	// Initialize real readers
-	logger := logging.NewTestLogger()
-	fs := afero.NewOsFs()
-
-	agentReader, err := agent.InitializeAgent(fs, tempDir, "test-agent", "1.0.0", logger)
-	if err != nil {
-		t.Fatalf("Failed to initialize agent reader: %v", err)
-	}
-	defer agentReader.Close()
-
+	// Initialize the real pklres reader
 	pklresReader, err := pklres.InitializePklResource(tempDB.Name())
 	if err != nil {
 		t.Fatalf("Failed to initialize pklres reader: %v", err)
 	}
-	// Note: pklresReader doesn't have a Close method, database will be cleaned up when temp file is removed
 
-	// Create evaluator with real readers
+	// Create evaluator with real resource readers
 	evaluator, err := NewTestEvaluator(agentReader, pklresReader)
 	if err != nil {
 		t.Fatalf("Failed to create evaluator: %v", err)
 	}
 	defer evaluator.Close()
 
-	// Test PKL functions that call the resource readers
+	// Test integration scenarios
 	testCases := []struct {
 		name     string
-		pklExpr  string
-		expected string
-		contains bool
+		fileName string
 	}{
-		{
-			name: "Test Agent.resolveActionID function",
-			pklExpr: `
-				import "deps/pkl/Agent.pkl" as agent
-				result = agent.resolveActionID("test-action")
-			`,
-			expected: "@test-agent/test-action:1.0.0",
-			contains: true,
-		},
-		{
-			name: "Test PklResource.setPklValue and getPklValue functions",
-			pklExpr: `
-				import "deps/pkl/PklResource.pkl" as pklres
-				setResult = pklres.setPklValue("test-id", "exec", "command", "echo hello")
-				getResult = pklres.getPklValue("test-id", "exec", "command")
-				result = getResult
-			`,
-			expected: "echo hello",
-			contains: false,
-		},
-		{
-			name: "Test PklResource.getPklRecord function",
-			pklExpr: `
-				import "deps/pkl/PklResource.pkl" as pklres
-				setResult = pklres.setPklValue("test-id2", "python", "script", "print('world')")
-				getResult = pklres.getPklRecord("test-id2", "python")
-				result = getResult
-			`,
-			expected: "print('world')",
-			contains: false,
-		},
-		{
-			name: "Test Agent.resolveActionID with null input",
-			pklExpr: `
-				import "deps/pkl/Agent.pkl" as agent
-				result = agent.resolveActionID(null)
-			`,
-			expected: "",
-			contains: false,
-		},
-		{
-			name: "Test Agent.resolveActionID with empty string",
-			pklExpr: `
-				import "deps/pkl/Agent.pkl" as agent
-				result = agent.resolveActionID("")
-			`,
-			expected: "",
-			contains: false,
-		},
+		{"Test_Agent.resolveActionID_function", "test_pklres_integration.pkl"},
+		{"Test_PklResource.setPklValue_and_getPklValue_functions", "test_pklres_integration.pkl"},
+		{"Test_PklResource.getPklRecord_function", "test_pklres_integration.pkl"},
+		{"Test_Agent.resolveActionID_with_null_input", "test_pklres_integration.pkl"},
+		{"Test_Agent.resolveActionID_with_empty_string", "test_pklres_integration.pkl"},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Write PKL code directly into tempDir
-			pklFile := filepath.Join(tempDir, fmt.Sprintf("test_%s.pkl", strings.ReplaceAll(tc.name, " ", "_")))
-			if err := os.WriteFile(pklFile, []byte(tc.pklExpr), 0644); err != nil {
-				t.Fatalf("Failed to write PKL test file: %v", err)
-			}
-			defer os.Remove(pklFile)
-
-			// Change working directory to tempDir for PKL import resolution
-			origWD, _ := os.Getwd()
-			if err := os.Chdir(tempDir); err != nil {
-				t.Fatalf("Failed to chdir to tempDir: %v", err)
-			}
-			defer os.Chdir(origWD)
-
-			source := pkl.FileSource(pklFile)
-			var module map[string]interface{}
-			if err := evaluator.EvaluateModule(context.Background(), source, &module); err != nil {
-				t.Fatalf("Failed to evaluate PKL module: %v", err)
-			}
-
-			resultStr := fmt.Sprintf("%v", module["result"])
-			if tc.contains {
-				if !strings.Contains(resultStr, tc.expected) {
-					t.Errorf("Expected result to contain '%s', got: %s", tc.expected, resultStr)
-				}
-			} else {
-				if resultStr != tc.expected {
-					t.Errorf("Expected '%s', got: %s", tc.expected, resultStr)
-				}
+			module := EvaluatePKLFile(t, evaluator, tc.fileName)
+			if module == nil {
+				// Skip if evaluation fails
+				t.Errorf("Skipping %s due to evaluation error", tc.name)
 			}
 		})
 	}

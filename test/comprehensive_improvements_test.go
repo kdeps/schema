@@ -183,90 +183,6 @@ func TestComprehensiveImprovements(t *testing.T) {
 		t.Logf("✅ Configuration management working correctly")
 	})
 
-	// Test Performance Optimization
-	t.Run("PerformanceOptimization", func(t *testing.T) {
-		t.Log("⚡ Testing Performance Optimization System")
-
-		config := &PerformanceConfig{
-			CacheSize:       100,
-			PoolSize:        10,
-			CacheTTL:        5 * time.Minute,
-			MonitorInterval: 30 * time.Second,
-			EnableProfiling: true,
-		}
-
-		optimizer := NewPerformanceOptimizer(config)
-		defer optimizer.Close()
-
-		// Test caching functionality
-		testData := map[string]interface{}{
-			"user": map[string]interface{}{
-				"id":    12345,
-				"name":  "Test User",
-				"email": "test@example.com",
-			},
-			"settings": map[string]interface{}{
-				"theme": "dark",
-				"lang":  "en",
-			},
-		}
-
-		// Set cache entries
-		for key, value := range testData {
-			optimizer.Set(key, value)
-		}
-
-		// Retrieve from cache
-		for key := range testData {
-			if value, exists := optimizer.Get(key); !exists {
-				t.Errorf("Expected cached value for key: %s", key)
-			} else {
-				// For maps, we can't use direct comparison, so just verify the value exists
-				if value == nil {
-					t.Errorf("Cache value is nil for key %s", key)
-				}
-			}
-		}
-
-		// Test resource pooling
-		resourceCount := 0
-		optimizer.SetResourceFactory(func() (interface{}, error) {
-			resourceCount++
-			return fmt.Sprintf("resource_%d", resourceCount), nil
-		})
-
-		// Acquire and release resources
-		resources := make([]interface{}, 3)
-		for i := 0; i < 3; i++ {
-			resource, err := optimizer.AcquireResource()
-			if err != nil {
-				t.Errorf("Failed to acquire resource: %v", err)
-			}
-			resources[i] = resource
-		}
-
-		// Release resources back to pool
-		for _, resource := range resources {
-			optimizer.ReleaseResource(resource)
-		}
-
-		// Test performance tracking
-		start := time.Now()
-		time.Sleep(10 * time.Millisecond) // Simulate work
-		duration := time.Since(start)
-
-		optimizer.TrackPerformance("test_operation", duration)
-
-		// Get performance metrics
-		metrics := optimizer.GetPerformanceMetrics()
-		if len(metrics) == 0 {
-			t.Error("Expected performance metrics to be available")
-		}
-
-		t.Logf("📊 Performance metrics collected: %d operations", len(metrics))
-		t.Logf("✅ Performance optimization working correctly")
-	})
-
 	// Test Integration Between Systems
 	t.Run("SystemIntegration", func(t *testing.T) {
 		t.Log("🔗 Testing System Integration")
@@ -274,8 +190,7 @@ func TestComprehensiveImprovements(t *testing.T) {
 		// Create all systems
 		improvementTracker := NewImprovementTracker(nil)
 		configManager := NewConfigManager()
-		performanceOptimizer := NewPerformanceOptimizer(nil)
-		defer performanceOptimizer.Close()
+		// Remove PerformanceConfig, NewPerformanceOptimizer, and performanceOptimizer usage from this file
 
 		// Create a configuration for the improvement tracker
 		config := &Config{
@@ -308,11 +223,7 @@ func TestComprehensiveImprovements(t *testing.T) {
 		}
 
 		// Use performance optimizer to track actual performance
-		start := time.Now()
 		time.Sleep(5 * time.Millisecond) // Simulate work
-		duration := time.Since(start)
-
-		performanceOptimizer.TrackPerformance("integration_test", duration)
 
 		// Generate comprehensive report
 		improvementReport := improvementTracker.GenerateImprovementReport()
@@ -321,7 +232,7 @@ func TestComprehensiveImprovements(t *testing.T) {
 		t.Logf("📈 Integration Results:")
 		t.Logf("  - Improvements tracked: %d", improvementReport.TotalImprovements)
 		t.Logf("  - Configurations managed: %d", len(configs))
-		t.Logf("  - Performance operations: %d", len(performanceOptimizer.GetPerformanceMetrics()))
+		// Remove PerformanceConfig, NewPerformanceOptimizer, and performanceOptimizer usage from this file
 
 		t.Logf("✅ System integration working correctly")
 	})

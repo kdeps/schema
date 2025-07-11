@@ -364,7 +364,7 @@ func TestPklresResourceIntegration(t *testing.T) {
 func TestPklresCLI(t *testing.T) {
 	// Check if pkl CLI is available
 	if _, err := exec.LookPath("pkl"); err != nil {
-		t.Skip("PKL CLI not available, skipping CLI tests")
+		t.Errorf("PKL CLI not available, skipping CLI tests")
 	}
 
 	testCases := []struct {
@@ -562,7 +562,7 @@ func TestPklresPerformance(t *testing.T) {
 func TestPklresSchemaValidation(t *testing.T) {
 	// Check if pkl CLI is available
 	if _, err := exec.LookPath("pkl"); err != nil {
-		t.Skip("PKL CLI not available, skipping schema validation")
+		t.Errorf("PKL CLI not available, skipping schema validation")
 	}
 
 	// Test files to validate
@@ -579,7 +579,7 @@ func TestPklresSchemaValidation(t *testing.T) {
 		t.Run(fmt.Sprintf("Validate %s", filepath.Base(file)), func(t *testing.T) {
 			// Check if file exists
 			if _, err := os.Stat(file); os.IsNotExist(err) {
-				t.Skipf("File %s does not exist", file)
+				t.Errorf("File %s does not exist", file)
 			}
 
 			// Validate PKL file syntax

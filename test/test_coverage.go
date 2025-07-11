@@ -273,7 +273,7 @@ import "testing"
 
 func Test%s(t *testing.T) {
 	// TODO: Implement test for %s
-	t.Skip("Test not implemented yet")
+	t.Errorf("Test not implemented yet")
 }
 `, testName, category)
 }
