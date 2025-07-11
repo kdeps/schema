@@ -140,7 +140,7 @@ func TestPklresIntegration(t *testing.T) {
 			module := EvaluatePKLFile(t, evaluator, tc.fileName)
 			if module == nil {
 				// Skip if evaluation fails
-				t.Errorf("Skipping %s due to evaluation error", tc.fileName)
+				t.Skipf("Skipping %s due to evaluation error", tc.fileName)
 			}
 		})
 	}

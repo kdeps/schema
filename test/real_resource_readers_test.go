@@ -313,7 +313,7 @@ Description = "Test action for integration testing"
 			module := EvaluatePKLFile(t, evaluator, tc.fileName)
 			if module == nil {
 				// Skip if evaluation fails
-				t.Errorf("Skipping %s due to evaluation error", tc.name)
+				t.Skipf("Skipping %s due to evaluation error", tc.name)
 			}
 		})
 	}

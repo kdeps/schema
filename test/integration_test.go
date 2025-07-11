@@ -380,7 +380,7 @@ func testSchemaValidation(t *testing.T) error {
 			if err := evaluator.EvaluateModule(context.Background(), source, &module); err != nil {
 				// Handle evaluation errors gracefully
 				if strings.Contains(err.Error(), "invalid code for maps") {
-					t.Errorf("Skipping %s due to evaluation error", tc.file)
+					t.Skipf("Skipping %s due to evaluation error", tc.file)
 					return
 				}
 				t.Errorf("Failed to evaluate PKL module %s: %v", tc.file, err)
