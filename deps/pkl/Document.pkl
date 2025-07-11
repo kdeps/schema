@@ -7,6 +7,7 @@
 
 open module org.kdeps.pkl.Document
 
+extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 
 import "pkl:json"
@@ -21,29 +22,33 @@ import "pkl:yaml"
 /// Parse JSON data using the JSON parser with list-based mapping.
 ///
 /// If the data cannot be parsed as JSON, returns the raw string data.
+/// If the input data is Base64-encoded, it will be automatically decoded before parsing.
 /// [data]: The JSON string to parse.
 /// Returns the parsed JSON data or the original string if parsing fails.
 function jsonParser(data: String?) =
   if (data != null)
-    if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)) != null)
-      (new json.Parser { useMapping = true }).parse(data)
-    else if (test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(data)) != null)
-      (new json.Parser { useMapping = false }).parse(data)
+    let (decodedData = if (isBase64(data)) data.base64Decoded else data)
+    if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(decodedData)) != null)
+      (new json.Parser { useMapping = true }).parse(decodedData)
+    else if (test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(decodedData)) != null)
+      (new json.Parser { useMapping = false }).parse(decodedData)
     else
-      data
+      decodedData
   else
     ""
 
 /// Parse JSON data using the JSON parser with object-based mapping.
 ///
+/// If the input data is Base64-encoded, it will be automatically decoded before parsing.
 /// [data]: The JSON string to parse.
 /// Returns the parsed JSON data as an object structure.
 function jsonParserMapping(data: String?) =
   if (data != null)
-    if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)) != null)
-      (new json.Parser { useMapping = true }).parse(data)
+    let (decodedData = if (isBase64(data)) data.base64Decoded else data)
+    if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(decodedData)) != null)
+      (new json.Parser { useMapping = true }).parse(decodedData)
     else
-      data
+      decodedData
   else
     ""
 

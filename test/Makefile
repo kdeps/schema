@@ -10,7 +10,7 @@ MAGENTA=\033[1;35m
 CYAN=\033[1;36m
 RESET=\033[0m
 
-.PHONY: help test test-go test-pkl test-benchmark test-coverage test-integration test-all clean report test-advanced test-benchmark-system test-filtering test-coverage-analysis test-cli-simulation
+.PHONY: help test test-go test-pkl test-benchmark test-coverage test-integration test-all clean report test-advanced test-benchmark-system test-filtering test-coverage-analysis test-cli-simulation test-dev deps fmt lint security ci stats
 
 # Default target
 help:
@@ -18,6 +18,7 @@ help:
 	@echo "$(MAGENTA)========================$(RESET)"
 	@echo ""
 	@echo "$(CYAN)Available targets:$(RESET)"
+	@echo "  $(BLUE)test$(RESET)                - Run all tests, format code, lint, and generate report"
 	@echo "  $(BLUE)test-go$(RESET)         - Run Go integration tests"
 	@echo "  $(BLUE)test-pkl$(RESET)        - Run PKL CLI schema validation"
 	@echo "  $(BLUE)test-benchmark$(RESET)  - Run performance benchmarks"

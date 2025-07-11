@@ -164,11 +164,19 @@ func ExtractPKLFileToTemp(filename string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to create temp file in %s: %w", tmpDir, err)
 	}
-	defer tempFile.Close()
+	defer func() {
+		if closeErr := tempFile.Close(); closeErr != nil {
+			// Log the error but don't fail the function
+			fmt.Printf("warning: failed to close temp file: %v\n", closeErr)
+		}
+	}()
 
 	// Write the embedded content to the temp file
 	if _, err := tempFile.Write(data); err != nil {
-		os.Remove(tempFile.Name()) // Clean up on error
+		if removeErr := os.Remove(tempFile.Name()); removeErr != nil {
+			// Log the cleanup error but don't fail the function
+			fmt.Printf("warning: failed to remove temp file on error: %v\n", removeErr)
+		}
 		return "", fmt.Errorf("failed to write to temp file: %w", err)
 	}
 
@@ -264,7 +272,10 @@ func SetupPKLWorkspaceInTmpDir() (*PKLWorkspace, error) {
 
 	extractedDir, err := ExtractAllPKLFilesToDir(workspaceDir)
 	if err != nil {
-		os.RemoveAll(workspaceDir) // Clean up on error
+		if removeErr := os.RemoveAll(workspaceDir); removeErr != nil {
+			// Log the cleanup error but don't fail the function
+			fmt.Printf("warning: failed to remove workspace directory on error: %v\n", removeErr)
+		}
 		return nil, err
 	}
 

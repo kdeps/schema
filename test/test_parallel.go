@@ -166,7 +166,7 @@ func (pte *ParallelTestExecutor) updateGraph(graph map[string][]string, complete
 			}
 			graph[testName] = newDeps
 		}
-		
+
 		// Remove the completed test from the graph itself
 		delete(graph, completedTest)
 	}

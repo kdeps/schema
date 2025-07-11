@@ -1,48 +1,131 @@
 package test
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/apple/pkl-go/pkl"
 	"github.com/kdeps/kdeps/pkg/pklres"
 )
 
 // TestIntegrationSuite runs all integration tests with comprehensive reporting
 func TestIntegrationSuite(t *testing.T) {
-	suite := NewTestSuite()
-	suite.metrics.StartTime = time.Now()
-
-	// Run all test categories
-	t.Run("Resource_Readers", func(t *testing.T) {
-		suite.RunTest(t, "Agent_Resource_Reader", testAgentResourceReader)
-		suite.RunTest(t, "Pklres_Resource_Reader", testPklresResourceReader)
-		suite.RunTest(t, "Real_Pklres_Reader", testRealPklresReader)
+	t.Run("Go Resource Readers", func(t *testing.T) {
+		t.Run("Agent Resource Reader", func(t *testing.T) {
+			if err := testAgentResourceReader(t); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("Pklres Resource Reader", func(t *testing.T) {
+			if err := testPklresResourceReader(t); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("Real Pklres Reader", func(t *testing.T) {
+			if err := testRealPklresReader(t); err != nil {
+				t.Fatal(err)
+			}
+		})
 	})
 
-	t.Run("PKL_Integration", func(t *testing.T) {
-		suite.RunTest(t, "PKL_File_Evaluation", testPKLFileEvaluation)
-		suite.RunTest(t, "PKL_Resource_Integration", testPKLResourceIntegration)
-		suite.RunTest(t, "PKL_Complex_Workflows", testPKLComplexWorkflows)
+	t.Run("PKL Integration", func(t *testing.T) {
+		t.Run("PKL File Evaluation", func(t *testing.T) {
+			if err := testPKLFileEvaluation(t); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("PKL Resource Integration", func(t *testing.T) {
+			if err := testPKLResourceIntegration(t); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("PKL Complex Workflows", func(t *testing.T) {
+			if err := testPKLComplexWorkflows(t); err != nil {
+				t.Fatal(err)
+			}
+		})
 	})
 
-	t.Run("Schema_Validation", func(t *testing.T) {
-		suite.RunTest(t, "Schema_Compatibility", testSchemaCompatibility)
-		suite.RunTest(t, "Resource_Type_Validation", testResourceTypeValidation)
-		suite.RunTest(t, "Import_Path_Resolution", testImportPathResolution)
+	t.Run("Schema Validation", func(t *testing.T) {
+		t.Run("Schema Compatibility", func(t *testing.T) {
+			if err := testSchemaCompatibility(t); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("Resource Type Validation", func(t *testing.T) {
+			if err := testResourceTypeValidation(t); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("Import Path Resolution", func(t *testing.T) {
+			if err := testImportPathResolution(t); err != nil {
+				t.Fatal(err)
+			}
+		})
 	})
 
-	t.Run("Performance_Tests", func(t *testing.T) {
-		suite.RunTest(t, "Resource_Reader_Performance", testResourceReaderPerformance)
-		suite.RunTest(t, "PKL_Evaluation_Performance", testPKLEvaluationPerformance)
-		suite.RunTest(t, "Concurrent_Operations", testConcurrentOperations)
+	t.Run("Performance Tests", func(t *testing.T) {
+		t.Run("Resource Reader Performance", func(t *testing.T) {
+			if err := testResourceReaderPerformance(t); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("PKL Evaluation Performance", func(t *testing.T) {
+			if err := testPKLEvaluationPerformance(t); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("Concurrent Operations", func(t *testing.T) {
+			if err := testConcurrentOperations(t); err != nil {
+				t.Fatal(err)
+			}
+		})
 	})
 
-	// Print comprehensive test summary
-	suite.PrintSummary()
+	t.Run("PKL Resource Integration (Primitive Results)", func(t *testing.T) {
+		cwd, _ := os.Getwd()
+		evaluator, err := pkl.NewEvaluator(context.Background(), nil)
+		if err != nil {
+			t.Fatalf("Failed to create PKL evaluator: %v", err)
+		}
+		defer evaluator.Close()
+
+		pklTests := []struct {
+			name     string
+			file     string
+			expected string
+		}{
+			{"Comprehensive Function Tests", "comprehensive_function_tests.pkl", ""},
+			{"Null Safety Tests", "null_safety_tests.pkl", ""},
+			{"State Management Tests", "state_management_tests.pkl", ""},
+			{"Base64 Edge Case Tests", "base64_edge_case_tests.pkl", ""},
+		}
+		for _, tc := range pklTests {
+			t.Run(tc.name, func(t *testing.T) {
+				filePath := filepath.Join(cwd, tc.file)
+				if _, err := os.Stat(filePath); os.IsNotExist(err) {
+					t.Skipf("Test file %s does not exist", filePath)
+				}
+				source := pkl.FileSource(filePath)
+				var module map[string]interface{}
+				if err := evaluator.EvaluateModule(context.Background(), source, &module); err != nil {
+					t.Errorf("Failed to evaluate PKL module %s: %v", tc.file, err)
+				}
+				if tc.expected != "" {
+					resultStr := fmt.Sprintf("%v", module["result"])
+					if !strings.Contains(resultStr, tc.expected) {
+						t.Errorf("Expected result to contain '%s', got: %s", tc.expected, resultStr)
+					}
+				}
+			})
+		}
+	})
 }
 
 // testAgentResourceReader tests the agent resource reader functionality

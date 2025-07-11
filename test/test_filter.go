@@ -16,51 +16,51 @@ type TestFilter struct {
 // FilterCriteria defines filtering criteria
 type FilterCriteria struct {
 	// Basic filters
-	NamePattern    string   `json:"name_pattern"`
-	NameRegex      string   `json:"name_regex"`
-	Tags           []string `json:"tags"`
-	ExcludeTags    []string `json:"exclude_tags"`
-	Categories     []string `json:"categories"`
+	NamePattern       string   `json:"name_pattern"`
+	NameRegex         string   `json:"name_regex"`
+	Tags              []string `json:"tags"`
+	ExcludeTags       []string `json:"exclude_tags"`
+	Categories        []string `json:"categories"`
 	ExcludeCategories []string `json:"exclude_categories"`
-	
+
 	// Status filters
-	Status         []string `json:"status"` // "pass", "fail", "skip", "flaky"
-	ExcludeStatus  []string `json:"exclude_status"`
-	
+	Status        []string `json:"status"` // "pass", "fail", "skip", "flaky"
+	ExcludeStatus []string `json:"exclude_status"`
+
 	// Time-based filters
-	LastRunAfter   *time.Time `json:"last_run_after"`
-	LastRunBefore  *time.Time `json:"last_run_before"`
-	DurationMin    *time.Duration `json:"duration_min"`
-	DurationMax    *time.Duration `json:"duration_max"`
-	
+	LastRunAfter  *time.Time     `json:"last_run_after"`
+	LastRunBefore *time.Time     `json:"last_run_before"`
+	DurationMin   *time.Duration `json:"duration_min"`
+	DurationMax   *time.Duration `json:"duration_max"`
+
 	// Performance filters
 	PerformanceThreshold float64 `json:"performance_threshold"`
 	MemoryThreshold      uint64  `json:"memory_threshold"`
-	
+
 	// Metadata filters
-	Metadata       map[string]interface{} `json:"metadata"`
-	MetadataRegex  map[string]string      `json:"metadata_regex"`
-	
+	Metadata      map[string]interface{} `json:"metadata"`
+	MetadataRegex map[string]string      `json:"metadata_regex"`
+
 	// Dependency filters
-	HasDependencies bool     `json:"has_dependencies"`
-	Dependencies    []string `json:"dependencies"`
+	HasDependencies     bool     `json:"has_dependencies"`
+	Dependencies        []string `json:"dependencies"`
 	ExcludeDependencies []string `json:"exclude_dependencies"`
-	
+
 	// Resource filters
-	Resources      []string `json:"resources"`
+	Resources        []string `json:"resources"`
 	ExcludeResources []string `json:"exclude_resources"`
-	
+
 	// Priority filters
-	PriorityMin    int `json:"priority_min"`
-	PriorityMax    int `json:"priority_max"`
-	
+	PriorityMin int `json:"priority_min"`
+	PriorityMax int `json:"priority_max"`
+
 	// Flaky test filters
-	FlakyOnly      bool `json:"flaky_only"`
-	StableOnly     bool `json:"stable_only"`
+	FlakyOnly      bool    `json:"flaky_only"`
+	StableOnly     bool    `json:"stable_only"`
 	FlakyThreshold float64 `json:"flaky_threshold"` // percentage of failures to consider flaky
-	
+
 	// Custom filters
-	CustomFilters  []CustomFilter `json:"custom_filters"`
+	CustomFilters []CustomFilter `json:"custom_filters"`
 }
 
 // CustomFilter allows custom filtering logic
@@ -89,18 +89,18 @@ type TestInfo struct {
 
 // PerformanceMetrics contains performance data
 type PerformanceMetrics struct {
-	AvgDuration    time.Duration `json:"avg_duration"`
-	MaxDuration    time.Duration `json:"max_duration"`
-	MinDuration    time.Duration `json:"min_duration"`
-	MemoryUsage    uint64        `json:"memory_usage"`
-	CPUUsage       float64       `json:"cpu_usage"`
-	OpsPerSecond   float64       `json:"ops_per_second"`
+	AvgDuration  time.Duration `json:"avg_duration"`
+	MaxDuration  time.Duration `json:"max_duration"`
+	MinDuration  time.Duration `json:"min_duration"`
+	MemoryUsage  uint64        `json:"memory_usage"`
+	CPUUsage     float64       `json:"cpu_usage"`
+	OpsPerSecond float64       `json:"ops_per_second"`
 }
 
 // FilterMatcher handles the actual filtering logic
 type FilterMatcher struct {
-	nameRegex      *regexp.Regexp
-	metadataRegex  map[string]*regexp.Regexp
+	nameRegex     *regexp.Regexp
+	metadataRegex map[string]*regexp.Regexp
 }
 
 // NewTestFilter creates a new test filter
@@ -459,7 +459,7 @@ func (tf *TestFilter) GetCriteria() *FilterCriteria {
 // Clone creates a copy of the filter
 func (tf *TestFilter) Clone() *TestFilter {
 	clone := NewTestFilter()
-	
+
 	// Copy basic criteria
 	clone.criteria.NamePattern = tf.criteria.NamePattern
 	clone.criteria.NameRegex = tf.criteria.NameRegex
@@ -469,7 +469,7 @@ func (tf *TestFilter) Clone() *TestFilter {
 	clone.criteria.ExcludeCategories = append([]string{}, tf.criteria.ExcludeCategories...)
 	clone.criteria.Status = append([]string{}, tf.criteria.Status...)
 	clone.criteria.ExcludeStatus = append([]string{}, tf.criteria.ExcludeStatus...)
-	
+
 	// Copy time filters
 	if tf.criteria.LastRunAfter != nil {
 		after := *tf.criteria.LastRunAfter
@@ -479,7 +479,7 @@ func (tf *TestFilter) Clone() *TestFilter {
 		before := *tf.criteria.LastRunBefore
 		clone.criteria.LastRunBefore = &before
 	}
-	
+
 	// Copy duration filters
 	if tf.criteria.DurationMin != nil {
 		min := *tf.criteria.DurationMin
@@ -489,11 +489,11 @@ func (tf *TestFilter) Clone() *TestFilter {
 		max := *tf.criteria.DurationMax
 		clone.criteria.DurationMax = &max
 	}
-	
+
 	// Copy performance filters
 	clone.criteria.PerformanceThreshold = tf.criteria.PerformanceThreshold
 	clone.criteria.MemoryThreshold = tf.criteria.MemoryThreshold
-	
+
 	// Copy metadata filters
 	for k, v := range tf.criteria.Metadata {
 		clone.criteria.Metadata[k] = v
@@ -501,28 +501,28 @@ func (tf *TestFilter) Clone() *TestFilter {
 	for k, v := range tf.criteria.MetadataRegex {
 		clone.criteria.MetadataRegex[k] = v
 	}
-	
+
 	// Copy dependency filters
 	clone.criteria.HasDependencies = tf.criteria.HasDependencies
 	clone.criteria.Dependencies = append([]string{}, tf.criteria.Dependencies...)
 	clone.criteria.ExcludeDependencies = append([]string{}, tf.criteria.ExcludeDependencies...)
-	
+
 	// Copy resource filters
 	clone.criteria.Resources = append([]string{}, tf.criteria.Resources...)
 	clone.criteria.ExcludeResources = append([]string{}, tf.criteria.ExcludeResources...)
-	
+
 	// Copy priority filters
 	clone.criteria.PriorityMin = tf.criteria.PriorityMin
 	clone.criteria.PriorityMax = tf.criteria.PriorityMax
-	
+
 	// Copy flaky filters
 	clone.criteria.FlakyOnly = tf.criteria.FlakyOnly
 	clone.criteria.StableOnly = tf.criteria.StableOnly
 	clone.criteria.FlakyThreshold = tf.criteria.FlakyThreshold
-	
+
 	// Copy custom filters
 	clone.criteria.CustomFilters = append([]CustomFilter{}, tf.criteria.CustomFilters...)
-	
+
 	// Recompile regex patterns
 	if tf.criteria.NameRegex != "" {
 		clone.SetNameRegex(tf.criteria.NameRegex)
@@ -530,7 +530,7 @@ func (tf *TestFilter) Clone() *TestFilter {
 	for key, regex := range tf.criteria.MetadataRegex {
 		clone.AddMetadataRegex(key, regex)
 	}
-	
+
 	return clone
 }
 
@@ -639,4 +639,4 @@ func NewResourceIntensiveTestsFilter() *TestFilter {
 	return NewTestFilter().
 		AddTags("resource-intensive").
 		SetMemoryThreshold(100 * 1024 * 1024) // 100MB threshold
-} 
+}

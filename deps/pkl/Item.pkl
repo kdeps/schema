@@ -8,6 +8,7 @@
 
 open module org.kdeps.pkl.Item
 
+extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
 import "pkl:test"
@@ -16,17 +17,26 @@ import "pkl:json"
 /// Retrieves the record for the current iteration
 ///
 /// Returns the textual content of the current loop record, or an empty string if no current record exists.
-function current(): String = read("item:/_?op=current")?.text ?? ""
+/// If the content is Base64-encoded, it will be automatically decoded.
+function current(): String = 
+    let (content = read("item:/_?op=current")?.text ?? "")
+    if (isBase64(content)) content.base64Decoded else content
 
 /// Retrieves the record for the previous iteration
 ///
 /// Returns the textual content of the previous loop record, or an empty string if no previous record exists.
-function prev(): String = read("item:/_?op=prev")?.text ?? ""
+/// If the content is Base64-encoded, it will be automatically decoded.
+function prev(): String = 
+    let (content = read("item:/_?op=prev")?.text ?? "")
+    if (isBase64(content)) content.base64Decoded else content
 
 /// Retrieves the record for the next iteration
 ///
 /// Returns the textual content of the next loop record, or an empty string if no next record exists.
-function next(): String = read("item:/_?op=next")?.text ?? ""
+/// If the content is Base64-encoded, it will be automatically decoded.
+function next(): String = 
+    let (content = read("item:/_?op=next")?.text ?? "")
+    if (isBase64(content)) content.base64Decoded else content
 
 /// Lists all record results associated with the for loop
 ///

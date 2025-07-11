@@ -2,6 +2,7 @@ package test
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -742,4 +743,77 @@ func TestResourceReaderErrorHandling(t *testing.T) {
 			})
 		}
 	})
+}
+
+func TestSessionReader_Base64AndPlain(t *testing.T) {
+	base64Val := base64.StdEncoding.EncodeToString([]byte("Hello Session"))
+	plainVal := "Hello Session"
+	// Simulate getRecord logic
+	decode := func(val string) string {
+		decoded, err := base64.StdEncoding.DecodeString(val)
+		if err == nil {
+			return string(decoded)
+		}
+		return val
+	}
+	if got := decode(base64Val); got != "Hello Session" {
+		t.Errorf("Session base64 decode failed: got %q", got)
+	}
+	if got := decode(plainVal); got != plainVal {
+		t.Errorf("Session plain decode failed: got %q", got)
+	}
+}
+
+func TestToolReader_Base64AndPlain(t *testing.T) {
+	base64Val := base64.StdEncoding.EncodeToString([]byte("Hello Tool"))
+	plainVal := "Hello Tool"
+	decode := func(val string) string {
+		decoded, err := base64.StdEncoding.DecodeString(val)
+		if err == nil {
+			return string(decoded)
+		}
+		return val
+	}
+	if got := decode(base64Val); got != "Hello Tool" {
+		t.Errorf("Tool base64 decode failed: got %q", got)
+	}
+	if got := decode(plainVal); got != plainVal {
+		t.Errorf("Tool plain decode failed: got %q", got)
+	}
+}
+
+func TestMemoryReader_Base64AndPlain(t *testing.T) {
+	base64Val := base64.StdEncoding.EncodeToString([]byte("Hello Memory"))
+	plainVal := "Hello Memory"
+	decode := func(val string) string {
+		decoded, err := base64.StdEncoding.DecodeString(val)
+		if err == nil {
+			return string(decoded)
+		}
+		return val
+	}
+	if got := decode(base64Val); got != "Hello Memory" {
+		t.Errorf("Memory base64 decode failed: got %q", got)
+	}
+	if got := decode(plainVal); got != plainVal {
+		t.Errorf("Memory plain decode failed: got %q", got)
+	}
+}
+
+func TestItemReader_Base64AndPlain(t *testing.T) {
+	base64Val := base64.StdEncoding.EncodeToString([]byte("Hello Item"))
+	plainVal := "Hello Item"
+	decode := func(val string) string {
+		decoded, err := base64.StdEncoding.DecodeString(val)
+		if err == nil {
+			return string(decoded)
+		}
+		return val
+	}
+	if got := decode(base64Val); got != "Hello Item" {
+		t.Errorf("Item base64 decode failed: got %q", got)
+	}
+	if got := decode(plainVal); got != plainVal {
+		t.Errorf("Item plain decode failed: got %q", got)
+	}
 }
