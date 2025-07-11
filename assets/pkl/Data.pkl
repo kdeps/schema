@@ -24,10 +24,7 @@ function filepath(agentName: String?, fileName: String?): String =
     if (agentName != null && fileName != null && Files.getOrNull(agentName)?.ifNonNull((v) -> v.containsKey(fileName)) == true)
         if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName]
     else
-        let (pklText = pklres.getPklRecord(agentName, "data"))
-        if (!pklText.isEmpty)
-            let (dataRecord = eval(pklText) as Mapping<String, String>)
-            if (dataRecord.containsKey(fileName))
-                if (isBase64(dataRecord[fileName])) dataRecord[fileName].base64Decoded else dataRecord[fileName]
-            else ""
+        let (dataRecord = pklres.getPklRecord(agentName, "data") as Mapping<String, String>)
+        if (dataRecord.containsKey(fileName))
+            if (isBase64(dataRecord[fileName])) dataRecord[fileName].base64Decoded else dataRecord[fileName]
         else ""

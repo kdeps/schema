@@ -99,7 +99,7 @@ class PklresIntegrationTests {
     totalTests: Int = allTests.length
     
     /// Count passed tests
-    passedTests: Int = allTests.count((test) -> test)
+    passedTests: Int = allTests.toList().count((test) -> test)
     
     /// Count failed tests
     failedTests: Int = totalTests - passedTests
@@ -120,14 +120,14 @@ Failed: \(failedTests)
 Success Rate: \(successRate)%
 
 ✅ RESOURCE MODULE TESTS:
-- Exec.pkl: \(execTests.count((test) -> test))/\(execTests.length) tests passed
-- Python.pkl: \(pythonTests.count((test) -> test))/\(pythonTests.length) tests passed
-- LLM.pkl: \(llmTests.count((test) -> test))/\(llmTests.length) tests passed
-- HTTP.pkl: \(httpTests.count((test) -> test))/\(httpTests.length) tests passed
-- Data.pkl: \(dataTests.count((test) -> test))/\(dataTests.length) tests passed
+- Exec.pkl: \(execTests.toList().count((test) -> test))/\(execTests.length) tests passed
+- Python.pkl: \(pythonTests.toList().count((test) -> test))/\(pythonTests.length) tests passed
+- LLM.pkl: \(llmTests.toList().count((test) -> test))/\(llmTests.length) tests passed
+- HTTP.pkl: \(httpTests.toList().count((test) -> test))/\(httpTests.length) tests passed
+- Data.pkl: \(dataTests.toList().count((test) -> test))/\(dataTests.length) tests passed
 
 🔧 PKLRES FUNCTION TESTS:
-- PklResource.pkl: \(pklresTests.count((test) -> test))/\(pklresTests.length) tests passed
+- PklResource.pkl: \(pklresTests.toList().count((test) -> test))/\(pklresTests.length) tests passed
 
 🎯 OVERALL STATUS: \(if (failedTests == 0) "✅ ALL TESTS PASSING" else "❌ \(failedTests) TESTS FAILING")
 
@@ -137,5 +137,18 @@ All functions should return appropriate default values when no data exists in pk
     }
 }
 
-/// Run the integration tests
-output = (new PklresIntegrationTests {}).output.text 
+
+
+// Test results exposed as module-level mapping
+execTestsPass = (new PklresIntegrationTests {}).execTests.every((test) -> test)
+pythonTestsPass = (new PklresIntegrationTests {}).pythonTests.every((test) -> test)
+llmTestsPass = (new PklresIntegrationTests {}).llmTests.every((test) -> test)
+httpTestsPass = (new PklresIntegrationTests {}).httpTests.every((test) -> test)
+dataTestsPass = (new PklresIntegrationTests {}).dataTests.every((test) -> test)
+pklresTestsPass = (new PklresIntegrationTests {}).pklresTests.every((test) -> test)
+allTestsPass = (new PklresIntegrationTests {}).allTests.every((test) -> test)
+totalTests = (new PklresIntegrationTests {}).totalTests
+passedTests = (new PklresIntegrationTests {}).passedTests
+failedTests = (new PklresIntegrationTests {}).failedTests
+successRate = (new PklresIntegrationTests {}).successRate
+text = (new PklresIntegrationTests {}).output.text 

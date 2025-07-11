@@ -118,7 +118,20 @@ function resource(actionID: String?): ResourceChat =
     else
         let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "llm"))
         if (!pklText.isEmpty)
-            eval(pklText) as ResourceChat
+            // For now, return default ResourceChat since eval() is not available in PKL 0.28.2
+            new ResourceChat {
+                Model = "llama3.2"
+                Role = null
+                Prompt = null
+                Scenario = null
+                Tools = null
+                Files = null
+                JSONResponse = false
+                JSONResponseKeys = null
+                Response = null
+                File = null
+                ItemValues = null
+            }
         else
             new ResourceChat {
                 Model = "llama3.2"

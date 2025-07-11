@@ -1,0 +1,2 @@
+import "./test_pklres_integration.pkl" as base
+result = (new base.PklresIntegrationTests {}).pythonTests.every((test) -> test) 
