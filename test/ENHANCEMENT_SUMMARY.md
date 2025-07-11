@@ -46,7 +46,7 @@ The PKL Schema test suite has been significantly enhanced with comprehensive tes
 #### Test Categories
 - **Resource Readers**: Agent and pklres reader functionality
 - **PKL Integration**: PKL file evaluation and resource integration
-- **Schema Validation**: Schema compatibility and validation
+- **Schema Validation**: Schema validation and integration
 - **Performance Tests**: Performance under various conditions
 
 #### Integration Features

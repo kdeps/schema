@@ -167,12 +167,12 @@ facts {
     
     ["Document.jsonParser correctly decodes Base64 JSON before parsing"] {
         let (result = Document.jsonParser(testBase64Data))
-        result.containsKey("test") && result["test"] == "value" && result.containsKey("number") && result["number"] == 123
+        result is Mapping && result["test"] == "value" && result["number"] == 123
     }
     
     ["Document.jsonParser handles plain text JSON"] {
         let (result = Document.jsonParser("{\"test\":\"value\"}"))
-        result.containsKey("test") && result["test"] == "value"
+        result is Mapping && result["test"] == "value"
     }
     
     ["Document.jsonParser handles invalid Base64 gracefully"] {
@@ -182,12 +182,12 @@ facts {
     
     ["Document.jsonParserMapping correctly decodes Base64 JSON before parsing"] {
         let (result = Document.jsonParserMapping(testBase64Data))
-        result.containsKey("test") && result["test"] == "value" && result.containsKey("number") && result["number"] == 123
+        result is Mapping && result["test"] == "value" && result["number"] == 123
     }
     
     ["Document.jsonParserMapping handles plain text JSON"] {
         let (result = Document.jsonParserMapping("{\"test\":\"value\"}"))
-        result.containsKey("test") && result["test"] == "value"
+        result is Mapping && result["test"] == "value"
     }
     
     ["Document.jsonParserMapping handles invalid Base64 gracefully"] {

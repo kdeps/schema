@@ -359,4 +359,4 @@ For issues and questions:
 
 **Last Updated**: $(date)
 **Version**: Enhanced Test Suite v2.0
-**Compatibility**: Go 1.24+, PKL 0.28.2+ 
+**Requirements**: Go 1.24+, PKL 0.28.2+ 

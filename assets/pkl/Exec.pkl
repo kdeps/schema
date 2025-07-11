@@ -70,7 +70,7 @@ function resource(actionID: String?): ResourceExec =
   else
     let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "exec"))
     if (!pklText.isEmpty)
-      // For now, return default ResourceExec since eval() is not available in PKL 0.28.2
+      // Return default ResourceExec
       new ResourceExec {
         Env = null
         Command = ""

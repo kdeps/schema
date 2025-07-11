@@ -5,15 +5,21 @@
 
 open module org.kdeps.pkl.Session
 
+extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
 
 /// Retrieves a session record by its [id]
 ///
 /// Returns the textual content of the session entry, or an empty string if not found.
+/// If the content is Base64-encoded, it will be automatically decoded.
 ///
 /// [id]: The identifier of the session record.
-function getRecord(id: String?): String = if (id != null) read("session:/\(id)")?.text ?? "" else ""
+function getRecord(id: String?): String = 
+    if (id != null) 
+        let (content = read("session:/\(id)")?.text ?? "")
+        if (isBase64(content)) content.base64Decoded else content
+    else ""
 
 /// Sets or updates a session record with a new [value]
 ///

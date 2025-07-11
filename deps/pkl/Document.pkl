@@ -26,14 +26,17 @@ import "pkl:yaml"
 /// [data]: The JSON string to parse.
 /// Returns the parsed JSON data or the original string if parsing fails.
 function jsonParser(data: String?) =
-  if (data != null)
+  if (data != null && data != "")
     let (decodedData = if (isBase64(data)) data.base64Decoded else data)
-    if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(decodedData)) != null)
-      (new json.Parser { useMapping = true }).parse(decodedData)
-    else if (test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(decodedData)) != null)
-      (new json.Parser { useMapping = false }).parse(decodedData)
+    let (result = test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(decodedData)))
+    if (result != null)
+      result
     else
-      decodedData
+      let (result2 = test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(decodedData)))
+      if (result2 != null)
+        result2
+      else
+        decodedData
   else
     ""
 
@@ -45,8 +48,9 @@ function jsonParser(data: String?) =
 function jsonParserMapping(data: String?) =
   if (data != null)
     let (decodedData = if (isBase64(data)) data.base64Decoded else data)
-    if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(decodedData)) != null)
-      (new json.Parser { useMapping = true }).parse(decodedData)
+    let (result = test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(decodedData)))
+    if (result != null)
+      result
     else
       decodedData
   else

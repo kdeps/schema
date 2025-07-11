@@ -5,31 +5,44 @@
 
 open module org.kdeps.pkl.Tool
 
+extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
 
 /// Retrieves the output of a previously run script by its [id]
 ///
 /// Returns the script output (stdout/stderr) as confirmation.
+/// If the output is Base64-encoded, it will be automatically decoded.
 ///
 /// [id]: The identifier of the script execution.
-function getOutput(id: String?): String = if (id != null) read("tool:/\(id)")?.text ?? "" else ""
+function getOutput(id: String?): String = 
+    if (id != null) 
+        let (content = read("tool:/\(id)")?.text ?? "")
+        if (isBase64(content)) content.base64Decoded else content
+    else ""
 
 /// Executes a script with the given [id], [script] content, and [params]
 ///
 /// Returns the script output (stdout/stderr) as confirmation.
+/// If the output is Base64-encoded, it will be automatically decoded.
 ///
 /// [id]: The identifier for the script execution.
 /// [script]: The script content to execute.
 /// [params]: The parameters to pass to the script.
 function runScript(id: String?, script: String?, params: String?): String = 
-  if (id != null && script != null && params != null) 
-    read("tool:/\(id)?op=run&script=\(URI.encodeComponent(script))&params=\(URI.encodeComponent(params))")?.text ?? "" 
-  else ""
+    if (id != null && script != null && params != null) 
+        let (content = read("tool:/\(id)?op=run&script=\(URI.encodeComponent(script))&params=\(URI.encodeComponent(params))")?.text ?? "")
+        if (isBase64(content)) content.base64Decoded else content
+    else ""
 
 /// Appends the current script output to the history for the given [id]
 ///
 /// Returns the full history of outputs for the script execution as confirmation.
+/// If the history is Base64-encoded, it will be automatically decoded.
 ///
 /// [id]: The identifier for the script execution.
-function history(id: String?): String = if (id != null) read("tool:/\(id)?op=history")?.text ?? "" else ""
+function history(id: String?): String = 
+    if (id != null) 
+        let (content = read("tool:/\(id)?op=history")?.text ?? "")
+        if (isBase64(content)) content.base64Decoded else content
+    else ""

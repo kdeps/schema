@@ -5,9 +5,11 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/utils"
 )
 
 type Item interface {
+	utils.Utils
 }
 
 var _ Item = (*ItemImpl)(nil)
@@ -17,6 +19,7 @@ var _ Item = (*ItemImpl)(nil)
 // This module provides functions to interact with records representing iterations or elements in a for loop.
 // The module supports retrieving, navigating, and listing records without requiring a specific identifier.
 type ItemImpl struct {
+	*utils.UtilsImpl
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Item

@@ -233,6 +233,36 @@ func CopyPKLFile(t *testing.T, tempDir, fileName string) {
 
 	// Update import paths for tempDir
 	updated := strings.ReplaceAll(string(data), "../deps/pkl/", "deps/pkl/")
+
+	// Also copy any referenced test files
+	if strings.Contains(string(data), "import \"./") {
+		// Find all relative imports
+		lines := strings.Split(string(data), "\n")
+		for _, line := range lines {
+			if strings.HasPrefix(strings.TrimSpace(line), "import \"./") {
+				// Extract the imported file name
+				importLine := strings.TrimSpace(line)
+				importFile := strings.TrimPrefix(importLine, "import \"./")
+				importFile = strings.Split(importFile, "\"")[0] // Get everything before the first quote after the file name
+
+				// Copy the imported file
+				importSrc := filepath.Join(".", importFile)
+				importDst := filepath.Join(tempDir, importFile)
+
+				importData, err := os.ReadFile(importSrc)
+				if err != nil {
+					t.Fatalf("Failed to read imported file %s: %v", importSrc, err)
+				}
+
+				// Update import paths in the imported file
+				importUpdated := strings.ReplaceAll(string(importData), "../deps/pkl/", "deps/pkl/")
+				if err := os.WriteFile(importDst, []byte(importUpdated), 0644); err != nil {
+					t.Fatalf("Failed to write imported file %s: %v", importDst, err)
+				}
+			}
+		}
+	}
+
 	if err := os.WriteFile(dst, []byte(updated), 0644); err != nil {
 		t.Fatalf("Failed to write %s: %v", dst, err)
 	}

@@ -81,7 +81,7 @@ function resource(actionID: String?): ResourceHTTPClient =
   else
     let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "http"))
     if (!pklText.isEmpty)
-      // For now, return default ResourceHTTPClient since eval() is not available in PKL 0.28.2
+      // Return default ResourceHTTPClient
       new ResourceHTTPClient {
         Method = "GET"
         Url = ""

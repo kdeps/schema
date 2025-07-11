@@ -66,7 +66,7 @@ func GenerateCoverageReport(t *testing.T) *TestCoverageReport {
 				"assets_test.go",
 				"pklres_reader_test.go",
 			},
-			description: "Tests for schema validation and compatibility",
+			description: "Tests for schema validation and integration",
 		},
 		{
 			name: "Performance_Benchmarks",

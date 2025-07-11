@@ -64,7 +64,9 @@ func TestPklresIntegrationPKL(t *testing.T) {
 			t.Fatalf("Failed to read %s: %v", src, err)
 		}
 		// Rewrite import paths for tempDir
-		updated := strings.ReplaceAll(string(data), "../deps/pkl/", "deps/pkl/")
+		updated := string(data)
+		updated = strings.ReplaceAll(updated, "../deps/pkl/", "deps/pkl/")
+		updated = strings.ReplaceAll(updated, "./test_pklres_integration.pkl", "test_pklres_integration.pkl")
 		if err := os.WriteFile(dst, []byte(updated), 0644); err != nil {
 			t.Fatalf("Failed to write %s: %v", dst, err)
 		}

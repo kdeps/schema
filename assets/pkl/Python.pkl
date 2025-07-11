@@ -76,7 +76,7 @@ function resource(actionID: String?): ResourcePython =
   else
     let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "python"))
     if (!pklText.isEmpty)
-      // For now, return default ResourcePython since eval() is not available in PKL 0.28.2
+      // Return default ResourcePython
       new ResourcePython {
         Env = null
         PythonEnvironment = ""

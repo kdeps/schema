@@ -53,8 +53,8 @@ func TestIntegrationSuite(t *testing.T) {
 	})
 
 	t.Run("Schema Validation", func(t *testing.T) {
-		t.Run("Schema Compatibility", func(t *testing.T) {
-			if err := testSchemaCompatibility(t); err != nil {
+		t.Run("Schema Validation", func(t *testing.T) {
+			if err := testSchemaValidation(t); err != nil {
 				t.Fatal(err)
 			}
 		})
@@ -90,7 +90,7 @@ func TestIntegrationSuite(t *testing.T) {
 
 	t.Run("PKL Resource Integration (Primitive Results)", func(t *testing.T) {
 		cwd, _ := os.Getwd()
-		evaluator, err := pkl.NewEvaluator(context.Background(), nil)
+		evaluator, err := pkl.NewEvaluator(context.Background(), pkl.PreconfiguredOptions)
 		if err != nil {
 			t.Fatalf("Failed to create PKL evaluator: %v", err)
 		}
@@ -318,9 +318,9 @@ func testPKLComplexWorkflows(t *testing.T) error {
 	return nil
 }
 
-// testSchemaCompatibility tests schema compatibility
-func testSchemaCompatibility(t *testing.T) error {
-	// Test that all PKL files are compatible with the current schema
+// testSchemaValidation tests schema validation
+func testSchemaValidation(t *testing.T) error {
+	// Test that all PKL files are valid with the current schema
 	testFiles := []string{
 		"exec_tests_pass.pkl",
 		"python_tests_pass.pkl",
@@ -341,7 +341,7 @@ func testSchemaCompatibility(t *testing.T) error {
 	for _, fileName := range testFiles {
 		module := EvaluatePKLFile(t, evaluator, fileName)
 		if module == nil {
-			return fmt.Errorf("schema compatibility test failed for %s", fileName)
+			return fmt.Errorf("schema validation test failed for %s", fileName)
 		}
 	}
 

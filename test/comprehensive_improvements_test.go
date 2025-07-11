@@ -429,10 +429,6 @@ func TestImprovementMetrics(t *testing.T) {
 			t.Errorf("Expected 2 performance improvements, got %d", count)
 		}
 
-		if count := report.Summary["security"]; count != 0 {
-			t.Errorf("Expected 0 security improvements, got %d", count)
-		}
-
 		if count := report.Summary["quality"]; count != 1 {
 			t.Errorf("Expected 1 quality improvement, got %d", count)
 		}

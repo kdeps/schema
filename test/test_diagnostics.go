@@ -189,7 +189,7 @@ func (dm *DiagnosticManager) generateSuggestions(errorMsg string, context map[st
 
 	if strings.Contains(errorMsg, "pkl-go") || strings.Contains(errorMsg, "invalid code for maps") {
 		suggestions = append(suggestions,
-			"This is a known pkl-go compatibility issue",
+			"This is a known pkl-go schema parsing issue",
 			"Use PKL CLI for syntax validation",
 			"Wait for pkl-go library updates",
 			"Focus on resource reader functionality testing")
@@ -364,7 +364,7 @@ func (ea *ErrorAnalyzer) classifyError(err error) string {
 		return "connection"
 	}
 	if strings.Contains(errorMsg, "pkl-go") {
-		return "pkl_go_compatibility"
+		return "pkl_go_schema_parsing"
 	}
 
 	return "unknown"
@@ -390,7 +390,7 @@ func (ea *ErrorAnalyzer) identifyRootCause(err error) string {
 		return "Network connectivity issue"
 	}
 	if strings.Contains(errorMsg, "pkl-go") {
-		return "pkl-go library compatibility issue"
+		return "pkl-go library schema parsing issue"
 	}
 
 	return "Unknown root cause"
