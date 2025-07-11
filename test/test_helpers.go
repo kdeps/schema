@@ -16,7 +16,16 @@ func NewTestEvaluator(readers ...pkl.ResourceReader) (pkl.Evaluator, error) {
 		options.Logger = pkl.NoopLogger
 		options.ResourceReaders = readers
 		options.AllowedModules = []string{".*"}
-		options.AllowedResources = []string{".*"}
+		options.AllowedResources = []string{
+			".*",
+			"agent:.*",
+			"pklres:.*",
+			"session:.*",
+			"tool:.*",
+			"memory:.*",
+			"item:.*",
+			"prop:.*",
+		}
 		options.ModulePaths = []string{"."}
 	}
 	return pkl.NewEvaluator(context.Background(), opts)
