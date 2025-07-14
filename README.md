@@ -21,7 +21,7 @@ make build         # Complete build with testing
 
 ## Release Notes
 
-### Latest Release: v0.4.2
+### Latest Release: v0.4.3
 *Released: 2025-07-14*
 
 **🔬 Validation Status:**
@@ -31,6 +31,24 @@ make build         # Complete build with testing
 
 
 📦 **Updates**
+  - **Update release notes for v0.4.2 [skip ci]** (`5a313bb`)
+
+📝 **Other Changes**
+  - **Base64utils fix (#29)** (`08ac10a`)
+    * obtain resource from pklres as first priority
+  - **** (`* add pklres + pkl eval for obtaining output`)
+  - **** (`* add new changes to Data.pkl as well`)
+  - **** (`* base64 utils fix`)
+  - **** (`* updated readme`)
+
+### Complete Release History
+
+*Detailed changelog showing all changes from the beginning of the project*
+
+
+## v0.4.2 (*2025-07-14*)
+
+📦 **Updates**
   - **Update release notes for v0.4.1 [skip ci]** (`58142ea`)
 
 📝 **Other Changes**
@@ -38,11 +56,6 @@ make build         # Complete build with testing
     * obtain resource from pklres as first priority
   - **** (`* add pklres + pkl eval for obtaining output`)
   - **** (`* add new changes to Data.pkl as well`)
-
-### Complete Release History
-
-*Detailed changelog showing all changes from the beginning of the project*
-
 
 ## v0.4.1 (*2025-07-14*)
 
@@ -475,24 +488,14 @@ make build         # Complete build with testing
 
 ## v0.2.4 (*2025-02-08*)
 
-✨ **Enhancements**
-  - **added new schema documentation info** (`c3fc856`)
-
-📦 **Updates**
-  - **updated release notes** (`0e6e41a`)
-
-📝 **Other Changes**
-  - **allow access to client IP and request ID** (`34a6f34`)
-
-## v0.2.3 (*2025-02-07*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 146
+- Total commits: 149
 - Project inception
 
 **📝 All Changes Since Project Start:**
 
 ✨ **Enhancements**
+  - **added new schema documentation info** (`c3fc856`)
   - **added trustedProxies settings to API server** (`d3ed25b`)
   - **upgrade minimum pkl version to 0.26.3. added minor fixes on the relnote generator.** (`c80d5ae`)
   - **Added skip validation helper functions** (`562775e`)
@@ -546,6 +549,7 @@ make build         # Complete build with testing
   - **Added initial core schema** (`a61fbf5`)
 
 📦 **Updates**
+  - **updated release notes** (`0e6e41a`)
   - **bump pkl to 0.27.2** (`e0683cb`)
   - **updated .gitattributes** (`e9ea189`)
   - **updated README.md** (`809d2c3`)
@@ -563,6 +567,7 @@ make build         # Complete build with testing
   - **Update CNAME** (`ae8b694`)
 
 📝 **Other Changes**
+  - **allow access to client IP and request ID** (`34a6f34`)
   - **Change resource ID to actionID, and Workflow action to targetActionID** (`94a46c7`)
   - **changed timeoutSeconds -> timeoutDuration** (`f8ed8ed`)
   - **Use uniform naming convention for {Http,Api,Id,Json} -> {HTTP,API,ID,JSON}** (`d8841da`)
@@ -662,4 +667,4 @@ This PKL schema project maintains high quality through:
 **Quality Assurance**: Every release is thoroughly tested before deployment.
 
 ---
-*Generated on 2025-07-14 21:16:38 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-14 19:20:29 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
