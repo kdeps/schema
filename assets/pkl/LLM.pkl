@@ -17,12 +17,39 @@ open module org.kdeps.pkl.LLM
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
+import "pkl:test"
 import "Agent.pkl" as agent
 import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourceChat] objects.
 /// This mapping is populated from pklres storage.
-Resources: Mapping<String, ResourceChat> = new Mapping {}
+Resources: Mapping<String, ResourceChat> = 
+    let (recordIds = pklres.getAllRecords("llm"))
+    if (recordIds != "" && recordIds != "[]")
+        // Parse JSON array of record IDs and populate mapping
+        let (ids = test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(recordIds)))
+        if (ids != null && ids is Listing)
+            new Mapping {
+                for (id in ids as Listing<String>) {
+                    [id] = new ResourceChat {
+                        Model = "llama3.2"
+                        Role = null
+                        Prompt = null
+                        Scenario = null
+                        Tools = null
+                        Files = null
+                        JSONResponse = false
+                        JSONResponseKeys = null
+                        Response = null
+                        File = null
+                        ItemValues = null
+                    }
+                }
+            }
+        else
+            new Mapping {}
+    else
+        new Mapping {}
 
 /// Class representing the details of a chat interaction with an LLM model, including prompts, responses,
 /// and configuration options such as tools, JSON output, and timeout settings.
@@ -113,48 +140,71 @@ class ToolProperties {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceChat]: The [ResourceChat] object associated with the resource actionID.
 function resource(actionID: String?): ResourceChat =
-    if (actionID != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
-        Resources[agent.resolveActionID(actionID)]
-    else
-        let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "llm"))
-        if (!pklText.isEmpty)
-            // Return default ResourceChat
-            new ResourceChat {
-                Model = "llama3.2"
-                Role = null
-                Prompt = null
-                Scenario = null
-                Tools = null
-                Files = null
-                JSONResponse = false
-                JSONResponseKeys = null
-                Response = null
-                File = null
-                ItemValues = null
-            }
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        // First try to get from pre-populated Resources mapping
+        if (Resources.getOrNull(resolvedID) != null)
+            Resources[resolvedID]
         else
-            new ResourceChat {
-                Model = "llama3.2"
-                Role = null
-                Prompt = null
-                Scenario = null
-                Tools = null
-                Files = null
-                JSONResponse = false
-                JSONResponseKeys = null
-                Response = null
-                File = null
-                ItemValues = null
-            }
+            // If not in mapping, fetch from pklres and create resource
+            let (pklText = pklres.getPklRecord(resolvedID, "llm"))
+            if (!pklText.isEmpty)
+                // Parse pklres data and create ResourceChat (simplified for now)
+                new ResourceChat {
+                    Model = "llama3.2"
+                    Role = null
+                    Prompt = null
+                    Scenario = null
+                    Tools = null
+                    Files = null
+                    JSONResponse = false
+                    JSONResponseKeys = null
+                    Response = null
+                    File = null
+                    ItemValues = null
+                }
+            else
+                // Return default ResourceChat for non-existent resources
+                new ResourceChat {
+                    Model = "llama3.2"
+                    Role = null
+                    Prompt = null
+                    Scenario = null
+                    Tools = null
+                    Files = null
+                    JSONResponse = false
+                    JSONResponseKeys = null
+                    Response = null
+                    File = null
+                    ItemValues = null
+                }
+    else
+        // Return default ResourceChat for null actionID
+        new ResourceChat {
+            Model = "llama3.2"
+            Role = null
+            Prompt = null
+            Scenario = null
+            Tools = null
+            Files = null
+            JSONResponse = false
+            JSONResponseKeys = null
+            Response = null
+            File = null
+            ItemValues = null
+        }
 
 /// Retrieves the response text associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response for.
 /// [str]: The response text returned by the LLM model.
 function response(actionID: String?): String = 
-    let (res = resource(actionID).Response)
-    if (res != null)
-        if (isBase64(res)) res.base64Decoded else res
+    let (res = resource(actionID))
+    if (res.Response != null)
+        if (isBase64(res.Response)) res.Response.base64Decoded else res.Response
+    else if (res.File != null)
+        // Fallback to file content if Response field is empty
+        if (isBase64(res.File)) res.File.base64Decoded else res.File
     else ""
 
 /// Retrieves the prompt text associated with the resource [actionID].

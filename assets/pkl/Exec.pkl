@@ -14,12 +14,35 @@ open module org.kdeps.pkl.Exec
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
+import "pkl:test"
 import "Agent.pkl" as agent
 import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourceExec] objects.
 /// This mapping is populated from pklres storage.
-Resources: Mapping<String, ResourceExec> = new Mapping {}
+Resources: Mapping<String, ResourceExec> = 
+    let (recordIds = pklres.getAllRecords("exec"))
+    if (recordIds != "" && recordIds != "[]")
+        // Parse JSON array of record IDs and populate mapping
+        let (ids = test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(recordIds)))
+        if (ids != null && ids is Listing)
+            new Mapping {
+                for (id in ids as Listing<String>) {
+                    [id] = new ResourceExec {
+                        Env = null
+                        Command = ""
+                        Stderr = null
+                        Stdout = null
+                        ExitCode = 0
+                        File = null
+                        ItemValues = null
+                    }
+                }
+            }
+        else
+            new Mapping {}
+    else
+        new Mapping {}
 
 /// Class representing an executable resource, which includes the command to be executed,
 /// environment variables, and execution details such as outputs and exit codes.
@@ -65,31 +88,47 @@ class ResourceExec {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceExec]: The [ResourceExec] object associated with the resource actionID.
 function resource(actionID: String?): ResourceExec =
-  if (actionID != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
-    Resources[agent.resolveActionID(actionID)]
-  else
-    let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "exec"))
-    if (!pklText.isEmpty)
-      // Return default ResourceExec
-      new ResourceExec {
-        Env = null
-        Command = ""
-        Stderr = null
-        Stdout = null
-        ExitCode = 0
-        File = null
-        ItemValues = null
-      }
+  if (actionID != null)
+    let (resolvedID = agent.resolveActionID(actionID))
+    // First try to get from pre-populated Resources mapping
+    if (Resources.getOrNull(resolvedID) != null)
+      Resources[resolvedID]
     else
-      new ResourceExec {
-        Env = null
-        Command = ""
-        Stderr = null
-        Stdout = null
-        ExitCode = 0
-        File = null
-        ItemValues = null
-      }
+      // If not in mapping, fetch from pklres and create resource
+      let (pklText = pklres.getPklRecord(resolvedID, "exec"))
+      if (!pklText.isEmpty)
+        // Parse pklres data and create ResourceExec (simplified for now)
+        new ResourceExec {
+          Env = null
+          Command = ""
+          Stderr = null
+          Stdout = null
+          ExitCode = 0
+          File = null
+          ItemValues = null
+        }
+      else
+        // Return default ResourceExec for non-existent resources
+        new ResourceExec {
+          Env = null
+          Command = ""
+          Stderr = null
+          Stdout = null
+          ExitCode = 0
+          File = null
+          ItemValues = null
+        }
+  else
+    // Return default ResourceExec for null actionID
+    new ResourceExec {
+      Env = null
+      Command = ""
+      Stderr = null
+      Stdout = null
+      ExitCode = 0
+      File = null
+      ItemValues = null
+    }
 
 /// Retrieves the standard error output associated with the resource [actionID].
 ///
