@@ -13,12 +13,36 @@ open module org.kdeps.pkl.Python
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
+import "pkl:test"
 import "Agent.pkl" as agent
 import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourcePython] objects.
 /// This mapping is populated from pklres storage.
-Resources: Mapping<String, ResourcePython> = new Mapping {}
+Resources: Mapping<String, ResourcePython> = 
+    let (recordIds = pklres.getAllRecords("python"))
+    if (recordIds != "" && recordIds != "[]")
+        // Parse JSON array of record IDs and populate mapping
+        let (ids = test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(recordIds)))
+        if (ids != null && ids is Listing)
+            new Mapping {
+                for (id in ids as Listing<String>) {
+                    [id] = new ResourcePython {
+                        Env = null
+                        PythonEnvironment = ""
+                        Script = ""
+                        Stderr = null
+                        Stdout = null
+                        ExitCode = 0
+                        File = null
+                        ItemValues = null
+                    }
+                }
+            }
+        else
+            new Mapping {}
+    else
+        new Mapping {}
 
 /// Class representing a Python execution resource, which includes the script to be executed,
 /// environment variables, and execution details such as outputs and exit codes.
@@ -71,33 +95,50 @@ class ResourcePython {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourcePython]: The [ResourcePython] object associated with the resource actionID.
 function resource(actionID: String?): ResourcePython =
-  if (actionID != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
-    Resources[agent.resolveActionID(actionID)]
-  else
-    let (pklText = pklres.getPklRecord(agent.resolveActionID(actionID), "python"))
-    if (!pklText.isEmpty)
-      // Return default ResourcePython
-      new ResourcePython {
-        Env = null
-        PythonEnvironment = ""
-        Script = ""
-        Stderr = null
-        Stdout = null
-        ExitCode = 0
-        File = null
-        ItemValues = null
-      }
+  if (actionID != null)
+    let (resolvedID = agent.resolveActionID(actionID))
+    // First try to get from pre-populated Resources mapping
+    if (Resources.getOrNull(resolvedID) != null)
+      Resources[resolvedID]
     else
-      new ResourcePython {
-        Env = null
-        PythonEnvironment = ""
-        Script = ""
-        Stderr = null
-        Stdout = null
-        ExitCode = 0
-        File = null
-        ItemValues = null
-      }
+      // If not in mapping, fetch from pklres and create resource
+      let (pklText = pklres.getPklRecord(resolvedID, "python"))
+      if (!pklText.isEmpty)
+        // Parse pklres data and create ResourcePython (simplified for now)
+        new ResourcePython {
+          Env = null
+          PythonEnvironment = ""
+          Script = ""
+          Stderr = null
+          Stdout = null
+          ExitCode = 0
+          File = null
+          ItemValues = null
+        }
+      else
+        // Return default ResourcePython for non-existent resources
+        new ResourcePython {
+          Env = null
+          PythonEnvironment = ""
+          Script = ""
+          Stderr = null
+          Stdout = null
+          ExitCode = 0
+          File = null
+          ItemValues = null
+        }
+  else
+    // Return default ResourcePython for null actionID
+    new ResourcePython {
+      Env = null
+      PythonEnvironment = ""
+      Script = ""
+      Stderr = null
+      Stdout = null
+      ExitCode = 0
+      File = null
+      ItemValues = null
+    }
 
 /// Retrieves the standard error output associated with the resource [actionID].
 ///

@@ -39,3 +39,13 @@ function getPklValue(id: String?, typ: String?, key: String?): String =
   if (id != null && typ != null && key != null) 
     read("pklres:/\(id)?type=\(typ)?key=\(key)?op=get")?.text ?? "" 
   else ""
+
+/// Lists all record IDs of a specific type
+///
+/// Returns a JSON array of record IDs for the given type
+///
+/// [typ]: The type of records to list (e.g., "llm", "exec", "python", "http")
+function getAllRecords(typ: String?): String = 
+  if (typ != null) 
+    read("pklres:/?type=\(typ)&op=list")?.text ?? "[]"
+  else "[]"

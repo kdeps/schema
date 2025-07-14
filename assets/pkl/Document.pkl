@@ -48,8 +48,9 @@ function jsonParser(data: String?) =
 function jsonParserMapping(data: String?) =
   if (data != null)
     let (decodedData = if (isBase64(data)) data.base64Decoded else data)
-    if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(decodedData)) != null)
-      (new json.Parser { useMapping = true }).parse(decodedData)
+    let (result = test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(decodedData)))
+    if (result != null)
+      result
     else
       decodedData
   else

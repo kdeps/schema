@@ -7,11 +7,29 @@ open module org.kdeps.pkl.Data
 
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "pkl:json"
+import "pkl:test"
 import "PklResource.pkl" as pklres
 
 /// Files in the data folder mapped with the agent name and version
 /// This mapping is populated from pklres storage.
-Files: Mapping<String, Mapping<String, String>> = new Mapping {}
+Files: Mapping<String, Mapping<String, String>> = 
+    let (recordIds = pklres.getAllRecords("data"))
+    if (recordIds != "" && recordIds != "[]")
+        // Parse JSON array of record IDs and populate mapping
+        let (ids = test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(recordIds)))
+        if (ids != null && ids is Listing)
+            new Mapping {
+                for (id in ids as Listing<String>) {
+                    // For data records, the ID typically represents agent@version format
+                    // For now, create empty file mapping - could be enhanced to parse actual data structure
+                    [id] = new Mapping<String, String> {}
+                }
+            }
+        else
+            new Mapping {}
+    else
+        new Mapping {}
 
 /// Retrieves data file path of a given [agentName] and [fileName]
 ///
@@ -21,9 +39,13 @@ Files: Mapping<String, Mapping<String, String>> = new Mapping {}
 /// [agentName]: The key of the agent name.
 /// [fileName]: The key of the file to retrieve from the agent.
 function filepath(agentName: String?, fileName: String?): String = 
-    if (agentName != null && fileName != null && Files.getOrNull(agentName)?.ifNonNull((v) -> v.containsKey(fileName)) == true)
-        if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName]
+    if (agentName != null && fileName != null)
+        // First try to get from pre-populated Files mapping
+        if (Files.getOrNull(agentName)?.ifNonNull((v) -> v.containsKey(fileName)) == true)
+            if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName]
+        else
+            // If not in mapping, fetch from pklres directly
+            let (pklText = pklres.getPklValue(agentName, "data", fileName))
+            if (isBase64(pklText)) pklText.base64Decoded else pklText
     else
-        // pklres.getPklRecord returns a string, not a mapping
-        // Return empty string when data is not in Files mapping
         ""
