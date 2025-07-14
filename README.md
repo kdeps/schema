@@ -21,7 +21,7 @@ make build         # Complete build with testing
 
 ## Release Notes
 
-### Latest Release: v0.4.1
+### Latest Release: v0.4.2
 *Released: 2025-07-14*
 
 **🔬 Validation Status:**
@@ -31,15 +31,26 @@ make build         # Complete build with testing
 
 
 📦 **Updates**
-  - **Update release notes for v0.4.0 [skip ci]** (`e755352`)
+  - **Update release notes for v0.4.1 [skip ci]** (`58142ea`)
 
 📝 **Other Changes**
-  - **obtain resource from pklres as first priority (#27)** (`4a46385`)
+  - **Pklres pkleval (#28)** (`60dc010`)
+    * obtain resource from pklres as first priority
+  - **** (`* add pklres + pkl eval for obtaining output`)
+  - **** (`* add new changes to Data.pkl as well`)
 
 ### Complete Release History
 
 *Detailed changelog showing all changes from the beginning of the project*
 
+
+## v0.4.1 (*2025-07-14*)
+
+📦 **Updates**
+  - **Update release notes for v0.4.0 [skip ci]** (`e755352`)
+
+📝 **Other Changes**
+  - **obtain resource from pklres as first priority (#27)** (`4a46385`)
 
 ## v0.4.0 (*2025-07-11*)
 
@@ -475,18 +486,14 @@ make build         # Complete build with testing
 
 ## v0.2.3 (*2025-02-07*)
 
-✨ **Enhancements**
-  - **added trustedProxies settings to API server** (`d3ed25b`)
-
-## v0.2.2 (*2025-01-24*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 145
+- Total commits: 146
 - Project inception
 
 **📝 All Changes Since Project Start:**
 
 ✨ **Enhancements**
+  - **added trustedProxies settings to API server** (`d3ed25b`)
   - **upgrade minimum pkl version to 0.26.3. added minor fixes on the relnote generator.** (`c80d5ae`)
   - **Added skip validation helper functions** (`562775e`)
   - **added README.md and relnote generator** (`6c6987c`)
@@ -655,4 +662,4 @@ This PKL schema project maintains high quality through:
 **Quality Assurance**: Every release is thoroughly tested before deployment.
 
 ---
-*Generated on 2025-07-14 16:08:26 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-14 21:12:56 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
