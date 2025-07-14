@@ -17,10 +17,10 @@ Files: Mapping<String, Mapping<String, String>> =
     let (recordIds = pklres.getAllRecords("data"))
     if (recordIds != "" && recordIds != "[]")
         // Parse JSON array of record IDs and populate mapping
-        let (ids = test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(recordIds)))
-        if (ids != null && ids is Listing)
+        let (parseResult = test.catchOrNull(() -> (new json.Parser {}).parse(recordIds)))
+        if (parseResult != null && parseResult is Listing)
             new Mapping {
-                for (id in ids as Listing<String>) {
+                for (id in parseResult as Listing<String>) {
                     // For data records, the ID typically represents agent@version format
                     // For now, create empty file mapping - could be enhanced to parse actual data structure
                     [id] = new Mapping<String, String> {}

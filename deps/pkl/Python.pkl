@@ -23,10 +23,10 @@ Resources: Mapping<String, ResourcePython> =
     let (recordIds = pklres.getAllRecords("python"))
     if (recordIds != "" && recordIds != "[]")
         // Parse JSON array of record IDs and populate mapping
-        let (ids = test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(recordIds)))
-        if (ids != null && ids is Listing)
+        let (parseResult = test.catchOrNull(() -> (new json.Parser {}).parse(recordIds)))
+        if (parseResult != null && parseResult is Listing)
             new Mapping {
-                for (id in ids as Listing<String>) {
+                for (id in parseResult as Listing<String>) {
                     [id] = new ResourcePython {
                         Env = null
                         PythonEnvironment = ""
@@ -101,21 +101,26 @@ function resource(actionID: String?): ResourcePython =
     if (Resources.getOrNull(resolvedID) != null)
       Resources[resolvedID]
     else
-      // If not in mapping, fetch from pklres and create resource
-      let (pklText = pklres.getPklRecord(resolvedID, "python"))
-      if (!pklText.isEmpty)
-        // Parse pklres data and create ResourcePython (simplified for now)
-        new ResourcePython {
-          Env = null
-          PythonEnvironment = ""
-          Script = ""
-          Stderr = null
-          Stdout = null
-          ExitCode = 0
-          File = null
-          ItemValues = null
-        }
+      // If not in mapping, try to get resource from pklres evaluation
+      let (resourceOutput = pklres.getResourceOutput(resolvedID, "python"))
+      if (resourceOutput != null && resourceOutput is ResourcePython)
+        resourceOutput as ResourcePython
       else
+        // Fallback: fetch from pklres and create resource
+        let (pklText = pklres.getPklRecord(resolvedID, "python"))
+        if (!pklText.isEmpty)
+          // Parse pklres data and create ResourcePython (simplified for now)
+          new ResourcePython {
+            Env = null
+            PythonEnvironment = ""
+            Script = ""
+            Stderr = null
+            Stdout = null
+            ExitCode = 0
+            File = null
+            ItemValues = null
+          }
+        else
         // Return default ResourcePython for non-existent resources
         new ResourcePython {
           Env = null
