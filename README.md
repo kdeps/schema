@@ -21,14 +21,27 @@ make build         # Complete build with testing
 
 ## Release Notes
 
-### Latest Release: v0.4.0
-*Released: 2025-07-11*
+### Latest Release: v0.4.1
+*Released: 2025-07-14*
 
 **🔬 Validation Status:**
 ✅ **Automated Testing Available** - Run `make test` for comprehensive validation
 📊 **Latest Test Report Available** - [View Results](test/TEST_REPORT.md)
 🧪 **PKL Test Suite** - 11 test modules with comprehensive coverage
 
+
+📦 **Updates**
+  - **Update release notes for v0.4.0 [skip ci]** (`e755352`)
+
+📝 **Other Changes**
+  - **obtain resource from pklres as first priority (#27)** (`4a46385`)
+
+### Complete Release History
+
+*Detailed changelog showing all changes from the beginning of the project*
+
+
+## v0.4.0 (*2025-07-11*)
 
 📦 **Updates**
   - **Update release notes for v0.3.8 [skip ci]** (`2ce3e26`)
@@ -87,11 +100,6 @@ make build         # Complete build with testing
   - **** (`* improvement`)
   - **** (`* updated tests`)
   - **** (`* Fix tests`)
-
-### Complete Release History
-
-*Detailed changelog showing all changes from the beginning of the project*
-
 
 ## v0.3.8 (*2025-07-10*)
 
@@ -472,13 +480,8 @@ make build         # Complete build with testing
 
 ## v0.2.2 (*2025-01-24*)
 
-📝 **Other Changes**
-  - **Change resource ID to actionID, and Workflow action to targetActionID** (`94a46c7`)
-
-## v0.2.1 (*2025-01-24*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 144
+- Total commits: 145
 - Project inception
 
 **📝 All Changes Since Project Start:**
@@ -553,6 +556,7 @@ make build         # Complete build with testing
   - **Update CNAME** (`ae8b694`)
 
 📝 **Other Changes**
+  - **Change resource ID to actionID, and Workflow action to targetActionID** (`94a46c7`)
   - **changed timeoutSeconds -> timeoutDuration** (`f8ed8ed`)
   - **Use uniform naming convention for {Http,Api,Id,Json} -> {HTTP,API,ID,JSON}** (`d8841da`)
   - **reprioritize request skip validations** (`672a02a`)
@@ -651,4 +655,4 @@ This PKL schema project maintains high quality through:
 **Quality Assurance**: Every release is thoroughly tested before deployment.
 
 ---
-*Generated on 2025-07-14 11:16:38 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-14 09:32:18 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
