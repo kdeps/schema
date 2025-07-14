@@ -49,3 +49,14 @@ function getAllRecords(typ: String?): String =
   if (typ != null) 
     read("pklres:/?type=\(typ)&op=list")?.text ?? "[]"
   else "[]"
+
+/// Gets resource by fetching and evaluating the full PKL record
+///
+/// Returns the evaluated PKL record for the given resource ID and type
+///
+/// [id]: The resource ID to get the record for
+/// [typ]: The resource type (e.g., "llm", "exec", "python", "http", "data")
+function getResourceOutput(id: String?, typ: String?): Any = 
+  if (id != null && typ != null) 
+    read("pklres:/\(id)?type=\(typ)&op=eval")
+  else null

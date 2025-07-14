@@ -27,10 +27,10 @@ Resources: Mapping<String, ResourceChat> =
     let (recordIds = pklres.getAllRecords("llm"))
     if (recordIds != "" && recordIds != "[]")
         // Parse JSON array of record IDs and populate mapping
-        let (ids = test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(recordIds)))
-        if (ids != null && ids is Listing)
+        let (parseResult = test.catchOrNull(() -> (new json.Parser {}).parse(recordIds)))
+        if (parseResult != null && parseResult is Listing)
             new Mapping {
-                for (id in ids as Listing<String>) {
+                for (id in parseResult as Listing<String>) {
                     [id] = new ResourceChat {
                         Model = "llama3.2"
                         Role = null
@@ -146,38 +146,43 @@ function resource(actionID: String?): ResourceChat =
         if (Resources.getOrNull(resolvedID) != null)
             Resources[resolvedID]
         else
-            // If not in mapping, fetch from pklres and create resource
-            let (pklText = pklres.getPklRecord(resolvedID, "llm"))
-            if (!pklText.isEmpty)
-                // Parse pklres data and create ResourceChat (simplified for now)
-                new ResourceChat {
-                    Model = "llama3.2"
-                    Role = null
-                    Prompt = null
-                    Scenario = null
-                    Tools = null
-                    Files = null
-                    JSONResponse = false
-                    JSONResponseKeys = null
-                    Response = null
-                    File = null
-                    ItemValues = null
-                }
+            // If not in mapping, try to get resource from pklres evaluation
+            let (resourceOutput = pklres.getResourceOutput(resolvedID, "llm"))
+            if (resourceOutput != null && resourceOutput is ResourceChat)
+                resourceOutput as ResourceChat
             else
-                // Return default ResourceChat for non-existent resources
-                new ResourceChat {
-                    Model = "llama3.2"
-                    Role = null
-                    Prompt = null
-                    Scenario = null
-                    Tools = null
-                    Files = null
-                    JSONResponse = false
-                    JSONResponseKeys = null
-                    Response = null
-                    File = null
-                    ItemValues = null
-                }
+                // Fallback: fetch from pklres
+                let (pklText = pklres.getPklRecord(resolvedID, "llm"))
+                if (!pklText.isEmpty)
+                    // Parse pklres data and create ResourceChat (simplified for now)
+                    new ResourceChat {
+                        Model = "llama3.2"
+                        Role = null
+                        Prompt = null
+                        Scenario = null
+                        Tools = null
+                        Files = null
+                        JSONResponse = false
+                        JSONResponseKeys = null
+                        Response = null
+                        File = null
+                        ItemValues = null
+                    }
+                else
+                    // Return default ResourceChat for non-existent resources
+                    new ResourceChat {
+                        Model = "llama3.2"
+                        Role = null
+                        Prompt = null
+                        Scenario = null
+                        Tools = null
+                        Files = null
+                        JSONResponse = false
+                        JSONResponseKeys = null
+                        Response = null
+                        File = null
+                        ItemValues = null
+                    }
     else
         // Return default ResourceChat for null actionID
         new ResourceChat {

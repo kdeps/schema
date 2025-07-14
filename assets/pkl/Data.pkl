@@ -17,10 +17,10 @@ Files: Mapping<String, Mapping<String, String>> =
     let (recordIds = pklres.getAllRecords("data"))
     if (recordIds != "" && recordIds != "[]")
         // Parse JSON array of record IDs and populate mapping
-        let (ids = test.catchOrNull(() -> (new json.Parser { useMapping = false }).parse(recordIds)))
-        if (ids != null && ids is Listing)
+        let (parseResult = test.catchOrNull(() -> (new json.Parser {}).parse(recordIds)))
+        if (parseResult != null && parseResult is Listing)
             new Mapping {
-                for (id in ids as Listing<String>) {
+                for (id in parseResult as Listing<String>) {
                     // For data records, the ID typically represents agent@version format
                     // For now, create empty file mapping - could be enhanced to parse actual data structure
                     [id] = new Mapping<String, String> {}
@@ -44,8 +44,20 @@ function filepath(agentName: String?, fileName: String?): String =
         if (Files.getOrNull(agentName)?.ifNonNull((v) -> v.containsKey(fileName)) == true)
             if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName]
         else
-            // If not in mapping, fetch from pklres directly
-            let (pklText = pklres.getPklValue(agentName, "data", fileName))
-            if (isBase64(pklText)) pklText.base64Decoded else pklText
+            // If not in mapping, try to get resource from pklres evaluation first
+            let (resourceOutput = pklres.getResourceOutput(agentName, "data"))
+            if (resourceOutput != null && resourceOutput is Mapping<String, String>)
+                let (dataFiles = resourceOutput as Mapping<String, String>)
+                if (dataFiles.containsKey(fileName))
+                    let (fileContent = dataFiles[fileName])
+                    if (isBase64(fileContent)) fileContent.base64Decoded else fileContent
+                else
+                    // Fallback to direct pklres value fetch
+                    let (pklText = pklres.getPklValue(agentName, "data", fileName))
+                    if (isBase64(pklText)) pklText.base64Decoded else pklText
+            else
+                // Fallback to direct pklres value fetch
+                let (pklText = pklres.getPklValue(agentName, "data", fileName))
+                if (isBase64(pklText)) pklText.base64Decoded else pklText
     else
         ""
