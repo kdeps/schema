@@ -5,15 +5,18 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/utils"
 )
 
 type Tool interface {
+	utils.Utils
 }
 
 var _ Tool = (*ToolImpl)(nil)
 
 // Abstractions for Tool execution
 type ToolImpl struct {
+	*utils.UtilsImpl
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Tool

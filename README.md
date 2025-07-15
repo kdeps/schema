@@ -21,14 +21,111 @@ make build         # Complete build with testing
 
 ## Release Notes
 
-### Latest Release: v0.3.8
-*Released: 2025-07-10*
+### Latest Release: v0.4.3
+*Released: 2025-07-14*
 
 **🔬 Validation Status:**
 ✅ **Automated Testing Available** - Run `make test` for comprehensive validation
 📊 **Latest Test Report Available** - [View Results](test/TEST_REPORT.md)
-🧪 **PKL Test Suite** - 8 test modules with comprehensive coverage
+🧪 **PKL Test Suite** - 11 test modules with comprehensive coverage
 
+
+📦 **Updates**
+  - **Update release notes for v0.4.2 [skip ci]** (`5a313bb`)
+
+📝 **Other Changes**
+  - **Base64utils fix (#29)** (`08ac10a`)
+    * obtain resource from pklres as first priority
+  - **** (`* add pklres + pkl eval for obtaining output`)
+  - **** (`* add new changes to Data.pkl as well`)
+  - **** (`* base64 utils fix`)
+  - **** (`* updated readme`)
+
+### Complete Release History
+
+*Detailed changelog showing all changes from the beginning of the project*
+
+
+## v0.4.2 (*2025-07-14*)
+
+📦 **Updates**
+  - **Update release notes for v0.4.1 [skip ci]** (`58142ea`)
+
+📝 **Other Changes**
+  - **Pklres pkleval (#28)** (`60dc010`)
+    * obtain resource from pklres as first priority
+  - **** (`* add pklres + pkl eval for obtaining output`)
+  - **** (`* add new changes to Data.pkl as well`)
+
+## v0.4.1 (*2025-07-14*)
+
+📦 **Updates**
+  - **Update release notes for v0.4.0 [skip ci]** (`e755352`)
+
+📝 **Other Changes**
+  - **obtain resource from pklres as first priority (#27)** (`4a46385`)
+
+## v0.4.0 (*2025-07-11*)
+
+📦 **Updates**
+  - **Update release notes for v0.3.8 [skip ci]** (`2ce3e26`)
+
+📝 **Other Changes**
+  - **PklResource - Reader to store PKL to SQLite instead of files (#26)** (`9faca07`)
+    * fix: APIServerRequest null safety with default values
+  - **** (`- Add default values for core APIServerRequest fields:`)
+  - **** (`  - ID: String = "" (instead of undefined)`)
+  - **** (`  - IP: String = "" (instead of undefined)`)
+  - **** (`  - Path: String = "/" (instead of undefined)`)
+  - **** (`  - Method: String = "GET" (instead of undefined)`)
+  - **** (`- Keep fields required (non-nullable) to maintain API contract`)
+  - **** (`- Functions now return safe defaults instead of throwing undefined errors`)
+  - **** (`- Updated both deps/pkl and assets/pkl versions for consistency`)
+  - **** (`- Fixes runtime errors when accessing request.id(), ip(), path(), method()`)
+  - **** (`This resolves: "Tried to read property `ID` but its value is undefined"`)
+  - **** (`All APIServerRequest functions now work safely with default empty objects.`)
+  - **** (`* feat: new pklresource service that uses SQL backend to record PKL`)
+  - **** (`- Add PklResource.pkl module for SQLite3-based PKL record storage`)
+  - **** (`- Implement getPklRecord/setPklRecord functions for CRUD operations`)
+  - **** (`- Add blank resource implementations to prevent null resources`)
+  - **** (`- Update all resource modules (Exec, Python, HTTP, LLM, Data) to use pklres`)
+  - **** (`- Add DataImpl class for Data resource structure`)
+  - **** (`- Ensure all resource() functions return blank objects instead of null`)
+  - **** (`- Add comprehensive pklres integration to both deps and assets PKL files`)
+  - **** (`- Support request-scoped storage with proper error handling`)
+  - **** (`* feat: complete pklres integration for all resource types`)
+  - **** (`- Refactor Exec, Python, LLM, HTTP, and Data resources to use pklres backend`)
+  - **** (`- Add hybrid retrieval: check local mapping first, fallback to pklres`)
+  - **** (`- Add comprehensive mapping functions for storing values in pklres`)
+  - **** (`- Maintain backward compatibility with existing mapping interfaces`)
+  - **** (`- All resources now retrieve values entirely from SQLite backend via pklres`)
+  - **** (`- Support for individual property mapping and full resource object storage`)
+  - **** (`* feat: regenerate Go code with pklres integration`)
+  - **** (`- Generated Go files reflect pklres integration from PKL schema`)
+  - **** (`- Updated assets/pkl/ files with pklres changes`)
+  - **** (`- Generated gen/ files include pklres-aware resource structures`)
+  - **** (`- All resource types now have proper Go bindings for pklres backend`)
+  - **** (`- Maintains backward compatibility with existing Go code patterns`)
+  - **** (`* refactor: remove redundant map* functions from resource files`)
+  - **** (`- Remove mapResource, mapStdout, mapExitCode, etc. functions from all resources`)
+  - **** (`- Users can call pklres.setPklValue() directly for storage operations`)
+  - **** (`- Simplifies the API and reduces code duplication`)
+  - **** (`- Maintains all retrieval functions (resource, stdout, exitCode, etc.)`)
+  - **** (`- Cleaner and more direct pklres integration`)
+  - **** (`* fix: update test expectations for PklResource.pkl addition`)
+  - **** (`- Update expected PKL file count from 22 to 23`)
+  - **** (`- Add PklResource.pkl to expected files list`)
+  - **** (`- Fix all test assertions to account for new file`)
+  - **** (`- Go tests now pass with pklres integration`)
+  - **** (`* removed map* functions`)
+  - **** (`* added pklresource tests`)
+  - **** (`* additional tests`)
+  - **** (`* add more tests`)
+  - **** (`* improvement`)
+  - **** (`* updated tests`)
+  - **** (`* Fix tests`)
+
+## v0.3.8 (*2025-07-10*)
 
 🚀 **Features**
   - **feat: comprehensive PKL test suite and validation system (#25)** (`4027874`)
@@ -68,11 +165,6 @@ make build         # Complete build with testing
   - **** (`  - Legacy compatibility with deprecation warnings`)
   - **** (`This establishes a production-ready PKL schema with comprehensive`)
   - **** (`testing, automation, and quality assurance systems.`)
-
-### Complete Release History
-
-*Detailed changelog showing all changes from the beginning of the project*
-
 
 ## v0.3.7 (*2025-07-10*)
 
@@ -396,42 +488,15 @@ make build         # Complete build with testing
 
 ## v0.2.4 (*2025-02-08*)
 
-✨ **Enhancements**
-  - **added new schema documentation info** (`c3fc856`)
-
-📦 **Updates**
-  - **updated release notes** (`0e6e41a`)
-
-📝 **Other Changes**
-  - **allow access to client IP and request ID** (`34a6f34`)
-
-## v0.2.3 (*2025-02-07*)
-
-✨ **Enhancements**
-  - **added trustedProxies settings to API server** (`d3ed25b`)
-
-## v0.2.2 (*2025-01-24*)
-
-📝 **Other Changes**
-  - **Change resource ID to actionID, and Workflow action to targetActionID** (`94a46c7`)
-
-## v0.2.1 (*2025-01-24*)
-
-📦 **Updates**
-  - **bump pkl to 0.27.2** (`e0683cb`)
-
-📝 **Other Changes**
-  - **changed timeoutSeconds -> timeoutDuration** (`f8ed8ed`)
-
-## v0.2.0 (*2025-01-23*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 142
+- Total commits: 149
 - Project inception
 
 **📝 All Changes Since Project Start:**
 
 ✨ **Enhancements**
+  - **added new schema documentation info** (`c3fc856`)
+  - **added trustedProxies settings to API server** (`d3ed25b`)
   - **upgrade minimum pkl version to 0.26.3. added minor fixes on the relnote generator.** (`c80d5ae`)
   - **Added skip validation helper functions** (`562775e`)
   - **added README.md and relnote generator** (`6c6987c`)
@@ -484,6 +549,8 @@ make build         # Complete build with testing
   - **Added initial core schema** (`a61fbf5`)
 
 📦 **Updates**
+  - **updated release notes** (`0e6e41a`)
+  - **bump pkl to 0.27.2** (`e0683cb`)
   - **updated .gitattributes** (`e9ea189`)
   - **updated README.md** (`809d2c3`)
   - **bump pkl to 0.27.1** (`8183a18`)
@@ -500,6 +567,9 @@ make build         # Complete build with testing
   - **Update CNAME** (`ae8b694`)
 
 📝 **Other Changes**
+  - **allow access to client IP and request ID** (`34a6f34`)
+  - **Change resource ID to actionID, and Workflow action to targetActionID** (`94a46c7`)
+  - **changed timeoutSeconds -> timeoutDuration** (`f8ed8ed`)
   - **Use uniform naming convention for {Http,Api,Id,Json} -> {HTTP,API,ID,JSON}** (`d8841da`)
   - **reprioritize request skip validations** (`672a02a`)
   - **removed all deprecated imports** (`7cd9fbe`)
@@ -587,7 +657,7 @@ This PKL schema project maintains high quality through:
 
 ✅ **Automated Testing Available** - Run `make test` for comprehensive validation
 📊 **Latest Test Report Available** - [View Results](test/TEST_REPORT.md)
-🧪 **PKL Test Suite** - 8 test modules with comprehensive coverage
+🧪 **PKL Test Suite** - 11 test modules with comprehensive coverage
 
 - **Real-time Testing**: All PKL modules validated on every change
 - **Comprehensive Coverage**: Functions, null safety, state management, and edge cases
@@ -597,4 +667,4 @@ This PKL schema project maintains high quality through:
 **Quality Assurance**: Every release is thoroughly tested before deployment.
 
 ---
-*Generated on 2025-07-10 10:38:36 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-14 19:20:29 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*

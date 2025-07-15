@@ -11,7 +11,7 @@ import (
 type Exec interface {
 	utils.Utils
 
-	GetResources() *map[string]*ResourceExec
+	GetResources() map[string]*ResourceExec
 }
 
 var _ Exec = (*ExecImpl)(nil)
@@ -27,11 +27,13 @@ type ExecImpl struct {
 	*utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceExec] objects.
-	Resources *map[string]*ResourceExec `pkl:"Resources"`
+	// This mapping is populated from pklres storage.
+	Resources map[string]*ResourceExec `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceExec] objects.
-func (rcv *ExecImpl) GetResources() *map[string]*ResourceExec {
+// This mapping is populated from pklres storage.
+func (rcv *ExecImpl) GetResources() map[string]*ResourceExec {
 	return rcv.Resources
 }
 

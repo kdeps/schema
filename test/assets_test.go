@@ -51,14 +51,15 @@ func TestPKLFileEmbedding(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to list PKL files: %v", err)
 		}
-		if len(files) != 22 {
-			t.Errorf("Expected 22 PKL files, got %d", len(files))
+		if len(files) != 23 {
+			t.Errorf("Expected 23 PKL files, got %d", len(files))
 		}
 
 		// Check for key files
 		expectedFiles := map[string]bool{
 			"Workflow.pkl": false, "Resource.pkl": false, "LLM.pkl": false,
 			"APIServer.pkl": false, "Docker.pkl": false, "Agent.pkl": false,
+			"PklResource.pkl": false,
 		}
 		for _, file := range files {
 			if _, exists := expectedFiles[file]; exists {
@@ -187,8 +188,8 @@ func TestPKLWorkspace(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to list workspace files: %v", err)
 		}
-		if len(files) != 22 {
-			t.Errorf("Expected 22 files in workspace, got %d", len(files))
+		if len(files) != 23 {
+			t.Errorf("Expected 23 files in workspace, got %d", len(files))
 		}
 	})
 
@@ -309,8 +310,8 @@ func TestExtractAllPKLFiles(t *testing.T) {
 				pklCount++
 			}
 		}
-		if pklCount != 22 {
-			t.Errorf("Expected 22 PKL files, found %d", pklCount)
+		if pklCount != 23 {
+			t.Errorf("Expected 23 PKL files, found %d", pklCount)
 		}
 	})
 

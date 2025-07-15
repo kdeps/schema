@@ -5,15 +5,18 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
+	"github.com/kdeps/schema/gen/utils"
 )
 
 type Session interface {
+	utils.Utils
 }
 
 var _ Session = (*SessionImpl)(nil)
 
 // Abstractions for Session records
 type SessionImpl struct {
+	*utils.UtilsImpl
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Session

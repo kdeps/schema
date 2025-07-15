@@ -11,7 +11,7 @@ import (
 type HTTP interface {
 	utils.Utils
 
-	GetResources() *map[string]*ResourceHTTPClient
+	GetResources() map[string]*ResourceHTTPClient
 }
 
 var _ HTTP = (*HTTPImpl)(nil)
@@ -25,11 +25,13 @@ type HTTPImpl struct {
 	*utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-	Resources *map[string]*ResourceHTTPClient `pkl:"Resources"`
+	// This mapping is populated from pklres storage.
+	Resources map[string]*ResourceHTTPClient `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-func (rcv *HTTPImpl) GetResources() *map[string]*ResourceHTTPClient {
+// This mapping is populated from pklres storage.
+func (rcv *HTTPImpl) GetResources() map[string]*ResourceHTTPClient {
 	return rcv.Resources
 }
 

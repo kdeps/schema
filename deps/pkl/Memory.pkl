@@ -5,15 +5,21 @@
 
 open module org.kdeps.pkl.Memory
 
+extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
 
 /// Retrieves a memory record by its [id]
 ///
 /// Returns the textual content of the memory entry, or an empty string if not found.
+/// If the content is Base64-encoded, it will be automatically decoded.
 ///
 /// [id]: The identifier of the memory record.
-function getRecord(id: String): String = read("memory:/\(id)")?.text ?? ""
+function getRecord(id: String?): String = 
+    if (id != null) 
+        let (content = read("memory:/\(id)")?.text ?? "")
+        if (isBase64(content)) content.base64Decoded else content
+    else ""
 
 /// Sets or updates a memory record with a new [value]
 ///
@@ -21,14 +27,17 @@ function getRecord(id: String): String = read("memory:/\(id)")?.text ?? ""
 ///
 /// [id]: The identifier of the memory record.
 /// [value]: The value to store.
-function setRecord(id: String, value: String): String = read("memory:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+function setRecord(id: String?, value: String?): String = 
+  if (id != null && value != null) 
+    read("memory:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? "" 
+  else ""
 
 /// Deletes a memory record by its [id]
 ///
 /// Returns a confirmation message or an empty string if the record was not found.
 ///
 /// [id]: The identifier of the memory record.
-function deleteRecord(id: String): String = read("memory:/\(id)?op=delete")?.text ?? ""
+function deleteRecord(id: String?): String = if (id != null) read("memory:/\(id)?op=delete")?.text ?? "" else ""
 
 /// Clears all memory records
 ///

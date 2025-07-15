@@ -11,4 +11,18 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:test"
 
 // Test if string is Base64Encoded
-function isBase64(str: String?) = if (str != null && str != "") test.catchOrNull(() -> str.base64Decoded) == null else false
+// This function uses a more robust approach to detect valid base64 strings
+function isBase64(str: String?) = 
+  if (str != null && str != "") 
+    // Check if the string contains only valid base64 characters
+    let (base64Pattern = "^[A-Za-z0-9+/]*={0,2}$")
+    let (isValidPattern = str.matches(base64Pattern))
+    let (lengthIsValid = str.length % 4 == 0)
+    let (startsWithValidChar = !str.startsWith("{") && !str.startsWith("[") && !str.startsWith("\""))
+    // Only attempt decoding if it passes basic validation
+    if (isValidPattern && lengthIsValid && startsWithValidChar)
+      test.catchOrNull(() -> str.base64Decoded) != null
+    else
+      false
+  else 
+    false

@@ -1,0 +1,126 @@
+{
+  "id": "coverage_1752204087",
+  "timestamp": "2025-07-11T05:21:27.6659+02:00",
+  "summary": {
+    "timestamp": "2025-07-11T05:21:27.665926+02:00",
+    "total_files": 3,
+    "covered_files": 2,
+    "uncovered_files": 1,
+    "total_lines": 170,
+    "covered_lines": 115,
+    "uncovered_lines": 55,
+    "total_functions": 3,
+    "covered_functions": 3,
+    "total_branches": 1,
+    "covered_branches": 1,
+    "overall_coverage": 67.64705882352942,
+    "function_coverage": 100,
+    "branch_coverage": 100,
+    "risk_breakdown": {
+      "high": 1,
+      "low": 2
+    },
+    "critical_paths": {
+      "internal/": 60,
+      "pkg/": 85
+    },
+    "trends": {
+      "overall_trend": "stable",
+      "change_rate": 0,
+      "days_since_last": 0,
+      "predicted_coverage": 0
+    },
+    "recommendations": [
+      "Overall coverage (67.6%) is below minimum threshold (80.0%)",
+      "Critical path 'internal/' has low coverage (60.0%)",
+      "Found 1 files with high risk - consider adding more tests",
+      "Found 1 uncovered files - consider adding tests for these files"
+    ]
+  },
+  "files": {
+    "docs/README.md": {
+      "path": "docs/README.md",
+      "total_lines": 20,
+      "covered_lines": 0,
+      "uncovered_lines": 20,
+      "coverage": 0,
+      "functions": null,
+      "branches": null,
+      "lines": null,
+      "last_modified": "0001-01-01T00:00:00Z",
+      "complexity": 1,
+      "risk": "low"
+    },
+    "internal/utils/helper.go": {
+      "path": "internal/utils/helper.go",
+      "total_lines": 50,
+      "covered_lines": 30,
+      "uncovered_lines": 20,
+      "coverage": 60,
+      "functions": {
+        "HelperFunction": {
+          "name": "HelperFunction",
+          "start_line": 5,
+          "end_line": 45,
+          "total_lines": 40,
+          "covered_lines": 25,
+          "coverage": 62.5,
+          "complexity": 15,
+          "risk": "high"
+        }
+      },
+      "branches": null,
+      "lines": null,
+      "last_modified": "0001-01-01T00:00:00Z",
+      "complexity": 12,
+      "risk": "high"
+    },
+    "pkg/core/engine.go": {
+      "path": "pkg/core/engine.go",
+      "total_lines": 100,
+      "covered_lines": 85,
+      "uncovered_lines": 15,
+      "coverage": 85,
+      "functions": {
+        "NewEngine": {
+          "name": "NewEngine",
+          "start_line": 10,
+          "end_line": 30,
+          "total_lines": 20,
+          "covered_lines": 20,
+          "coverage": 100,
+          "complexity": 2,
+          "risk": "low"
+        },
+        "Process": {
+          "name": "Process",
+          "start_line": 35,
+          "end_line": 80,
+          "total_lines": 45,
+          "covered_lines": 40,
+          "coverage": 88.9,
+          "complexity": 8,
+          "risk": "medium"
+        }
+      },
+      "branches": {
+        "10": {
+          "line": 10,
+          "total_branches": 2,
+          "covered_branches": 2,
+          "coverage": 100,
+          "risk": "low"
+        }
+      },
+      "lines": null,
+      "last_modified": "0001-01-01T00:00:00Z",
+      "complexity": 5,
+      "risk": "low"
+    }
+  },
+  "environment": {
+    "go_version": "1.24",
+    "platform": "darwin",
+    "timestamp": "2025-07-11T05:21:27+02:00"
+  }
+}

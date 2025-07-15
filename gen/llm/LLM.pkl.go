@@ -11,7 +11,7 @@ import (
 type LLM interface {
 	utils.Utils
 
-	GetResources() *map[string]*ResourceChat
+	GetResources() map[string]*ResourceChat
 }
 
 var _ LLM = (*LLMImpl)(nil)
@@ -30,11 +30,13 @@ type LLMImpl struct {
 	*utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-	Resources *map[string]*ResourceChat `pkl:"Resources"`
+	// This mapping is populated from pklres storage.
+	Resources map[string]*ResourceChat `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceChat] objects.
-func (rcv *LLMImpl) GetResources() *map[string]*ResourceChat {
+// This mapping is populated from pklres storage.
+func (rcv *LLMImpl) GetResources() map[string]*ResourceChat {
 	return rcv.Resources
 }
 

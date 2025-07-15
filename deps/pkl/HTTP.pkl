@@ -12,10 +12,36 @@ open module org.kdeps.pkl.HTTP
 extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
+import "pkl:test"
 import "Agent.pkl" as agent
+import "PklResource.pkl" as pklres
 
 /// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-Resources: Mapping<String, ResourceHTTPClient>?
+/// This mapping is populated from pklres storage.
+Resources: Mapping<String, ResourceHTTPClient> = 
+    let (recordIds = pklres.getAllRecords("http"))
+    if (recordIds != "" && recordIds != "[]")
+        // Parse JSON array of record IDs and populate mapping
+        let (parseResult = test.catchOrNull(() -> (new json.Parser {}).parse(recordIds)))
+        if (parseResult != null && parseResult is Listing)
+            new Mapping {
+                for (id in parseResult as Listing<String>) {
+                    [id] = new ResourceHTTPClient {
+                        Method = "GET"
+                        Url = ""
+                        Data = null
+                        Headers = null
+                        Params = null
+                        Response = null
+                        File = null
+                        ItemValues = null
+                    }
+                }
+            }
+        else
+            new Mapping {}
+    else
+        new Mapping {}
 
 /// Class representing an HTTP client resource, which includes details
 /// about the HTTP method, URL, request data, headers, and response.
@@ -74,9 +100,45 @@ class ResponseBlock {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceHTTPClient]: The [ResourceHTTPClient] object associated with the resource actionID.
 function resource(actionID: String?): ResourceHTTPClient =
-  if (actionID != null && Resources != null && Resources.getOrNull(agent.resolveActionID(actionID)) != null)
-    Resources[agent.resolveActionID(actionID)]
+  if (actionID != null)
+    let (resolvedID = agent.resolveActionID(actionID))
+    // First try to get from pre-populated Resources mapping
+    if (Resources.getOrNull(resolvedID) != null)
+      Resources[resolvedID]
+    else
+      // If not in mapping, try to get resource from pklres evaluation
+      let (resourceOutput = pklres.getResourceOutput(resolvedID, "http"))
+      if (resourceOutput != null && resourceOutput is ResourceHTTPClient)
+        resourceOutput as ResourceHTTPClient
+      else
+        // Fallback: fetch from pklres and create resource
+        let (pklText = pklres.getPklRecord(resolvedID, "http"))
+        if (!pklText.isEmpty)
+          // Parse pklres data and create ResourceHTTPClient (simplified for now)
+          new ResourceHTTPClient {
+            Method = "GET"
+            Url = ""
+            Data = null
+            Headers = null
+            Params = null
+            Response = null
+            File = null
+            ItemValues = null
+          }
+        else
+        // Return default ResourceHTTPClient for non-existent resources
+        new ResourceHTTPClient {
+          Method = "GET"
+          Url = ""
+          Data = null
+          Headers = null
+          Params = null
+          Response = null
+          File = null
+          ItemValues = null
+        }
   else
+    // Return default ResourceHTTPClient for null actionID
     new ResourceHTTPClient {
       Method = "GET"
       Url = ""

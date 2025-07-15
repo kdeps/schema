@@ -11,7 +11,7 @@ import (
 type Python interface {
 	utils.Utils
 
-	GetResources() *map[string]*ResourcePython
+	GetResources() map[string]*ResourcePython
 }
 
 var _ Python = (*PythonImpl)(nil)
@@ -26,11 +26,13 @@ type PythonImpl struct {
 	*utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourcePython] objects.
-	Resources *map[string]*ResourcePython `pkl:"Resources"`
+	// This mapping is populated from pklres storage.
+	Resources map[string]*ResourcePython `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourcePython] objects.
-func (rcv *PythonImpl) GetResources() *map[string]*ResourcePython {
+// This mapping is populated from pklres storage.
+func (rcv *PythonImpl) GetResources() map[string]*ResourcePython {
 	return rcv.Resources
 }
 
