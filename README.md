@@ -21,14 +21,29 @@ make build         # Complete build with testing
 
 ## Release Notes
 
-### Latest Release: v0.4.4
-*Released: 2025-07-15*
+### Latest Release: v0.4.5
+*Released: 2025-07-17*
 
 **🔬 Validation Status:**
 ✅ **Automated Testing Available** - Run `make test` for comprehensive validation
 📊 **Latest Test Report Available** - [View Results](test/TEST_REPORT.md)
 🧪 **PKL Test Suite** - 11 test modules with comprehensive coverage
 
+
+📦 **Updates**
+  - **Update release notes for v0.4.4 [skip ci]** (`a8ccffb`)
+
+📝 **Other Changes**
+  - **pklres backend improvement to use sql-based pkl storage (#30)** (`7033105`)
+    * pklres backend improvement to use sql-based pkl storage
+  - **** (`* add compiled pkl-go libs`)
+
+### Complete Release History
+
+*Detailed changelog showing all changes from the beginning of the project*
+
+
+## v0.4.4 (*2025-07-15*)
 
 🐛 **Bug Fixes**
   - **fix: APIServerRequest null safety with default values** (`21f03cd`)
@@ -49,11 +64,6 @@ make build         # Complete build with testing
   - **** (`- Fixes runtime errors when accessing request.id(), ip(), path(), method()`)
   - **** (`This resolves: "Tried to read property `ID` but its value is undefined"`)
   - **** (`All APIServerRequest functions now work safely with default empty objects.`)
-
-### Complete Release History
-
-*Detailed changelog showing all changes from the beginning of the project*
-
 
 ## v0.4.3 (*2025-07-14*)
 
@@ -497,21 +507,14 @@ make build         # Complete build with testing
 
 ## v0.2.6 (*2025-02-10*)
 
-✨ **Enhancements**
-  - **added api response meta info for other additional information sent over the JSON response** (`cf98a9d`)
-
-📦 **Updates**
-  - **updated release notes** (`c085ef2`)
-
-## v0.2.5 (*2025-02-10*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 150
+- Total commits: 152
 - Project inception
 
 **📝 All Changes Since Project Start:**
 
 ✨ **Enhancements**
+  - **added api response meta info for other additional information sent over the JSON response** (`cf98a9d`)
   - **added new schema documentation info** (`c3fc856`)
   - **added trustedProxies settings to API server** (`d3ed25b`)
   - **upgrade minimum pkl version to 0.26.3. added minor fixes on the relnote generator.** (`c80d5ae`)
@@ -566,6 +569,7 @@ make build         # Complete build with testing
   - **Added initial core schema** (`a61fbf5`)
 
 📦 **Updates**
+  - **updated release notes** (`c085ef2`)
   - **updated release notes** (`0e6e41a`)
   - **bump pkl to 0.27.2** (`e0683cb`)
   - **updated .gitattributes** (`e9ea189`)
@@ -685,4 +689,4 @@ This PKL schema project maintains high quality through:
 **Quality Assurance**: Every release is thoroughly tested before deployment.
 
 ---
-*Generated on 2025-07-17 16:42:13 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-17 14:57:32 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
