@@ -7,56 +7,45 @@ open module org.kdeps.pkl.PklResource
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
+import "pkl:json"
 
-/// Retrieves a session record by its [id]
-///
-/// Returns the textual content of the session entry, or an empty string if not found.
-///
-/// [id]: The identifier of the session record.
-function getPklRecord(id: String?, typ: String?): String = 
+/// Retrieves a record by its [id] and [type] as a PKL object
+/// Returns the record as a PKL object, or null if not found.
+function getPklRecord(id: String?, typ: String?): Resource? = 
   if (id != null && typ != null) 
-    read("pklres:/\(id)?type=\(typ)")?.text ?? "" 
-  else ""
+    read("pklres:/\(id)?type=\(typ)&op=get")
+  else null
 
-/// Sets or updates a session record with a new [value]
-///
+/// Sets or updates a record with a new [value]
 /// Returns the set value as confirmation.
-///
-/// [id]: The identifier of the session record.
-/// [value]: The value to store.
 function setPklValue(id: String?, typ: String?, key: String?, value: String?): String = 
   if (id != null && typ != null && key != null && value != null) 
-    read("pklres:/\(id)?type=\(typ)?key=\(key)?op=set&value=\(URI.encodeComponent(value))")?.text ?? "" 
+    read("pklres:/\(id)?type=\(typ)&key=\(key)&op=set&value=\(URI.encodeComponent(value))")?.text ?? "" 
   else ""
 
-/// Get a pkl key record
-///
-/// Returns the key value
-///
-/// [id]: The identifier of the session record.
-/// [value]: The value to store.
-function getPklValue(id: String?, typ: String?, key: String?): String = 
+/// Get a pkl key record as a PKL object
+/// Returns the key value as a PKL object, or null if not found
+function getPklValue(id: String?, typ: String?, key: String?): Resource? = 
   if (id != null && typ != null && key != null) 
-    read("pklres:/\(id)?type=\(typ)?key=\(key)?op=get")?.text ?? "" 
-  else ""
-
-/// Lists all record IDs of a specific type
-///
-/// Returns a JSON array of record IDs for the given type
-///
-/// [typ]: The type of records to list (e.g., "llm", "exec", "python", "http")
-function getAllRecords(typ: String?): String = 
-  if (typ != null) 
-    read("pklres:/?type=\(typ)&op=list")?.text ?? "[]"
-  else "[]"
-
-/// Gets resource by fetching and evaluating the full PKL record
-///
-/// Returns the evaluated PKL record for the given resource ID and type
-///
-/// [id]: The resource ID to get the record for
-/// [typ]: The resource type (e.g., "llm", "exec", "python", "http", "data")
-function getResourceOutput(id: String?, typ: String?): Any = 
-  if (id != null && typ != null) 
-    read("pklres:/\(id)?type=\(typ)&op=eval")
+    read("pklres:/\(id)?type=\(typ)&key=\(key)&op=get")
   else null
+
+/// Lists all record IDs of a specific type as a PKL collection
+/// Returns a PKL collection (Listing) of record IDs for the given type
+function getAllRecords(typ: String?): Listing<String> = 
+  if (typ != null) 
+    let (result = read("pklres:/?type=\(typ)&op=list"))
+    if (result != null)
+      let (jsonText = result.text)
+      if (!jsonText.isEmpty && jsonText != "[]")
+        let (parseResult = (new json.Parser {}).parse(jsonText))
+        if (parseResult is Listing)
+          parseResult as Listing<String>
+        else
+          new Listing<String> {}
+      else
+        new Listing<String> {}
+    else
+      new Listing<String> {}
+  else new Listing<String> {}
+

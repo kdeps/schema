@@ -30,12 +30,12 @@ type LLMImpl struct {
 	*utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-	// This mapping is populated from pklres storage.
+	// This mapping is populated from pklres storage using append/modify operations.
 	Resources map[string]*ResourceChat `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceChat] objects.
-// This mapping is populated from pklres storage.
+// This mapping is populated from pklres storage using append/modify operations.
 func (rcv *LLMImpl) GetResources() map[string]*ResourceChat {
 	return rcv.Resources
 }
