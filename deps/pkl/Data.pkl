@@ -11,53 +11,95 @@ import "pkl:json"
 import "pkl:test"
 import "PklResource.pkl" as pklres
 
-/// Files in the data folder mapped with the agent name and version
-/// This mapping is populated from pklres storage.
-Files: Mapping<String, Mapping<String, String>> = 
-    let (recordIds = pklres.getAllRecords("data"))
-    if (recordIds != "" && recordIds != "[]")
-        // Parse JSON array of record IDs and populate mapping
-        let (parseResult = test.catchOrNull(() -> (new json.Parser {}).parse(recordIds)))
-        if (parseResult != null && parseResult is Listing)
-            new Mapping {
-                for (id in parseResult as Listing<String>) {
-                    // For data records, the ID typically represents agent@version format
-                    // For now, create empty file mapping - could be enhanced to parse actual data structure
-                    [id] = new Mapping<String, String> {}
-                }
-            }
-        else
-            new Mapping {}
-    else
-        new Mapping {}
+Files: Mapping<String, Mapping<String, String>> =
+  let (recordIds = pklres.getAllRecords("data"))
+  if (recordIds.length > 0)
+    new Mapping {
+      for (id in recordIds) {
+        [id] = 
+          let (recordObject = pklres.getPklRecord(id, "data"))
+          if (recordObject != null && !recordObject.text.isEmpty)
+            parseDataMappingFromPkl(recordObject.text, id)
+          else
+            new Mapping<String, String> {}
+      }
+    }
+  else
+    new Mapping<String, Mapping<String, String>> {}
 
-/// Retrieves data file path of a given [agentName] and [fileName]
-///
-/// If the file with the specified key does not exist, returns metadata for the first available file,
-/// or returns an empty file metadata object if no files are data.
-///
-/// [agentName]: The key of the agent name.
-/// [fileName]: The key of the file to retrieve from the agent.
-function filepath(agentName: String?, fileName: String?): String = 
-    if (agentName != null && fileName != null)
-        // First try to get from pre-populated Files mapping
-        if (Files.getOrNull(agentName)?.ifNonNull((v) -> v.containsKey(fileName)) == true)
-            if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName]
-        else
-            // If not in mapping, try to get resource from pklres evaluation first
-            let (resourceOutput = pklres.getResourceOutput(agentName, "data"))
-            if (resourceOutput != null && resourceOutput is Mapping<String, String>)
-                let (dataFiles = resourceOutput as Mapping<String, String>)
-                if (dataFiles.containsKey(fileName))
-                    let (fileContent = dataFiles[fileName])
-                    if (isBase64(fileContent)) fileContent.base64Decoded else fileContent
-                else
-                    // Fallback to direct pklres value fetch
-                    let (pklText = pklres.getPklValue(agentName, "data", fileName))
-                    if (isBase64(pklText)) pklText.base64Decoded else pklText
-            else
-                // Fallback to direct pklres value fetch
-                let (pklText = pklres.getPklValue(agentName, "data", fileName))
-                if (isBase64(pklText)) pklText.base64Decoded else pklText
+/// Parses a PKL record text and extracts the data mapping for the given resource ID
+/// 
+/// [pklText]: The PKL content containing the Files mapping or individual object
+/// [resourceId]: The ID of the resource to extract
+/// Returns a Mapping<String, String> with the parsed values or empty mapping if parsing fails
+function parseDataMappingFromPkl(pklText: String, resourceId: String): Mapping<String, String> =
+    if (pklText.isEmpty)
+        new Mapping<String, String> {}
     else
-        ""
+        // Try to evaluate the PKL content as a Mapping<String, String>
+        let (evaluatedMapping = evaluatePklContent(pklText))
+        if (evaluatedMapping != null)
+            evaluatedMapping
+        else
+            // Fallback to empty mapping if parsing fails
+            new Mapping<String, String> {}
+
+/// Evaluates PKL content and returns a Mapping<String, String> if successful
+/// 
+/// [pklContent]: The PKL content to evaluate
+/// Returns the evaluated Mapping<String, String> or null if evaluation fails
+function evaluatePklContent(pklContent: String): Mapping<String, String>? =
+    if (pklContent.isEmpty || pklContent.trim().isEmpty)
+        null
+    else
+        // Try to parse as JSON first (common case)
+        let (jsonResult = test.catchOrNull(() -> (new json.Parser {}).parse(pklContent)))
+        if (jsonResult != null && jsonResult is Mapping)
+            jsonResult as Mapping<String, String>
+        else
+            // Try to evaluate as a simple key-value mapping
+            parseSimpleMapping(pklContent)
+
+/// Parses simple key-value mappings from PKL content
+function parseSimpleMapping(content: String): Mapping<String, String>? =
+    // Handle simple mapping formats like: { "key1" = "value1"; "key2" = "value2" }
+    if (content.trim().startsWith("{") && content.trim().endsWith("}"))
+        // Extract content between braces
+        let (innerContent = content.trim().drop(1).dropLast(1).trim())
+        if (innerContent.isEmpty)
+            new Mapping<String, String> {}
+        else
+            parseKeyValuePairs(innerContent)
+    else
+        null
+
+/// Parses key-value pairs from string content
+function parseKeyValuePairs(content: String): Mapping<String, String> =
+    // Parse key-value pairs from semicolon-separated format
+    let (cleanContent = content.replaceAll("\n", ";").replaceAll("\r", ""))
+    let (pairs = cleanContent.split(";"))
+    let (parsedPairs = pairs.map((pair) -> parseKeyValuePair(pair.trim())).filter((entry) -> entry != null && entry.key != null && !entry.key.isEmpty))
+    new Mapping<String, String> {
+        for (entry in parsedPairs) {
+            [entry.key] = entry.value ?? ""
+        }
+    }
+
+/// Helper to parse a single key-value pair
+function parseKeyValuePair(pair: String): ParsedKeyValue? =
+    if (pair.isEmpty || !pair.contains("="))
+        null
+    else
+        let (equalIndex = pair.indexOf("="))
+        let (key = pair.substring(0, equalIndex).trim().replaceAll("\"", "").replaceAll("'", ""))
+        let (value = pair.substring(equalIndex + 1).trim().replaceAll("\"", "").replaceAll("'", ""))
+        if (key.isEmpty)
+            null
+        else
+            new ParsedKeyValue { key = key; value = value }
+
+/// Helper class for parsed key-value pairs
+class ParsedKeyValue {
+    key: String
+    value: String
+}

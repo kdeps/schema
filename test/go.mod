@@ -4,12 +4,12 @@ go 1.24.4
 
 replace github.com/kdeps/schema => ../
 
-replace github.com/kdeps/kdeps => ../../../kdeps
+replace github.com/kdeps/kdeps => /Users/joel/cursor/kdeps
 
 require (
 	github.com/apple/pkl-go v0.10.0
 	github.com/kdeps/kdeps v0.0.0-00010101000000-000000000000
-	github.com/kdeps/schema v0.4.1
+	github.com/kdeps/schema v0.4.4
 	github.com/spf13/afero v1.14.0
 )
 

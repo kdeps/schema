@@ -11,4 +11,8 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:test"
 
 // Test if string is Base64Encoded
-function isBase64(str: String) = test.catchOrNull(() -> str.base64Decoded) == null
+function isBase64(str: String?) = 
+    if (str != null && !str.isEmpty) 
+        test.catchOrNull(() -> str.base64Decoded) != null
+    else 
+        false
