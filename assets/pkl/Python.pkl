@@ -21,28 +21,19 @@ import "PklResource.pkl" as pklres
 /// This mapping is populated from pklres storage.
 Resources: Mapping<String, ResourcePython> = 
     let (recordIds = pklres.getAllRecords("python"))
-    if (recordIds != "" && recordIds != "[]")
-        // Parse JSON array of record IDs and populate mapping
-        let (parseResult = test.catchOrNull(() -> (new json.Parser {}).parse(recordIds)))
-        if (parseResult != null && parseResult is Listing)
-            new Mapping {
-                for (id in parseResult as Listing<String>) {
-                    [id] = new ResourcePython {
-                        Env = null
-                        PythonEnvironment = ""
-                        Script = ""
-                        Stderr = null
-                        Stdout = null
-                        ExitCode = 0
-                        File = null
-                        ItemValues = null
-                    }
-                }
+    if (recordIds.length > 0)
+        new Mapping {
+            for (id in recordIds) {
+                [id] = 
+                    let (recordObject = pklres.getPklRecord(id, "python"))
+                    if (recordObject != null && !recordObject.text.isEmpty)
+                        parseResourcePythonFromPkl(recordObject.text, id)
+                    else
+                        new ResourcePython {}
             }
-        else
-            new Mapping {}
+        }
     else
-        new Mapping {}
+        new Mapping<String, ResourcePython> {}
 
 /// Class representing a Python execution resource, which includes the script to be executed,
 /// environment variables, and execution details such as outputs and exit codes.
@@ -101,49 +92,16 @@ function resource(actionID: String?): ResourcePython =
     if (Resources.getOrNull(resolvedID) != null)
       Resources[resolvedID]
     else
-      // If not in mapping, try to get resource from pklres evaluation
-      let (resourceOutput = pklres.getResourceOutput(resolvedID, "python"))
-      if (resourceOutput != null && resourceOutput is ResourcePython)
-        resourceOutput as ResourcePython
+      // Fallback: fetch from pklres and create resource
+      let (pklText = pklres.getPklRecord(resolvedID, "python"))
+      if (pklText != null && !pklText.text.isEmpty)
+        parseResourcePythonFromPkl(pklText.text, resolvedID)
       else
-        // Fallback: fetch from pklres and create resource
-        let (pklText = pklres.getPklRecord(resolvedID, "python"))
-        if (!pklText.isEmpty)
-          // Parse pklres data and create ResourcePython (simplified for now)
-          new ResourcePython {
-            Env = null
-            PythonEnvironment = ""
-            Script = ""
-            Stderr = null
-            Stdout = null
-            ExitCode = 0
-            File = null
-            ItemValues = null
-          }
-        else
         // Return default ResourcePython for non-existent resources
-        new ResourcePython {
-          Env = null
-          PythonEnvironment = ""
-          Script = ""
-          Stderr = null
-          Stdout = null
-          ExitCode = 0
-          File = null
-          ItemValues = null
-        }
+        new ResourcePython {}
   else
     // Return default ResourcePython for null actionID
-    new ResourcePython {
-      Env = null
-      PythonEnvironment = ""
-      Script = ""
-      Stderr = null
-      Stdout = null
-      ExitCode = 0
-      File = null
-      ItemValues = null
-    }
+    new ResourcePython {}
 
 /// Retrieves the standard error output associated with the resource [actionID].
 ///
@@ -195,7 +153,7 @@ function itemValues(actionID: String?): Listing<String> =
     let (res = resource(actionID).ItemValues)
     if (res != null)
         res
-    else new Listing {}
+    else new Listing<String> {}
 
 /// Retrieves the environment variable [envName] associated with the resource [actionID].
 ///
@@ -210,3 +168,121 @@ function env(actionID: String?, envName: String?): String =
       if (isBase64(envValue)) envValue.base64Decoded else envValue
     else ""
   else ""
+
+/// Parses a PKL record text and extracts the ResourcePython object for the given resource ID
+/// 
+/// [pklText]: The PKL content containing the Resources mapping or individual object
+/// [resourceId]: The ID of the resource to extract
+/// Returns a ResourcePython object with the parsed values or default values if parsing fails
+function parseResourcePythonFromPkl(pklText: String, resourceId: String): ResourcePython =
+    if (pklText.isEmpty)
+        new ResourcePython {}
+    else
+        // Try to evaluate the PKL content as a ResourcePython object
+        let (evaluatedPython = evaluatePklContent(pklText))
+        if (evaluatedPython != null)
+            evaluatedPython
+        else
+            // Fallback to default ResourcePython if parsing fails
+            new ResourcePython {}
+
+/// Evaluates PKL content and returns a ResourcePython object if successful
+/// 
+/// [pklContent]: The PKL content to evaluate
+/// Returns the evaluated ResourcePython object or null if evaluation fails
+function evaluatePklContent(pklContent: String): ResourcePython? =
+    if (pklContent.isEmpty || pklContent.trim().isEmpty)
+        null
+    else
+        // Try to parse as JSON first (common case)
+        let (jsonResult = test.catchOrNull(() -> (new json.Parser {}).parse(pklContent)))
+        if (jsonResult != null && jsonResult is Mapping)
+            parseResourcePythonFromJson(jsonResult as Mapping<String, Any>)
+        else
+            // Try to evaluate as PKL object content
+            parseResourcePythonFromPklText(pklContent)
+
+/// Parses ResourcePython from JSON mapping
+function parseResourcePythonFromJson(jsonData: Mapping<String, Any>): ResourcePython? =
+    new ResourcePython {
+        Script = jsonData.getOrNull("Script") as String? ?? ""
+        PythonEnvironment = jsonData.getOrNull("PythonEnvironment") as String?
+        Stderr = jsonData.getOrNull("Stderr") as String?
+        Stdout = jsonData.getOrNull("Stdout") as String?
+        ExitCode = parseIntFromAny(jsonData.getOrNull("ExitCode"), 0)
+        File = jsonData.getOrNull("File") as String?
+        ItemValues = jsonData.getOrNull("ItemValues") as Listing<String>?
+        Timestamp = jsonData.getOrNull("Timestamp") as Duration?
+        TimeoutDuration = jsonData.getOrNull("TimeoutDuration") as Duration?
+    }
+
+/// Helper function to parse integer from Any type
+function parseIntFromAny(value: Any?, defaultValue: Int): Int =
+    if (value == null)
+        defaultValue
+    else if (value is Int)
+        value
+    else if (value is String)
+        parseIntOrDefault(value, defaultValue)
+    else
+        defaultValue
+
+/// Parses ResourcePython from PKL text content
+function parseResourcePythonFromPklText(content: String): ResourcePython? =
+    // Handle simple object formats like: { Script = "print('Hello')"; ExitCode = 0 }
+    if (content.trim().startsWith("{") && content.trim().endsWith("}"))
+        // Extract content between braces
+        let (innerContent = content.trim().drop(1).dropLast(1).trim())
+        let (properties = parseProperties(innerContent))
+        new ResourcePython {
+            Script = properties.getOrNull("Script") ?? ""
+            PythonEnvironment = properties.getOrNull("PythonEnvironment")
+            Stderr = properties.getOrNull("Stderr")
+            Stdout = properties.getOrNull("Stdout")
+            ExitCode = parseIntOrDefault(properties.getOrNull("ExitCode"), 0)
+            File = properties.getOrNull("File")
+        }
+    else
+        null
+
+/// Helper function to parse properties from PKL object content
+function parseProperties(content: String): Mapping<String, String> =
+    // Parse key-value pairs from semicolon-separated format
+    let (cleanContent = content.replaceAll("\n", ";").replaceAll("\r", ""))
+    let (pairs = cleanContent.split(";"))
+    let (parsedPairs = pairs.map((pair) -> parseKeyValuePair(pair.trim())).filter((entry) -> entry != null && entry.key != null && !entry.key.isEmpty))
+    new Mapping<String, String> {
+        for (entry in parsedPairs) {
+            [entry.key] = entry.value ?? ""
+        }
+    }
+
+/// Helper to parse a single key-value pair
+function parseKeyValuePair(pair: String): ParsedKeyValue? =
+    if (pair.isEmpty || !pair.contains("="))
+        null
+    else
+        let (equalIndex = pair.indexOf("="))
+        let (key = pair.substring(0, equalIndex).trim().replaceAll("\"", "").replaceAll("'", ""))
+        let (value = pair.substring(equalIndex + 1).trim().replaceAll("\"", "").replaceAll("'", ""))
+        if (key.isEmpty)
+            null
+        else
+            new ParsedKeyValue { key = key; value = value }
+
+/// Helper class for parsed key-value pairs
+class ParsedKeyValue {
+    key: String
+    value: String
+}
+
+/// Helper function to parse integer with default value
+function parseIntOrDefault(value: String?, defaultValue: Int): Int =
+    if (value == null || value.trim().isEmpty)
+        defaultValue
+    else
+        let (trimmed = value.trim())
+        if (trimmed.matches(Regex("^-?\\d+$")))
+            trimmed.toInt()
+        else
+            defaultValue

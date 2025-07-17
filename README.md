@@ -21,14 +21,41 @@ make build         # Complete build with testing
 
 ## Release Notes
 
-### Latest Release: v0.4.3
-*Released: 2025-07-14*
+### Latest Release: v0.4.4
+*Released: 2025-07-15*
 
 **🔬 Validation Status:**
 ✅ **Automated Testing Available** - Run `make test` for comprehensive validation
 📊 **Latest Test Report Available** - [View Results](test/TEST_REPORT.md)
 🧪 **PKL Test Suite** - 11 test modules with comprehensive coverage
 
+
+🐛 **Bug Fixes**
+  - **fix: APIServerRequest null safety with default values** (`21f03cd`)
+    - Add default values for core APIServerRequest fields:
+
+📦 **Updates**
+  - **Update release notes for v0.4.3 [skip ci]** (`5770390`)
+
+📝 **Other Changes**
+  - **hotfix: fix isBase64 method** (`6967a67`)
+  - **** (`  - ID: String = "" (instead of undefined)`)
+  - **** (`  - IP: String = "" (instead of undefined)`)
+  - **** (`  - Path: String = "/" (instead of undefined)`)
+  - **** (`  - Method: String = "GET" (instead of undefined)`)
+  - **** (`- Keep fields required (non-nullable) to maintain API contract`)
+  - **** (`- Functions now return safe defaults instead of throwing undefined errors`)
+  - **** (`- Updated both deps/pkl and assets/pkl versions for consistency`)
+  - **** (`- Fixes runtime errors when accessing request.id(), ip(), path(), method()`)
+  - **** (`This resolves: "Tried to read property `ID` but its value is undefined"`)
+  - **** (`All APIServerRequest functions now work safely with default empty objects.`)
+
+### Complete Release History
+
+*Detailed changelog showing all changes from the beginning of the project*
+
+
+## v0.4.3 (*2025-07-14*)
 
 📦 **Updates**
   - **Update release notes for v0.4.2 [skip ci]** (`5a313bb`)
@@ -40,11 +67,6 @@ make build         # Complete build with testing
   - **** (`* add new changes to Data.pkl as well`)
   - **** (`* base64 utils fix`)
   - **** (`* updated readme`)
-
-### Complete Release History
-
-*Detailed changelog showing all changes from the beginning of the project*
-
 
 ## v0.4.2 (*2025-07-14*)
 
@@ -483,13 +505,8 @@ make build         # Complete build with testing
 
 ## v0.2.5 (*2025-02-10*)
 
-📝 **Other Changes**
-  - **allow sending headers to response** (`12f3575`)
-
-## v0.2.4 (*2025-02-08*)
-
 **📊 Initial Release Statistics:**
-- Total commits: 149
+- Total commits: 150
 - Project inception
 
 **📝 All Changes Since Project Start:**
@@ -567,6 +584,7 @@ make build         # Complete build with testing
   - **Update CNAME** (`ae8b694`)
 
 📝 **Other Changes**
+  - **allow sending headers to response** (`12f3575`)
   - **allow access to client IP and request ID** (`34a6f34`)
   - **Change resource ID to actionID, and Workflow action to targetActionID** (`94a46c7`)
   - **changed timeoutSeconds -> timeoutDuration** (`f8ed8ed`)
@@ -667,4 +685,4 @@ This PKL schema project maintains high quality through:
 **Quality Assurance**: Every release is thoroughly tested before deployment.
 
 ---
-*Generated on 2025-07-14 19:20:29 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*
+*Generated on 2025-07-17 16:42:13 by [Enhanced Release Notes Generator](scripts/generate_release_notes.sh)*

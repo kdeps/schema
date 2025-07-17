@@ -20,13 +20,9 @@ var _ Data = (*DataImpl)(nil)
 type DataImpl struct {
 	*utils.UtilsImpl
 
-	// Files in the data folder mapped with the agent name and version
-	// This mapping is populated from pklres storage.
 	Files map[string]map[string]string `pkl:"Files"`
 }
 
-// Files in the data folder mapped with the agent name and version
-// This mapping is populated from pklres storage.
 func (rcv *DataImpl) GetFiles() map[string]map[string]string {
 	return rcv.Files
 }
