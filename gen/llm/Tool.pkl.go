@@ -1,7 +1,7 @@
 // Code generated from Pkl module `org.kdeps.pkl.LLM`. DO NOT EDIT.
 package llm
 
-// Class representing the details of a tool interaction with an LLM model
+// Class representing a tool that can be used by an LLM model.
 type Tool struct {
 	// The name of the tool.
 	Name *string `pkl:"Name"`

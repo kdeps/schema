@@ -10,8 +10,6 @@ import (
 
 type Exec interface {
 	utils.Utils
-
-	GetResources() map[string]*ResourceExec
 }
 
 var _ Exec = (*ExecImpl)(nil)
@@ -25,16 +23,6 @@ var _ Exec = (*ExecImpl)(nil)
 // resources based on their identifiers.
 type ExecImpl struct {
 	*utils.UtilsImpl
-
-	// A mapping of resource actionIDs to their associated [ResourceExec] objects.
-	// This mapping is populated from pklres storage.
-	Resources map[string]*ResourceExec `pkl:"Resources"`
-}
-
-// A mapping of resource actionIDs to their associated [ResourceExec] objects.
-// This mapping is populated from pklres storage.
-func (rcv *ExecImpl) GetResources() map[string]*ResourceExec {
-	return rcv.Resources
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Exec

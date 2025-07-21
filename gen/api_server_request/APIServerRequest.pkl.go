@@ -8,21 +8,6 @@ import (
 )
 
 type APIServerRequest interface {
-	GetPath() string
-
-	GetIP() string
-
-	GetID() string
-
-	GetMethod() string
-
-	GetData() *string
-
-	GetParams() *map[string]string
-
-	GetHeaders() *map[string]string
-
-	GetFiles() *map[string]*APIServerRequestUploads
 }
 
 var _ APIServerRequest = (*APIServerRequestImpl)(nil)
@@ -39,74 +24,8 @@ var _ APIServerRequest = (*APIServerRequestImpl)(nil)
 //
 // The module defines:
 // - [APIServerRequestUploads]: For managing metadata of uploaded files.
-// - [Path]: The URI path of the incoming request.
-// - [Method]: The HTTP method used for the request.
-// - [Data]: The request body data.
-// - [Files]: A mapping of uploaded files and their metadata.
+// - Functions for retrieving request data from the key-value store.
 type APIServerRequestImpl struct {
-	// The URI path of the incoming request.
-	Path string `pkl:"Path"`
-
-	// The Client IP Address
-	IP string `pkl:"IP"`
-
-	// The Request ID
-	ID string `pkl:"ID"`
-
-	// The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
-	Method string `pkl:"Method"`
-
-	// The request body, if provided.
-	Data *string `pkl:"Data"`
-
-	// A mapping of query parameters included in the request.
-	Params *map[string]string `pkl:"Params"`
-
-	// A mapping of HTTP headers included in the request.
-	Headers *map[string]string `pkl:"Headers"`
-
-	// Files uploaded with the request, represented as a mapping of file keys to upload metadata.
-	Files *map[string]*APIServerRequestUploads `pkl:"Files"`
-}
-
-// The URI path of the incoming request.
-func (rcv *APIServerRequestImpl) GetPath() string {
-	return rcv.Path
-}
-
-// The Client IP Address
-func (rcv *APIServerRequestImpl) GetIP() string {
-	return rcv.IP
-}
-
-// The Request ID
-func (rcv *APIServerRequestImpl) GetID() string {
-	return rcv.ID
-}
-
-// The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
-func (rcv *APIServerRequestImpl) GetMethod() string {
-	return rcv.Method
-}
-
-// The request body, if provided.
-func (rcv *APIServerRequestImpl) GetData() *string {
-	return rcv.Data
-}
-
-// A mapping of query parameters included in the request.
-func (rcv *APIServerRequestImpl) GetParams() *map[string]string {
-	return rcv.Params
-}
-
-// A mapping of HTTP headers included in the request.
-func (rcv *APIServerRequestImpl) GetHeaders() *map[string]string {
-	return rcv.Headers
-}
-
-// Files uploaded with the request, represented as a mapping of file keys to upload metadata.
-func (rcv *APIServerRequestImpl) GetFiles() *map[string]*APIServerRequestUploads {
-	return rcv.Files
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a APIServerRequest

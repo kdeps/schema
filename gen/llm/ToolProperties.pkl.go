@@ -1,7 +1,7 @@
 // Code generated from Pkl module `org.kdeps.pkl.LLM`. DO NOT EDIT.
 package llm
 
-// Class representing a single parameter's properties in a tool definition
+// Class representing a single parameter's properties in a tool definition.
 type ToolProperties struct {
 	// Indicates if the parameter is required for the tool to function.
 	Required *bool `pkl:"Required"`

@@ -4,9 +4,6 @@ package docker
 // Class representing the settings for Docker configurations.
 // It includes options for specifying packages, PPAs, and models.
 type DockerSettings struct {
-	// A mapping of environment variable names to their values.
-	Params *map[string]string `pkl:"Params"`
-
 	// Sets the tag version to be use as the base image
 	OllamaTagVersion *string `pkl:"OllamaTagVersion"`
 

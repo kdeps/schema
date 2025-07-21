@@ -10,8 +10,6 @@ import (
 
 type HTTP interface {
 	utils.Utils
-
-	GetResources() map[string]*ResourceHTTPClient
 }
 
 var _ HTTP = (*HTTPImpl)(nil)
@@ -23,16 +21,6 @@ var _ HTTP = (*HTTPImpl)(nil)
 // retrieve and manage HTTP client resources based on their identifiers.
 type HTTPImpl struct {
 	*utils.UtilsImpl
-
-	// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-	// This mapping is populated from pklres storage.
-	Resources map[string]*ResourceHTTPClient `pkl:"Resources"`
-}
-
-// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-// This mapping is populated from pklres storage.
-func (rcv *HTTPImpl) GetResources() map[string]*ResourceHTTPClient {
-	return rcv.Resources
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a HTTP

@@ -10,8 +10,6 @@ import (
 
 type Python interface {
 	utils.Utils
-
-	GetResources() map[string]*ResourcePython
 }
 
 var _ Python = (*PythonImpl)(nil)
@@ -24,16 +22,6 @@ var _ Python = (*PythonImpl)(nil)
 // and managing Python execution resources based on their identifiers.
 type PythonImpl struct {
 	*utils.UtilsImpl
-
-	// A mapping of resource actionIDs to their associated [ResourcePython] objects.
-	// This mapping is populated from pklres storage.
-	Resources map[string]*ResourcePython `pkl:"Resources"`
-}
-
-// A mapping of resource actionIDs to their associated [ResourcePython] objects.
-// This mapping is populated from pklres storage.
-func (rcv *PythonImpl) GetResources() map[string]*ResourcePython {
-	return rcv.Resources
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Python

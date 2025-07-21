@@ -1,4 +1,5 @@
-/// Abstractions for PKL records
+/// Generic key-value store abstractions for PKL
+/// No schema restrictions - can store anything from shallow to deep nested data
 @ModuleInfo { minPklVersion = "0.28.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/pkl_resource" }
@@ -8,44 +9,20 @@ open module org.kdeps.pkl.PklResource
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
 import "pkl:json"
+import "Core.pkl" as core
 
-/// Retrieves a record by its [id] and [type] as a PKL object
-/// Returns the record as a PKL object, or null if not found.
-function getPklRecord(id: String?, typ: String?): Resource? = 
-  if (id != null && typ != null) 
-    read("pklres:/\(id)?type=\(typ)&op=get")
-  else null
+/// Gets a value from the generic key-value store
+/// Collection keys are always actionIDs, scope is graphID
+/// Returns the value as a string, or empty string if not found
+function get(collectionKey: String?, key: String?): String = core.get(collectionKey, key)
 
-/// Sets or updates a record with a new [value]
-/// Returns the set value as confirmation.
-function setPklValue(id: String?, typ: String?, key: String?, value: String?): String = 
-  if (id != null && typ != null && key != null && value != null) 
-    read("pklres:/\(id)?type=\(typ)&key=\(key)&op=set&value=\(URI.encodeComponent(value))")?.text ?? "" 
-  else ""
+/// Sets a value in the generic key-value store
+/// Collection keys are always actionIDs, scope is graphID
+/// Returns the set value as confirmation, or empty string if failed
+function set(collectionKey: String?, key: String?, value: String?): String = core.set(collectionKey, key, value)
 
-/// Get a pkl key record as a PKL object
-/// Returns the key value as a PKL object, or null if not found
-function getPklValue(id: String?, typ: String?, key: String?): Resource? = 
-  if (id != null && typ != null && key != null) 
-    read("pklres:/\(id)?type=\(typ)&key=\(key)&op=get")
-  else null
-
-/// Lists all record IDs of a specific type as a PKL collection
-/// Returns a PKL collection (Listing) of record IDs for the given type
-function getAllRecords(typ: String?): Listing<String> = 
-  if (typ != null) 
-    let (result = read("pklres:/?type=\(typ)&op=list"))
-    if (result != null)
-      let (jsonText = result.text)
-      if (!jsonText.isEmpty && jsonText != "[]")
-        let (parseResult = (new json.Parser {}).parse(jsonText))
-        if (parseResult is Listing)
-          parseResult as Listing<String>
-        else
-          new Listing<String> {}
-      else
-        new Listing<String> {}
-    else
-      new Listing<String> {}
-  else new Listing<String> {}
+/// Lists all keys in a collection
+/// Collection keys are always actionIDs, scope is graphID
+/// Returns a listing of keys, or empty listing if not found
+function list(collectionKey: String?): Listing<String> = core.list(collectionKey)
 

@@ -5,39 +5,28 @@ import (
 	"context"
 
 	"github.com/apple/pkl-go/pkl"
-	"github.com/kdeps/schema/gen/utils"
 )
 
 type LLM interface {
-	utils.Utils
-
-	GetResources() map[string]*ResourceChat
 }
 
 var _ LLM = (*LLMImpl)(nil)
 
-// Abstractions for KDEPS LLM Resources
+// Abstractions for Kdeps LLM operations
 //
-// This module defines the structure for managing large language model (LLM) resources
-// related to LLM model interactions. The class allows for managing prompts, responses,
-// and additional configurations such as tools, scenarios, and output files. It also
-// provides utilities for retrieving and managing LLM resources based on their identifiers.
+// This module provides the structure for LLM (Large Language Model) operations within the Kdeps framework,
+// including chat interactions, response handling, and model configuration. It defines classes and functions
+// for managing LLM resources, processing prompts, and handling responses from various LLM models.
 //
-// The module includes:
-// - [ResourceChat]: A class for handling individual chat interactions with LLM models.
-// - [Resource]: Mapping of resource actionIDs to [ResourceChat] objects.
+// This module is part of the `kdeps` schema and provides a unified interface for LLM operations across
+// different models and providers.
+//
+// The module defines:
+// - [ResourceChat]: For managing chat interactions with LLM models.
+// - [MultiChat]: For managing multi-turn chat conversations.
+// - [Tool]: For managing tool interactions with LLM models.
+// - Functions for retrieving and processing LLM responses.
 type LLMImpl struct {
-	*utils.UtilsImpl
-
-	// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-	// This mapping is populated from pklres storage using append/modify operations.
-	Resources map[string]*ResourceChat `pkl:"Resources"`
-}
-
-// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-// This mapping is populated from pklres storage using append/modify operations.
-func (rcv *LLMImpl) GetResources() map[string]*ResourceChat {
-	return rcv.Resources
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a LLM

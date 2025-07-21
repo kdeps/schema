@@ -6,11 +6,9 @@
 open module org.kdeps.pkl.Agent
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "Core.pkl" as core
 
 /// Resolves an actionID using the agent reader.
 /// Returns the fully qualified actionID (e.g., @agentID/actionID:version)
-function resolveActionID(actionID: String?): String =
-  if (actionID != null && !actionID.isEmpty) 
-    read("agent:/\(actionID)")?.text ?? actionID 
-  else 
-    ""
+/// This is now a simple wrapper around the core function
+function resolveActionID(actionID: String?): String = core.resolveActionID(actionID)

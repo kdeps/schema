@@ -10,8 +10,6 @@ import (
 
 type Data interface {
 	utils.Utils
-
-	GetFiles() map[string]map[string]string
 }
 
 var _ Data = (*DataImpl)(nil)
@@ -19,12 +17,6 @@ var _ Data = (*DataImpl)(nil)
 // Abstractions for Data folder
 type DataImpl struct {
 	*utils.UtilsImpl
-
-	Files map[string]map[string]string `pkl:"Files"`
-}
-
-func (rcv *DataImpl) GetFiles() map[string]map[string]string {
-	return rcv.Files
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Data

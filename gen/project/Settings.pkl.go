@@ -41,15 +41,27 @@ type Settings struct {
 	// Docker-specific configurations.
 	AgentSettings *docker.DockerSettings `pkl:"AgentSettings"`
 
-	// Maximum number of rate limit requests allowed in the workflow.
+	// Maximum number of concurrent requests allowed in the workflow.
 	//
 	// This setting controls the rate limiting behavior for workflow execution.
-	// Default value is 100 requests.
+	// Default value is 5 concurrent requests.
 	RateLimitMax *int `pkl:"RateLimitMax"`
 
 	// Environment setting for the workflow execution.
 	//
 	// Specifies whether the workflow runs in development or production mode.
-	// Valid values are "dev" or "production".
+	// Valid values are "dev", "development", "prod", or "production".
+	//
+	// In production mode ("prod" or "production"):
+	// - Gin framework runs in release mode (no debug output)
+	// - Log level is set to WARN (less verbose)
+	// - DEBUG environment variable is set to 0
+	// - Debug logs are suppressed
+	//
+	// In development mode ("dev" or "development"):
+	// - Gin framework runs in debug mode (verbose output)
+	// - Log level is set to INFO or DEBUG (based on DEBUG env var)
+	// - DEBUG environment variable is set to 1
+	// - Full logging and debug information available
 	Environment *buildenv.BuildEnv `pkl:"Environment"`
 }

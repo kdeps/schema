@@ -12,7 +12,8 @@ type PklResource interface {
 
 var _ PklResource = (*PklResourceImpl)(nil)
 
-// Abstractions for PKL records
+// Generic key-value store abstractions for PKL
+// No schema restrictions - can store anything from shallow to deep nested data
 type PklResourceImpl struct {
 }
 

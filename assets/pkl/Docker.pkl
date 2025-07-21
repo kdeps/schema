@@ -19,9 +19,6 @@ class DockerSettings {
     /// Function to check if a given params variable name is valid.
     hidden isValidParams = (str) -> if (str.matches(paramStringRegex)) true else throw("Error: Invalid params name: The params name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
 
-    /// A mapping of environment variable names to their values.
-    Params: Mapping<String(isValidParams), String>?
-
     /// Sets the tag version to be use as the base image
     OllamaTagVersion: String? = "latest"
 

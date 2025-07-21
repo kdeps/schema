@@ -9,97 +9,102 @@ extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 import "pkl:test"
-import "PklResource.pkl" as pklres
+import "Agent.pkl" as agent
 
-Files: Mapping<String, Mapping<String, String>> =
-  let (recordIds = pklres.getAllRecords("data"))
-  if (recordIds.length > 0)
-    new Mapping {
-      for (id in recordIds) {
-        [id] = 
-          let (recordObject = pklres.getPklRecord(id, "data"))
-          if (recordObject != null && !recordObject.text.isEmpty)
-            parseDataMappingFromPkl(recordObject.text, id)
-          else
-            new Mapping<String, String> {}
-      }
-    }
-  else
-    new Mapping<String, Mapping<String, String>> {}
+/// Retrieves a data value for the given resource ID and key
+///
+/// [actionID]: The actionID of the resource to retrieve data for
+/// [key]: The key to retrieve
+/// [String]: The data value
+function get(actionID: String?, key: String?): String =
+    if (actionID != null && key != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (value = test.catchOrNull(() -> read("pklres://?op=get&collection=" + resolvedID + "&key=" + key)?.text))
+        if (value != null && value != "")
+            let (isBase64Result = test.catchOrNull(() -> isBase64(value)))
+            if (isBase64Result == true)
+                value
+            else value
+        else ""
+    else ""
 
-/// Parses a PKL record text and extracts the data mapping for the given resource ID
-/// 
-/// [pklText]: The PKL content containing the Files mapping or individual object
-/// [resourceId]: The ID of the resource to extract
-/// Returns a Mapping<String, String> with the parsed values or empty mapping if parsing fails
-function parseDataMappingFromPkl(pklText: String, resourceId: String): Mapping<String, String> =
-    if (pklText.isEmpty)
-        new Mapping<String, String> {}
-    else
-        // Try to evaluate the PKL content as a Mapping<String, String>
-        let (evaluatedMapping = evaluatePklContent(pklText))
-        if (evaluatedMapping != null)
-            evaluatedMapping
-        else
-            // Fallback to empty mapping if parsing fails
-            new Mapping<String, String> {}
+/// Retrieves all data for the given resource ID as a mapping
+///
+/// [actionID]: The actionID of the resource to retrieve data for
+/// [Mapping<String, String>]: The data mapping
+function getAll(actionID: String?): Mapping<String, String> =
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (keys = test.catchOrNull(() -> read("pklres://?op=list&collection=" + resolvedID)?.text))
+        if (keys != null && keys != "")
+            let (parsedKeys = keys.parseJsonOrNull())
+            let (keyList = if (parsedKeys != null) parsedKeys as Listing<String> else new Listing<String> {})
+            new Mapping<String, String> {
+                for (key in keyList) {
+                    [key] = get(actionID, key)
+                }
+            }
+        else new Mapping<String, String> {}
+    else new Mapping<String, String> {}
 
-/// Evaluates PKL content and returns a Mapping<String, String> if successful
-/// 
-/// [pklContent]: The PKL content to evaluate
-/// Returns the evaluated Mapping<String, String> or null if evaluation fails
-function evaluatePklContent(pklContent: String): Mapping<String, String>? =
-    if (pklContent.isEmpty || pklContent.trim().isEmpty)
-        null
-    else
-        // Try to parse as JSON first (common case)
-        let (jsonResult = test.catchOrNull(() -> (new json.Parser {}).parse(pklContent)))
-        if (jsonResult != null && jsonResult is Mapping)
-            jsonResult as Mapping<String, String>
-        else
-            // Try to evaluate as a simple key-value mapping
-            parseSimpleMapping(pklContent)
+/// Sets a data value for the given resource ID and key
+///
+/// [actionID]: The actionID of the resource to set data for
+/// [key]: The key to set
+/// [value]: The value to set
+/// [String]: The set value
+function set(actionID: String?, key: String?, value: String?): String =
+    if (actionID != null && key != null && value != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (result = test.catchOrNull(() -> read("pklres://?op=set&collection=" + resolvedID + "&key=" + key + "&value=" + value)?.text))
+        if (result != null) result else ""
+    else ""
 
-/// Parses simple key-value mappings from PKL content
-function parseSimpleMapping(content: String): Mapping<String, String>? =
-    // Handle simple mapping formats like: { "key1" = "value1"; "key2" = "value2" }
-    if (content.trim().startsWith("{") && content.trim().endsWith("}"))
-        // Extract content between braces
-        let (innerContent = content.trim().drop(1).dropLast(1).trim())
-        if (innerContent.isEmpty)
-            new Mapping<String, String> {}
-        else
-            parseKeyValuePairs(innerContent)
-    else
-        null
+/// Retrieves a file path for the given resource ID and key
+///
+/// [actionID]: The actionID of the resource to retrieve file for
+/// [key]: The key to retrieve
+/// [String]: The file path
+function file(actionID: String?, key: String?): String =
+    if (actionID != null && key != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (value = test.catchOrNull(() -> read("pklres://?op=get&collection=" + resolvedID + "&key=" + key)?.text))
+        if (value != null && value != "")
+            let (isBase64Result = test.catchOrNull(() -> isBase64(value)))
+            if (isBase64Result == true)
+                value
+            else value
+        else ""
+    else ""
 
-/// Parses key-value pairs from string content
-function parseKeyValuePairs(content: String): Mapping<String, String> =
-    // Parse key-value pairs from semicolon-separated format
-    let (cleanContent = content.replaceAll("\n", ";").replaceAll("\r", ""))
-    let (pairs = cleanContent.split(";"))
-    let (parsedPairs = pairs.map((pair) -> parseKeyValuePair(pair.trim())).filter((entry) -> entry != null && entry.key != null && !entry.key.isEmpty))
-    new Mapping<String, String> {
-        for (entry in parsedPairs) {
-            [entry.key] = entry.value ?? ""
-        }
-    }
+/// Retrieves all file paths for the given resource ID as a mapping
+///
+/// [actionID]: The actionID of the resource to retrieve files for
+/// [Mapping<String, String>]: The file mapping
+function files(actionID: String?): Mapping<String, String> =
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (keys = test.catchOrNull(() -> read("pklres://?op=list&collection=" + resolvedID)?.text))
+        if (keys != null && keys != "")
+            let (parsedKeys = keys.parseJsonOrNull())
+            let (keyList = if (parsedKeys != null) parsedKeys as Listing<String> else new Listing<String> {})
+            new Mapping<String, String> {
+                for (key in keyList) {
+                    [key] = file(actionID, key)
+                }
+            }
+        else new Mapping<String, String> {}
+    else new Mapping<String, String> {}
 
-/// Helper to parse a single key-value pair
-function parseKeyValuePair(pair: String): ParsedKeyValue? =
-    if (pair.isEmpty || !pair.contains("="))
-        null
-    else
-        let (equalIndex = pair.indexOf("="))
-        let (key = pair.substring(0, equalIndex).trim().replaceAll("\"", "").replaceAll("'", ""))
-        let (value = pair.substring(equalIndex + 1).trim().replaceAll("\"", "").replaceAll("'", ""))
-        if (key.isEmpty)
-            null
-        else
-            new ParsedKeyValue { key = key; value = value }
-
-/// Helper class for parsed key-value pairs
-class ParsedKeyValue {
-    key: String
-    value: String
-}
+/// Sets a file path for the given resource ID and key
+///
+/// [actionID]: The actionID of the resource to set file for
+/// [key]: The key to set
+/// [value]: The file path to set
+/// [String]: The set file path
+function setFile(actionID: String?, key: String?, value: String?): String =
+    if (actionID != null && key != null && value != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (result = test.catchOrNull(() -> read("pklres://?op=set&collection=" + resolvedID + "&key=" + key + "&value=" + value)?.text))
+        if (result != null) result else ""
+    else ""

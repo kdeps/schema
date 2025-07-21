@@ -8,7 +8,7 @@
 
 @go.Package { name = "github.com/kdeps/schema/gen/resource" }
 
-module org.kdeps.pkl.Resource
+open module org.kdeps.pkl.Resource
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 
