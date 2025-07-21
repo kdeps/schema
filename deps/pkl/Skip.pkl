@@ -25,4 +25,125 @@ function ifFolderExists(it: String?) = if (it != null && it != "") read*(it).key
 ///
 /// [it]: The file path to check.
 /// Returns `true` if the file exists and is empty, `false` otherwise.
-function ifFileIsEmpty(it: String?) = if (it != null && it != "") ifFileExists(it) && read?(it)?.base64Decoded?.isEmpty == true else false
+function ifFileIsEmpty(it: String?) = if (it != null && it != "") ifFileExists(it) && read?(it)?.text?.isEmpty == true else false
+
+/// Checks if a file exists and is not empty at the given path.
+///
+/// [it]: The file path to check.
+/// Returns `true` if the file exists and contains content, `false` otherwise.
+function ifFileNotEmpty(it: String?) = if (it != null && it != "") ifFileExists(it) && read?(it)?.text?.isEmpty == false else false
+
+/// Checks if a file contains specific text content.
+///
+/// [filePath]: The file path to check.
+/// [searchText]: The text to search for in the file.
+/// Returns `true` if the file exists and contains the specified text, `false` otherwise.
+function ifFileContains(filePath: String?, searchText: String?) = 
+  if (filePath != null && filePath != "" && searchText != null && searchText != "") 
+    ifFileExists(filePath) && read?(filePath)?.text?.contains(searchText) == true 
+  else false
+
+/// Checks if a string value equals another string (case-sensitive).
+///
+/// [value]: The value to compare.
+/// [expected]: The expected value.
+/// Returns `true` if the values are equal, `false` otherwise.
+function ifEquals(value: String?, expected: String?) = value == expected
+
+/// Checks if a string value equals another string (case-insensitive).
+///
+/// [value]: The value to compare.
+/// [expected]: The expected value.
+/// Returns `true` if the values are equal (ignoring case), `false` otherwise.
+function ifEqualsIgnoreCase(value: String?, expected: String?) = 
+  if (value != null && expected != null) value.toLowerCase() == expected.toLowerCase() else value == expected
+
+/// Checks if a string value is empty or null.
+///
+/// [value]: The string value to check.
+/// Returns `true` if the value is null, empty, or contains only whitespace, `false` otherwise.
+function ifEmpty(value: String?) = value == null || value.trim().isEmpty
+
+/// Checks if a string value is not empty.
+///
+/// [value]: The string value to check.
+/// Returns `true` if the value is not null and not empty, `false` otherwise.
+function ifNotEmpty(value: String?) = !ifEmpty(value)
+
+/// Checks if a string starts with a specific prefix.
+///
+/// [value]: The string value to check.
+/// [prefix]: The prefix to look for.
+/// Returns `true` if the value starts with the prefix, `false` otherwise.
+function ifStartsWith(value: String?, prefix: String?) = 
+  if (value != null && prefix != null) value.startsWith(prefix) else false
+
+/// Checks if a string ends with a specific suffix.
+///
+/// [value]: The string value to check.
+/// [suffix]: The suffix to look for.
+/// Returns `true` if the value ends with the suffix, `false` otherwise.
+function ifEndsWith(value: String?, suffix: String?) = 
+  if (value != null && suffix != null) value.endsWith(suffix) else false
+
+/// Checks if a string contains specific text.
+///
+/// [value]: The string value to check.
+/// [searchText]: The text to search for.
+/// Returns `true` if the value contains the search text, `false` otherwise.
+function ifContains(value: String?, searchText: String?) = 
+  if (value != null && searchText != null) value.contains(searchText) else false
+
+/// Checks if a numeric value (as string) is greater than a threshold.
+///
+/// [value]: The numeric value as string to check.
+/// [threshold]: The threshold value as string.
+/// Returns `true` if the value is greater than the threshold, `false` otherwise.
+function ifGreaterThan(value: String?, threshold: String?) = 
+  if (value != null && threshold != null) 
+    (value.toFloat() > threshold.toFloat()) 
+  else false
+
+/// Checks if a numeric value (as string) is less than a threshold.
+///
+/// [value]: The numeric value as string to check.
+/// [threshold]: The threshold value as string.
+/// Returns `true` if the value is less than the threshold, `false` otherwise.
+function ifLessThan(value: String?, threshold: String?) = 
+  if (value != null && threshold != null) 
+    (value.toFloat() < threshold.toFloat()) 
+  else false
+
+/// Checks if a string value matches a specific pattern.
+///
+/// [value]: The value to check against the pattern.
+/// [pattern]: The pattern to match against.
+/// Returns `true` if the value matches the pattern, `false` otherwise.
+/// Note: Use with request.path() for request path matching.
+function ifValueMatches(value: String?, pattern: String?) = 
+  if (value != null && pattern != null) value == pattern else false
+
+/// Checks if a string value matches a specific method (case-insensitive).
+///
+/// [value]: The value to check (e.g., from request.method()).
+/// [method]: The HTTP method to match against (e.g., "GET", "POST").
+/// Returns `true` if the value matches the method, `false` otherwise.
+/// Note: Use with request.method() for request method matching.
+function ifValueIsMethod(value: String?, method: String?) = 
+  if (value != null && method != null) value.toUpperCase() == method.toUpperCase() else false
+
+/// Checks if two string values are equal.
+///
+/// [value]: The first value to compare.
+/// [expectedValue]: The expected value.
+/// Returns `true` if the values are equal, `false` otherwise.
+/// Note: Use with request.headers() for header value matching.
+function ifValuesEqual(value: String?, expectedValue: String?) = 
+  if (value != null && expectedValue != null) value == expectedValue else false
+
+/// Checks if a string value exists and is not empty.
+///
+/// [value]: The value to check.
+/// Returns `true` if the value exists and is not empty, `false` otherwise.
+/// Note: Use with request.headers() to check if header exists.
+function ifValueExists(value: String?) = ifNotEmpty(value)

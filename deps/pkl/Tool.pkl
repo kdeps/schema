@@ -18,7 +18,7 @@ import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pk
 function getOutput(id: String?): String = 
     if (id != null) 
         let (content = read("tool:/\(id)")?.text ?? "")
-        if (isBase64(content)) content.base64Decoded else content
+        content
     else ""
 
 /// Executes a script with the given [id], [script] content, and [params]
@@ -32,7 +32,7 @@ function getOutput(id: String?): String =
 function runScript(id: String?, script: String?, params: String?): String = 
     if (id != null && script != null && params != null) 
         let (content = read("tool:/\(id)?op=run&script=\(URI.encodeComponent(script))&params=\(URI.encodeComponent(params))")?.text ?? "")
-        if (isBase64(content)) content.base64Decoded else content
+        content
     else ""
 
 /// Appends the current script output to the history for the given [id]
@@ -44,5 +44,5 @@ function runScript(id: String?, script: String?, params: String?): String =
 function history(id: String?): String = 
     if (id != null) 
         let (content = read("tool:/\(id)?op=history")?.text ?? "")
-        if (isBase64(content)) content.base64Decoded else content
+        content
     else ""

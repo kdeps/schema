@@ -27,7 +27,7 @@ import "pkl:yaml"
 /// Returns the parsed JSON data or the original string if parsing fails.
 function jsonParser(data: String?) =
   if (data != null && data != "")
-    let (decodedData = if (isBase64(data)) data.base64Decoded else data)
+    let (decodedData = data)
     let (result = test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(decodedData)))
     if (result != null)
       result
@@ -47,7 +47,7 @@ function jsonParser(data: String?) =
 /// Returns the parsed JSON data as an object structure.
 function jsonParserMapping(data: String?) =
   if (data != null)
-    let (decodedData = if (isBase64(data)) data.base64Decoded else data)
+    let (decodedData = data)
     let (result = test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(decodedData)))
     if (result != null)
       result

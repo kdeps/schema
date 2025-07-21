@@ -18,7 +18,7 @@ import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pk
 function getRecord(id: String?): String = 
     if (id != null) 
         let (content = read("session:/\(id)")?.text ?? "")
-        if (isBase64(content)) content.base64Decoded else content
+        content
     else ""
 
 /// Sets or updates a session record with a new [value]

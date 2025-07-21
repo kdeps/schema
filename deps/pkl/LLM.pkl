@@ -1,97 +1,134 @@
-/// Abstractions for KDEPS LLM Resources
+/// Abstractions for Kdeps LLM operations
 ///
-/// This module defines the structure for managing large language model (LLM) resources
-/// related to LLM model interactions. The class allows for managing prompts, responses,
-/// and additional configurations such as tools, scenarios, and output files. It also
-/// provides utilities for retrieving and managing LLM resources based on their identifiers.
+/// This module provides the structure for LLM (Large Language Model) operations within the Kdeps framework,
+/// including chat interactions, response handling, and model configuration. It defines classes and functions
+/// for managing LLM resources, processing prompts, and handling responses from various LLM models.
 ///
-/// The module includes:
-/// - [ResourceChat]: A class for handling individual chat interactions with LLM models.
-/// - [Resource]: Mapping of resource actionIDs to [ResourceChat] objects.
+/// This module is part of the `kdeps` schema and provides a unified interface for LLM operations across
+/// different models and providers.
+///
+/// The module defines:
+/// - [ResourceChat]: For managing chat interactions with LLM models.
+/// - [MultiChat]: For managing multi-turn chat conversations.
+/// - [Tool]: For managing tool interactions with LLM models.
+/// - Functions for retrieving and processing LLM responses.
 @ModuleInfo { minPklVersion = "0.28.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/llm" }
 
 open module org.kdeps.pkl.LLM
 
-extends "Utils.pkl"
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
 import "pkl:json"
 import "pkl:test"
+import "pkl:semver"
+import "pkl:shell"
+import "pkl:xml"
+import "pkl:yaml"
+
+import "Document.pkl" as document
+import "Utils.pkl" as utils
+import "Memory.pkl" as memory
+import "Session.pkl" as session
+import "Tool.pkl" as tool
+import "Item.pkl" as item
 import "Agent.pkl" as agent
-import "PklResource.pkl" as pklres
+import "Core.pkl" as core
 
-/// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-/// This mapping is populated from pklres storage using append/modify operations.
-Resources: Mapping<String, ResourceChat> =
-  let (recordIds = pklres.getAllRecords("llm"))
-  if (recordIds.length > 0)
-    new Mapping {
-      for (id in recordIds) {
-        [id] = 
-          let (recordObject = pklres.getPklRecord(id, "llm"))
-          if (recordObject != null && !recordObject.text.isEmpty)
-            parseResourceChatFromPklObject(recordObject, id)
-          else
-            new ResourceChat {}
-      }
-    }
+/// Helper function to parse JSON safely and return null if parsing fails
+function parseJsonOrNull(data: String?) =
+  if (data != null && data != "" && data != "null")
+    test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data))
   else
-    new Mapping<String, ResourceChat> {}
+    null
 
-/// Class representing the details of a chat interaction with an LLM model, including prompts, responses,
-/// and configuration options such as tools, JSON output, and timeout settings.
+/// Helper function to safely read from pklres and return null if not available
+function safeRead(uri: String?) =
+  if (uri != null && uri != "")
+    test.catchOrNull(() -> read(uri))
+  else
+    null
+
+/// Helper function to safely get a value from pklres and return empty string if not available
+function safeGetValue(collection: String?, key: String?): String =
+  if (collection != null && key != null)
+    // URL encode the collection name to handle special characters like @
+    let (encodedCollection = collection.replaceAll("@", "%40"))
+    let (result = safeRead("pklres://?op=get&collection=" + encodedCollection + "&key=" + key))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        // For simple strings, return as-is. For nested data, it should already be JSON encoded by Go side
+        jsonText
+      else
+        ""
+    else
+      ""
+  else ""
+
+
+/// Class representing a chat interaction with an LLM model.
 class ResourceChat {
-    /// The model to use for the conversation (e.g., "llama3.2").
-    Model: String = "llama3.2"
+    /// The name of the LLM model to use for the chat interaction.
+    Model: String? = "llama3.2"
 
-    /// The role of the speaker in the conversation (e.g., "user", "assistant").
+    /// The role or persona for the chat interaction.
     Role: String?
 
-    /// The prompt text to be sent to the LLM model.
+    /// The prompt or message to send to the LLM model.
     Prompt: String?
 
-    /// A listing of multi-prompt scenarios to be executed in sequence.
-    Scenario: Listing<MultiChat>?
+    /// The response received from the LLM model.
+    Response: String?
 
-    /// A listing of tools available for the LLM to use during the conversation.
-    Tools: Listing<Tool>?
+    /// The file path where the response is stored.
+    File: String?
 
-    /// A listing of file paths that the LLM can reference or access.
-    Files: Listing<String>?
-
-    /// A flag indicating whether the response should be in JSON format.
+    /// Whether the response should be in JSON format.
     JSONResponse: Boolean? = false
 
     /// A listing of specific keys to extract from the JSON response.
     JSONResponseKeys: Listing<String>?
 
-    /// The response text returned by the LLM model.
-    Response: String?
+    /// The timeout duration for the LLM request.
+    TimeoutDuration: Duration? = 60.s
 
-    /// The file path where the response is saved.
-    File: String?
-
-    /// The listing of the item iteration results
-    ItemValues: Listing<String>?
-
-    /// A timestamp of when the response was generated, represented as an unsigned 64-bit integer.
+    /// The timestamp when the request was made.
     Timestamp: Duration?
 
-    /// The timeout duration (in seconds) for the LLM request. Defaults to 60 seconds.
-    TimeoutDuration: Duration? = 60.s
+    /// The scenario or context for the chat interaction.
+    Scenario: Listing<MultiChat>?
+
+    /// The tools available for the LLM to use.
+    Tools: Listing<Tool>?
+
+    /// The files associated with the chat interaction.
+    Files: Listing<String>?
+
+    /// A description of the chat interaction.
+    Description: String?
+
+    /// The listing of the item iteration results.
+    ItemValues: Listing<String>?
 }
 
-/// Class representing the details of a multi-prompt interaction with an LLM model
+/// Class representing a multi-turn chat conversation.
 class MultiChat {
-    /// The role of the speaker in the conversation (e.g., "user", "assistant").
+    /// The role or persona for this turn of the conversation.
     Role: String?
 
     /// The prompt text to be sent to the LLM model.
     Prompt: String?
+
+    /// The content or message for this turn of the conversation.
+    Content: String?
+
+    /// A description of this turn of the conversation.
+    Description: String?
 }
 
-/// Class representing the details of a tool interaction with an LLM model
+/// Class representing a tool that can be used by an LLM model.
 class Tool {
     /// The name of the tool.
     Name: String?
@@ -109,7 +146,7 @@ class Tool {
     Parameters: Mapping<String, ToolProperties>?
 }
 
-/// Class representing a single parameter's properties in a tool definition
+/// Class representing a single parameter's properties in a tool definition.
 class ToolProperties {
     /// Indicates if the parameter is required for the tool to function.
     Required: Boolean? = true
@@ -130,17 +167,23 @@ class ToolProperties {
 function resource(actionID: String?): ResourceChat =
     if (actionID != null)
         let (resolvedID = agent.resolveActionID(actionID))
-        // First try to get from pre-populated Resources mapping
-        if (Resources.getOrNull(resolvedID) != null)
-            Resources[resolvedID]
-        else
-            // Fallback: fetch from pklres
-            let (pklObject = pklres.getPklRecord(resolvedID, "llm"))
-            if (pklObject != null && !pklObject.text.isEmpty)
-                parseResourceChatFromPklObject(pklObject, resolvedID)
-            else
-                // Return default ResourceChat for non-existent resources
-                new ResourceChat {}
+        let (model = safeGetValue(resolvedID, "model"))
+        let (role = safeGetValue(resolvedID, "role"))
+        let (prompt = safeGetValue(resolvedID, "prompt"))
+        let (response = safeGetValue(resolvedID, "response"))
+        let (file = safeGetValue(resolvedID, "file"))
+        let (jsonResponse = safeGetValue(resolvedID, "jsonResponse"))
+        let (timeoutDuration = safeGetValue(resolvedID, "timeoutDuration"))
+        
+        new ResourceChat {
+            Model = if (model != "") model else "llama3.2"
+            Role = if (role != "") role else null
+            Prompt = if (prompt != "") prompt else null
+            Response = if (response != "") response else null
+            File = if (file != "") file else null
+            JSONResponse = if (jsonResponse != "") jsonResponse.toBoolean() else false
+            TimeoutDuration = if (timeoutDuration != "") timeoutDuration.toDuration() else 60.s
+        }
     else
         // Return default ResourceChat for null actionID
         new ResourceChat {}
@@ -150,12 +193,10 @@ function resource(actionID: String?): ResourceChat =
 /// [actionID]: The actionID of the resource to retrieve the response for.
 /// [str]: The response text returned by the LLM model.
 function response(actionID: String?): String = 
-    let (res = resource(actionID))
-    if (res.Response != null)
-        if (isBase64(res.Response)) res.Response.base64Decoded else res.Response
-    else if (res.File != null)
-        // Fallback to file content if Response field is empty
-        if (isBase64(res.File)) res.File.base64Decoded else res.File
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "response"))
+        if (res != "") res else ""
     else ""
 
 /// Retrieves the prompt text associated with the resource [actionID].
@@ -163,9 +204,10 @@ function response(actionID: String?): String =
 /// [actionID]: The actionID of the resource to retrieve the prompt for.
 /// [str]: The prompt text sent to the LLM model.
 function prompt(actionID: String?): String = 
-    let (res = resource(actionID).Prompt)
-    if (res != null)
-        if (isBase64(res)) res.base64Decoded else res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "prompt"))
+        if (res != "") res else ""
     else ""
 
 /// Retrieves whether the LLM's response for the resource [actionID] is in JSON format.
@@ -173,9 +215,12 @@ function prompt(actionID: String?): String =
 /// [actionID]: The actionID of the resource to check for JSON response.
 /// [bool]: True if the response is in JSON format, otherwise False.
 function jsonResponse(actionID: String?): Boolean = 
-    let (res = resource(actionID).JSONResponse)
-    if (res != null)
-        res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "jsonResponse"))
+        if (res != "")
+            res.toBoolean()
+        else false
     else false
 
 /// Retrieves the JSON response keys for the resource [actionID].
@@ -183,189 +228,122 @@ function jsonResponse(actionID: String?): Boolean =
 /// [actionID]: The actionID of the resource to retrieve the JSON response keys for.
 /// [Listing<String>]: A listing of the JSON response keys.
 function jsonResponseKeys(actionID: String?): Listing<String> = 
-    let (res = resource(actionID).JSONResponseKeys)
-    if (res != null)
-        res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "jsonResponseKeys"))
+        if (res != "")
+            let (parsed = parseJsonOrNull(res))
+            if (parsed != null) parsed as Listing<String> else new Listing<String> {}
+        else new Listing<String> {}
     else new Listing<String> {}
 
 /// Retrieves the item iteration responses for the resource [actionID].
 ///
-/// [actionID]: The actionID of the resource to retrieve the item values.
+/// [actionID]: The actionID of the resource to retrieve the item values for.
+/// [Listing<String>]: A listing of the item iteration responses.
 function itemValues(actionID: String?): Listing<String> = 
-    let (res = resource(actionID).ItemValues)
-    if (res != null)
-        res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "itemValues"))
+        if (res != "")
+            let (parsed = parseJsonOrNull(res))
+            if (parsed != null) parsed as Listing<String> else new Listing<String> {}
+        else new Listing<String> {}
     else new Listing<String> {}
 
-/// Retrieves the file path containing the LLM response associated with the specified resource [actionID].
+/// Retrieves the model name for the resource [actionID].
 ///
-/// [actionID]: The actionID of the resource to retrieve the response for.
-/// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(actionID: String?): String = 
-    let (res = resource(actionID).File)
-    if (res != null)
-        if (isBase64(res)) res.base64Decoded else res
+/// [actionID]: The actionID of the resource to retrieve the model for.
+/// [str]: The model name.
+function model(actionID: String?): String = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "model"))
+        if (res != "") res else "llama3.2"
+    else "llama3.2"
+
+/// Retrieves the role for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the role for.
+/// [str]: The role.
+function role(actionID: String?): String = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "role"))
+        if (res != "") res else ""
     else ""
 
-/// Parses a PKL object and extracts the ResourceChat object for the given resource ID
-/// 
-/// [pklObject]: The PKL Resource object containing the resource data
-/// [resourceId]: The ID of the resource to extract
-/// Returns a ResourceChat object with the parsed values or default values if parsing fails
-function parseResourceChatFromPklObject(pklObject: Resource?, resourceId: String): ResourceChat =
-    if (pklObject == null)
-        new ResourceChat {}
-    else
-        // Get the text content from the Resource object
-        let (textContent = pklObject.text)
-        if (!textContent.isEmpty)
-            parseResourceChatFromPkl(textContent, resourceId)
-        else
-            new ResourceChat {}
+/// Retrieves the file path for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the file for.
+/// [str]: The file path.
+function file(actionID: String?): String = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "file"))
+        if (res != "") res else ""
+    else ""
 
-/// Parses ResourceChat from a PKL mapping
-function parseResourceChatFromMapping(mapping: Mapping<String, Dynamic>): ResourceChat =
-    new ResourceChat {
-        Model = mapping.getOrNull("Model") as String? ?? "llama3.2"
-        Role = mapping.getOrNull("Role") as String?
-        Prompt = mapping.getOrNull("Prompt") as String?
-        Response = mapping.getOrNull("Response") as String?
-        File = mapping.getOrNull("File") as String?
-        ItemValues = mapping.getOrNull("ItemValues") as Listing<String>?
-        Timestamp = mapping.getOrNull("Timestamp") as Duration?
-        TimeoutDuration = mapping.getOrNull("TimeoutDuration") as Duration?
-        JSONResponse = mapping.getOrNull("JSONResponse") as Boolean?
-        JSONResponseKeys = mapping.getOrNull("JSONResponseKeys") as Listing<String>?
-    }
+/// Retrieves the timeout duration for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the timeout for.
+/// [Duration]: The timeout duration.
+function timeoutDuration(actionID: String?): Duration = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "timeoutDuration"))
+        if (res != "") res.toDuration() else 60.s
+    else 60.s
 
-/// Parses a PKL record text and extracts the ResourceChat object for the given resource ID
-/// 
-/// [pklText]: The PKL content containing the Resources mapping or individual object
-/// [resourceId]: The ID of the resource to extract
-/// Returns a ResourceChat object with the parsed values or default values if parsing fails
-function parseResourceChatFromPkl(pklText: String, resourceId: String): ResourceChat =
-    if (pklText.isEmpty)
-        new ResourceChat {}
-    else
-        // Try to evaluate the PKL content as a ResourceChat object
-        let (evaluatedChat = evaluatePklContent(pklText))
-        if (evaluatedChat != null)
-            evaluatedChat
-        else
-            // Fallback to default ResourceChat if parsing fails
-            new ResourceChat {}
+/// Retrieves the timestamp for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the timestamp for.
+/// [Duration]: The timestamp.
+function timestamp(actionID: String?): Duration = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "timestamp"))
+        if (res != "") res.toDuration() else 0.s
+    else 0.s
 
-/// Evaluates PKL content and returns a ResourceChat object if successful
-/// 
-/// [pklContent]: The PKL content to evaluate
-/// Returns the evaluated ResourceChat object or null if evaluation fails
-function evaluatePklContent(pklContent: String): ResourceChat? =
-    if (pklContent.isEmpty || pklContent.trim().isEmpty)
-        null
-    else
-        // Try to parse as JSON first (common case)
-        let (jsonResult = test.catchOrNull(() -> (new json.Parser {}).parse(pklContent)))
-        if (jsonResult != null && jsonResult is Mapping)
-            parseResourceChatFromJson(jsonResult as Mapping<String, Any>)
-        else
-            // Try to evaluate as PKL object content
-            parseResourceChatFromPklText(pklContent)
+/// Retrieves the scenario for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the scenario for.
+/// [Listing<MultiChat>]: The scenario.
+function scenario(actionID: String?): Listing<MultiChat> = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "scenario"))
+        if (res != "")
+            let (parsed = parseJsonOrNull(res))
+            if (parsed != null) parsed as Listing<MultiChat> else new Listing<MultiChat> {}
+        else new Listing<MultiChat> {}
+    else new Listing<MultiChat> {}
 
-/// Parses ResourceChat from JSON mapping
-function parseResourceChatFromJson(jsonData: Mapping<String, Any>): ResourceChat? =
-    new ResourceChat {
-        Model = jsonData.getOrNull("Model") as String? ?? "llama3.2"
-        Role = jsonData.getOrNull("Role") as String?
-        Prompt = jsonData.getOrNull("Prompt") as String?
-        Response = jsonData.getOrNull("Response") as String?
-        File = jsonData.getOrNull("File") as String?
-        ItemValues = jsonData.getOrNull("ItemValues") as Listing<String>?
-        Timestamp = jsonData.getOrNull("Timestamp") as Duration?
-        TimeoutDuration = jsonData.getOrNull("TimeoutDuration") as Duration?
-        JSONResponse = jsonData.getOrNull("JSONResponse") as Boolean?
-        JSONResponseKeys = jsonData.getOrNull("JSONResponseKeys") as Listing<String>?
-    }
+/// Retrieves the tools for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the tools for.
+/// [Listing<Tool>]: The tools.
+function tools(actionID: String?): Listing<Tool> = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "tools"))
+        if (res != "")
+            let (parsed = parseJsonOrNull(res))
+            if (parsed != null) parsed as Listing<Tool> else new Listing<Tool> {}
+        else new Listing<Tool> {}
+    else new Listing<Tool> {}
 
-/// Parses ResourceChat from PKL text content
-function parseResourceChatFromPklText(content: String): ResourceChat? =
-    // Handle simple object formats like: { Response = "Hello"; Model = "llama3.2" }
-    if (content.trim().startsWith("{") && content.trim().endsWith("}"))
-        // Extract content between braces
-        let (innerContent = content.trim().drop(1).dropLast(1).trim())
-        let (properties = parseProperties(innerContent))
-        new ResourceChat {
-            Model = properties.getOrNull("Model") ?? "llama3.2"
-            Role = properties.getOrNull("Role")
-            Prompt = properties.getOrNull("Prompt")
-            Response = properties.getOrNull("Response")
-            File = properties.getOrNull("File")
-            JSONResponse = parseBooleanOrNull(properties.getOrNull("JSONResponse"))
-        }
-    else
-        null
-
-/// Helper function to parse properties from PKL object content
-function parseProperties(content: String): Mapping<String, String> =
-    // Parse key-value pairs from semicolon-separated format
-    let (cleanContent = content.replaceAll("\n", ";").replaceAll("\r", ""))
-    let (pairs = cleanContent.split(";"))
-    let (parsedPairs = pairs.map((pair) -> parseKeyValuePair(pair.trim())).filter((entry) -> entry != null && entry.key != null && !entry.key.isEmpty))
-    new Mapping<String, String> {
-        for (entry in parsedPairs) {
-            [entry.key] = entry.value ?? ""
-        }
-    }
-
-/// Helper to parse a single key-value pair
-function parseKeyValuePair(pair: String): ParsedKeyValue? =
-    if (pair.isEmpty || !pair.contains("="))
-        null
-    else
-        let (equalIndex = pair.indexOf("="))
-        let (key = pair.substring(0, equalIndex).trim().replaceAll("\"", "").replaceAll("'", ""))
-        let (value = pair.substring(equalIndex + 1).trim().replaceAll("\"", "").replaceAll("'", ""))
-        if (key.isEmpty)
-            null
-        else
-            new ParsedKeyValue { key = key; value = value }
-
-/// Helper class for parsed key-value pairs
-class ParsedKeyValue {
-    key: String
-    value: String
-}
-
-/// Helper function to parse float with null default
-function parseFloatOrNull(value: String?): Float? =
-    if (value == null || value.trim().isEmpty)
-        null
-    else
-        let (trimmed = value.trim())
-        if (trimmed.matches(Regex("^-?\\d*\\.?\\d+$")))
-            trimmed.toFloat()
-        else
-            null
-
-/// Helper function to parse integer with null default
-function parseIntOrNull(value: String?): Int? =
-    if (value == null || value.trim().isEmpty)
-        null
-    else
-        let (trimmed = value.trim())
-        if (trimmed.matches(Regex("^-?\\d+$")))
-            trimmed.toInt()
-        else
-            null
-
-/// Helper function to parse boolean with null default
-function parseBooleanOrNull(value: String?): Boolean? =
-    if (value == null || value.trim().isEmpty)
-        null
-    else
-        let (trimmed = value.trim().toLowerCase())
-        if (trimmed == "true")
-            true
-        else if (trimmed == "false")
-            false
-        else
-            null
+/// Retrieves the files for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the files for.
+/// [Listing<String>]: The files.
+function files(actionID: String?): Listing<String> = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "files"))
+        if (res != "")
+            let (parsed = parseJsonOrNull(res))
+            if (parsed != null) parsed as Listing<String> else new Listing<String> {}
+        else new Listing<String> {}
+    else new Listing<String> {}

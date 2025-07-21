@@ -1,0 +1,103 @@
+/// Core abstractions for Kdeps operations
+/// This module provides unified functions for agent resolution and generic pklres operations
+@ModuleInfo { minPklVersion = "0.28.2" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/core" }
+
+open module org.kdeps.pkl.Core
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
+import "pkl:json"
+import "pkl:test"
+
+/// Helper function to parse JSON safely and return null if parsing fails
+function parseJsonOrNull(data: String?) =
+  if (data != null && data != "" && data != "null")
+    test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data))
+  else
+    null
+
+/// Helper function to safely read from pklres and return null if not available
+function safeRead(uri: String?) =
+  if (uri != null && uri != "")
+    test.catchOrNull(() -> read(uri))
+  else
+    null
+
+/// Resolves an actionID using the agent reader.
+/// Returns the fully qualified actionID (e.g., @agentID/actionID:version)
+/// If actionID is already in canonical format (@...), returns it as-is
+/// If actionID is null or empty, returns empty string
+function resolveActionID(actionID: String?): String =
+  if (actionID != null && !actionID.isEmpty) 
+    if (actionID.startsWith("@"))
+      actionID // Already canonical
+    else
+      let (result = safeRead("agent:/\(actionID)"))
+      if (result != null) result.text else actionID 
+  else 
+    ""
+
+/// Generic key-value store operations
+/// Collection keys are always actionIDs, scope is graphID
+/// Can store anything from shallow to deep nested data without schema restrictions
+/// Gets a value from the generic key-value store
+/// Returns the value as a string, or empty string if not found
+function get(collectionKey: String?, key: String?): String = 
+  if (collectionKey != null && key != null) 
+    let (resolvedCollectionKey = resolveActionID(collectionKey))
+    let (result = safeRead("pklres://?op=get&collection=\(resolvedCollectionKey)&key=\(key)"))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        let (parsed = parseJsonOrNull(jsonText))
+        if (parsed != null)
+          parsed.toString()
+        else
+          jsonText
+      else
+        ""
+    else
+      ""
+  else ""
+
+/// Sets a value in the generic key-value store
+/// Returns the set value as confirmation, or empty string if failed
+function set(collectionKey: String?, key: String?, value: String?): String = 
+  if (collectionKey != null && key != null && value != null) 
+    let (resolvedCollectionKey = resolveActionID(collectionKey))
+    let (result = safeRead("pklres://?op=set&collection=\(resolvedCollectionKey)&key=\(key)&value=\(URI.encodeComponent(value))"))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        let (parsed = parseJsonOrNull(jsonText))
+        if (parsed != null)
+          parsed.toString()
+        else
+          jsonText
+      else
+        ""
+    else
+      ""
+  else ""
+
+/// Lists all keys in a collection
+/// Returns a listing of keys, or empty listing if not found
+function list(collectionKey: String?): Listing<String> = 
+  if (collectionKey != null) 
+    let (resolvedCollectionKey = resolveActionID(collectionKey))
+    let (result = safeRead("pklres://?op=list&collection=\(resolvedCollectionKey)"))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "" && jsonText != "[]")
+        let (parseResult = parseJsonOrNull(jsonText))
+        if (parseResult is Listing)
+          parseResult as Listing<String>
+        else
+          new Listing<String> {}
+      else
+        new Listing<String> {}
+    else
+      new Listing<String> {}
+  else new Listing<String> {} 

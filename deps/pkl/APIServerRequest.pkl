@@ -10,10 +10,7 @@
 ///
 /// The module defines:
 /// - [APIServerRequestUploads]: For managing metadata of uploaded files.
-/// - [Path]: The URI path of the incoming request.
-/// - [Method]: The HTTP method used for the request.
-/// - [Data]: The request body data.
-/// - [Files]: A mapping of uploaded files and their metadata.
+/// - Functions for retrieving request data from the key-value store.
 @ModuleInfo { minPklVersion = "0.28.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/api_server_request" }
@@ -23,6 +20,9 @@ open module org.kdeps.pkl.APIServerRequest
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
 import "pkl:test"
+import "pkl:json"
+import "Core.pkl" as core
+import "Agent.pkl" as agent
 
 /// Regular expression for validating HTTP methods supported by the API server.
 hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
@@ -36,36 +36,22 @@ hidden apiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#
 /// Returns `true` if the method is valid; otherwise, throws an error with a descriptive message.
 ///
 /// [str]: The HTTP method string to validate.
-/// [bool]: True if the HTTP method is valid, otherwise throws an error.
+/// [bool]: True if the HTTP method is valid, otherwise throws an error with a descriptive message.
 hidden isValidHTTPMethod = (str) -> if (str.matches(apiMethodRegex)) true else throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
 
-/// The URI path of the incoming request.
-Path: String = "/"
+/// Helper function to parse JSON safely
+function parseJsonOrNull(data: String?) =
+  if (data != null && data != "" && data != "null")
+    test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data))
+  else
+    null
 
-/// The Client IP Address
-IP: String = ""
-
-/// The Request ID
-ID: String = ""
-
-/// The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
-Method: String(isValidHTTPMethod) = "GET"
-
-/// The request body, if provided.
-Data: String?
-
-/// A mapping of query parameters included in the request.
-Params: Mapping<String, String>?
-
-/// A mapping of HTTP headers included in the request.
-Headers: Mapping<String, String>?
-
-/// Files uploaded with the request, represented as a mapping of file keys to upload metadata.
-Files: Mapping<String, APIServerRequestUploads>?
-
-/// Helper variables for file processing
-hidden fileKeys = Files?.keys ?? new Listing {}
-hidden firstFileKey = fileKeys.firstOrNull
+/// Helper function to safely read from pklres and return null if not available
+function safeRead(uri: String?) =
+  if (uri != null && uri != "")
+    test.catchOrNull(() -> read(uri))
+  else
+    null
 
 /// Class representing metadata for an uploaded file in an API request.
 class APIServerRequestUploads {
@@ -76,14 +62,86 @@ class APIServerRequestUploads {
     Filetype: String
 }
 
+/// Retrieves the request ID from the key-value store
+/// Returns empty string if not found or if reader is not available
+function requestID(): String =
+  let (result = safeRead("pklres://?op=get&collection=current&key=requestID"))
+  if (result != null)
+    let (jsonText = result)
+    if (jsonText != "null" && jsonText != "")
+      let (parsed = parseJsonOrNull(jsonText))
+      if (parsed != null)
+        parsed.toString()
+      else
+        jsonText
+    else
+      ""
+  else ""
+
+/// Retrieves the request ID from the key-value store (alias for requestID)
+/// Returns empty string if not found or if reader is not available
+function id(): String = requestID()
+
+/// Retrieves the request path from the key-value store
+/// Returns empty string if not found or if reader is not available
+function path(): String =
+  let (reqID = requestID())
+  if (reqID != null && reqID != "")
+    let (result = safeRead("pklres://?op=get&collection=\(reqID)&key=path"))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        let (parsed = parseJsonOrNull(jsonText))
+        if (parsed != null)
+          parsed.toString()
+        else
+          jsonText
+      else
+        ""
+    else
+      ""
+  else ""
+
+/// Retrieves the request method from the key-value store
+/// Returns empty string if not found or if reader is not available
+function method(): String =
+  let (reqID = requestID())
+  if (reqID != null && reqID != "")
+    let (result = safeRead("pklres://?op=get&collection=\(reqID)&key=method"))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        let (parsed = parseJsonOrNull(jsonText))
+        if (parsed != null)
+          parsed.toString()
+        else
+          jsonText
+      else
+        ""
+    else
+      ""
+  else ""
+
 /// Retrieves the decoded request body.
 ///
 /// [str]: The Base64-decoded request body.
-function data(): String = 
-    if (Data != null && Data != "") 
-        let (exception = test.catchOrNull(() -> Data.base64Decoded))
-        if (exception == null) Data.base64Decoded else Data
-    else ""
+function data(): String =
+  let (reqID = requestID())
+  if (reqID != null && reqID != "")
+    let (result = safeRead("pklres://?op=get&collection=\(reqID)&key=data"))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        let (parsed = parseJsonOrNull(jsonText))
+        if (parsed != null)
+          parsed.toString()
+        else
+          jsonText
+      else
+        ""
+    else
+      ""
+  else ""
 
 /// Retrieves the decoded value of the query parameter [name].
 ///
@@ -92,11 +150,25 @@ function data(): String =
 /// [name]: The query parameter to retrieve.
 /// [str]: The Base64-decoded value of the query parameter.
 function params(name: String?): String =
-    if (name != null && Params != null && Params.getOrNull(name) != null) 
-        let (paramValue = Params[name])
-        let (exception = test.catchOrNull(() -> paramValue.base64Decoded))
-        if (exception == null) paramValue.base64Decoded else paramValue
-    else ""
+  let (reqID = requestID())
+  let (params = if (name != null && reqID != null && reqID != "")
+    safeRead("pklres://?op=get&collection=\(reqID)&key=params")
+    else null)
+  let (paramsMap = if (params != null)
+    let  (jsonText = params)
+    if (jsonText != "null" && jsonText != "")
+      let (parsed = parseJsonOrNull(jsonText))
+      if (parsed is Mapping<String, String>)
+        parsed as Mapping<String, String>
+      else
+        new Mapping<String, String> {}
+    else
+      new Mapping<String, String> {}
+    else new Mapping<String, String> {})
+  let (paramValue = paramsMap.getOrNull(name))
+  if (paramValue != null && paramValue != "")
+    paramValue
+  else ""
 
 /// Retrieves the decoded value of the header [name].
 ///
@@ -105,11 +177,25 @@ function params(name: String?): String =
 /// [name]: The header name to retrieve.
 /// [str]: The Base64-decoded value of the header.
 function header(name: String?): String =
-    if (name != null && Headers != null && Headers.getOrNull(name) != null) 
-        let (headerValue = Headers[name])
-        let (exception = test.catchOrNull(() -> headerValue.base64Decoded))
-        if (exception == null) headerValue.base64Decoded else headerValue
-    else ""
+  let (reqID = requestID())
+  let (headers = if (name != null && reqID != null && reqID != "")
+    safeRead("pklres://?op=get&collection=\(reqID)&key=headers")
+    else null)
+  let (headersMap = if (headers != null)
+    let  (jsonText = headers)
+    if (jsonText != "null" && jsonText != "")
+      let (parsed = parseJsonOrNull(jsonText))
+      if (parsed is Mapping<String, String>)
+        parsed as Mapping<String, String>
+      else
+        new Mapping<String, String> {}
+    else
+      new Mapping<String, String> {}
+    else new Mapping<String, String> {})
+  let (headerValue = headersMap.getOrNull(name))
+  if (headerValue != null && headerValue != "")
+    headerValue
+  else ""
 
 /// Retrieves metadata for the uploaded file with the key [name].
 ///
@@ -119,11 +205,28 @@ function header(name: String?): String =
 /// [name]: The key of the file to retrieve.
 /// [APIServerRequestUploads]: The metadata for the requested file.
 function file(name: String?): APIServerRequestUploads =
-    if (name != null && Files != null && !Files.isEmpty) 
-        if (Files.getOrNull(name) != null) Files[name] 
-        else if (firstFileKey != null) Files[firstFileKey] 
-        else new APIServerRequestUploads { Filepath = ""; Filetype = "" }
-    else new APIServerRequestUploads { Filepath = ""; Filetype = "" }
+  let (reqID = requestID())
+  if (reqID != null && reqID != "")
+    let (result = safeRead("pklres://?op=get&collection=\(reqID)&key=files"))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        let (parsed = parseJsonOrNull(jsonText))
+        if (parsed is Mapping<String, APIServerRequestUploads>)
+          let (filesMap = parsed as Mapping<String, APIServerRequestUploads>)
+          if (name != null)
+            let (fileResult = filesMap.getOrNull(name))
+            if (fileResult != null) fileResult else (if (!filesMap.isEmpty) filesMap.values.first() else new APIServerRequestUploads { Filepath = ""; Filetype = "" })
+          else if (!filesMap.isEmpty)
+            filesMap.values.first()
+          else new APIServerRequestUploads { Filepath = ""; Filetype = "" }
+        else
+          new APIServerRequestUploads { Filepath = ""; Filetype = "" }
+      else
+        new APIServerRequestUploads { Filepath = ""; Filetype = "" }
+    else
+      new APIServerRequestUploads { Filepath = ""; Filetype = "" }
+  else new APIServerRequestUploads { Filepath = ""; Filetype = "" }
 
 /// Retrieves the MIME type of the uploaded file with the key [name].
 ///
@@ -140,40 +243,87 @@ function filepath(name: String?): String = file(name).Filepath
 /// Retrieves the total number of uploaded files.
 ///
 /// [str]: The number of uploaded files as a string.
-function filecount(): String = if (Files != null) Files.length.toString() else "0"
+function filecount(): String =
+  let (reqID = requestID())
+  if (reqID != null && reqID != "")
+    let (result = safeRead("pklres://?op=get&collection=\(reqID)&key=files"))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        let (parsed = parseJsonOrNull(jsonText))
+        if (parsed is Mapping<String, APIServerRequestUploads>)
+          let (filesMap = parsed as Mapping<String, APIServerRequestUploads>)
+          filesMap.length.toString()
+        else
+          "0"
+      else
+        "0"
+    else
+      "0"
+  else "0"
 
 /// Retrieves a list of file paths for all uploaded files.
 ///
 /// [Listing]: A list of file paths for uploaded files.
-function fileList(): Listing = if (Files != null) Files.values.toList().map((it) -> it.Filepath) else new Listing {}
+function fileList(): Listing =
+  let (reqID = requestID())
+  if (reqID != null && reqID != "")
+    let (result = safeRead("pklres://?op=get&collection=\(reqID)&key=files"))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        let (parsed = parseJsonOrNull(jsonText))
+        if (parsed is Mapping<String, APIServerRequestUploads>)
+          let (filesMap = parsed as Mapping<String, APIServerRequestUploads>)
+          filesMap.values.toList().map((it) -> it.Filepath)
+        else
+          new Listing {}
+      else
+        new Listing {}
+    else
+      new Listing {}
+  else new Listing {}
 
 /// Retrieves a list of MIME types for all uploaded files.
 ///
 /// [Listing]: A list of MIME types for uploaded files.
-function filetypes(): Listing = if (Files != null) Files.values.toList().map((it) -> it.Filetype) else new Listing {}
+function filetypes(): Listing =
+  let (reqID = requestID())
+  if (reqID != null && reqID != "")
+    let (result = safeRead("pklres://?op=get&collection=\(reqID)&key=files"))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        let (parsed = parseJsonOrNull(jsonText))
+        if (parsed is Mapping<String, APIServerRequestUploads>)
+          let (filesMap = parsed as Mapping<String, APIServerRequestUploads>)
+          filesMap.values.toList().map((it) -> it.Filetype)
+        else
+          new Listing {}
+      else
+        new Listing {}
+    else
+      new Listing {}
+  else new Listing {}
 
 /// Retrieves a list of file paths for uploaded files that match the given MIME type [mimeType].
 ///
 /// [mimeType]: The MIME type to filter files by.
 /// [Listing]: A list of file paths for files that match the specified MIME type.
-function filesByType(mimeType: String?): Listing = if (mimeType != null && Files != null) Files.values.toList().filter((it) -> it.Filetype == mimeType).map((it) -> it.Filepath) else new Listing {}
-
-/// Retrieves the URI path of the request.
-///
-/// [str]: The URI path of the request.
-function path(): String = Path
-
-/// Retrieves the HTTP method of the request.
-///
-/// [str]: The HTTP method of the request.
-function method(): String = Method
-
-/// Retrieves the Client IP Address of the request.
-///
-/// [str]: The Client IP of the request.
-function ip(): String = IP
-
-/// Retrieves the Request ID of the request.
-///
-/// [str]: The Request ID of the request.
-function id(): String = ID
+function filesByType(mimeType: String?): Listing =
+  let (reqID = requestID())
+  let (result = if (mimeType != null && reqID != null && reqID != "")
+    safeRead("pklres://?op=get&collection=\(reqID)&key=files")
+    else null)
+  let (filesMap = if (result != null)
+    let (jsonText = result)
+    if (jsonText != "null" && jsonText != "")
+      let (parsed = parseJsonOrNull(jsonText))
+      if (parsed is Mapping<String, APIServerRequestUploads>)
+        parsed as Mapping<String, APIServerRequestUploads>
+      else
+        new Mapping<String, APIServerRequestUploads> {}
+    else
+      new Mapping<String, APIServerRequestUploads> {}
+    else new Mapping<String, APIServerRequestUploads> {})
+  filesMap.values.toList().filter((it) -> it.Filetype == mimeType).map((it) -> it.Filepath)

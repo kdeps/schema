@@ -20,7 +20,7 @@ import "pkl:json"
 /// If the content is Base64-encoded, it will be automatically decoded.
 function current(): String = 
     let (content = read("item:/_?op=current")?.text ?? "")
-    if (isBase64(content)) content.base64Decoded else content
+    content
 
 /// Retrieves the record for the previous iteration
 ///
@@ -28,7 +28,7 @@ function current(): String =
 /// If the content is Base64-encoded, it will be automatically decoded.
 function prev(): String = 
     let (content = read("item:/_?op=prev")?.text ?? "")
-    if (isBase64(content)) content.base64Decoded else content
+    content
 
 /// Retrieves the record for the next iteration
 ///
@@ -36,7 +36,7 @@ function prev(): String =
 /// If the content is Base64-encoded, it will be automatically decoded.
 function next(): String = 
     let (content = read("item:/_?op=next")?.text ?? "")
-    if (isBase64(content)) content.base64Decoded else content
+    content
 
 /// Lists all record results associated with the for loop
 ///

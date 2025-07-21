@@ -14,29 +14,22 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 import "pkl:test"
 import "Agent.pkl" as agent
-import "PklResource.pkl" as pklres
+import "Core.pkl" as core
 
-/// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-/// This mapping is populated from pklres storage.
-Resources: Mapping<String, ResourceHTTPClient> = 
-    let (recordIds = pklres.getAllRecords("http"))
-    if (recordIds != "" && recordIds != "[]")
-        let (parseResult = test.catchOrNull(() -> (new json.Parser {}).parse(recordIds)))
-        if (parseResult != null && parseResult is Listing)
-            new Mapping {
-                for (id in parseResult as Listing<String>) {
-                    [id] = 
-                        let (recordText = pklres.getPklRecord(id, "http"))
-                        if (recordText != null && !recordText.text.isEmpty)
-                            parseResourceHTTPFromPkl(recordText, id)
-                        else
-                            new ResourceHTTPClient {}
-                }
-            }
-        else
-            new Mapping<String, ResourceHTTPClient> {}
+/// Helper function to safely get a value from pklres and return empty string if not available
+function safeGetValue(collection: String?, key: String?): String =
+  if (collection != null && key != null)
+    let (result = core.safeRead("pklres://?op=get&collection=" + collection + "&key=" + key))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        // For simple strings, return as-is. For nested data, it should already be JSON encoded by Go side
+        jsonText
+      else
+        ""
     else
-        new Mapping<String, ResourceHTTPClient> {}
+      ""
+  else ""
 
 /// Class representing an HTTP client resource, which includes details
 /// about the HTTP method, URL, request data, headers, and response.
@@ -97,17 +90,25 @@ class ResponseBlock {
 function resource(actionID: String?): ResourceHTTPClient =
   if (actionID != null)
     let (resolvedID = agent.resolveActionID(actionID))
-    // First try to get from pre-populated Resources mapping
-    if (Resources.getOrNull(resolvedID) != null)
-      Resources[resolvedID]
-    else
-      // Fallback: fetch from pklres and create resource
-      let (pklText = pklres.getPklRecord(resolvedID, "http"))
-      if (pklText != null && !pklText.text.isEmpty)
-        parseResourceHTTPFromPkl(pklText, resolvedID)
-      else
-        // Return default ResourceHTTPClient for non-existent resources
-        new ResourceHTTPClient {}
+    let (method = safeGetValue(resolvedID, "method"))
+    let (url = safeGetValue(resolvedID, "url"))
+    let (response = safeGetValue(resolvedID, "response"))
+    let (file = safeGetValue(resolvedID, "file"))
+    let (timeoutDuration = safeGetValue(resolvedID, "timeoutDuration"))
+    let (timestamp = safeGetValue(resolvedID, "timestamp"))
+    
+    new ResourceHTTPClient {
+        Method = if (method != "") method else "GET"
+        Url = if (url != "") url else ""
+        Response = if (response != "") parseResponseFromJson(core.parseJsonOrNull(response)) else null
+        File = if (file != "") file else null
+        TimeoutDuration = if (timeoutDuration != "") timeoutDuration.toDuration() else 60.s
+        Timestamp = if (timestamp != "") timestamp.toDuration() else null
+        Data = new Listing<String> {}
+        Headers = new Mapping<String, String> {}
+        Params = new Mapping<String, String> {}
+        ItemValues = new Listing<String> {}
+    }
   else
     // Return default ResourceHTTPClient for null actionID
     new ResourceHTTPClient {}
@@ -117,10 +118,12 @@ function resource(actionID: String?): ResourceHTTPClient =
 /// [actionID]: The actionID of the resource to retrieve the response body for.
 /// [str]: The body of the response from the HTTP request.
 function responseBody(actionID: String?): String = 
-    let (res = resource(actionID).Response)
-    if (res != null && res.Body != null)
-        let (body = res.Body)
-        if (isBase64(body)) body.base64Decoded else body
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "response"))
+        if (res != "")
+            res
+        else ""
     else ""
 
 /// Retrieves the file path containing the response body associated with the specified resource [actionID].
@@ -128,9 +131,12 @@ function responseBody(actionID: String?): String =
 /// [actionID]: The actionID of the resource to retrieve the response body for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
 function file(actionID: String?): String = 
-    let (res = resource(actionID).File)
-    if (res != null)
-        if (isBase64(res)) res.base64Decoded else res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "file"))
+        if (res != "")
+            res
+        else ""
     else ""
 
 /// Retrieves the item iteration responses for the resource [actionID].
@@ -138,190 +144,91 @@ function file(actionID: String?): String =
 /// [actionID]: The actionID of the resource to retrieve the item values.
 /// [Listing<String>]: A listing of expected item iteration output.
 function itemValues(actionID: String?): Listing<String> = 
-    let (res = resource(actionID).ItemValues)
-    if (res != null)
-        res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "itemValues"))
+        if (res != "")
+            let (parsed = core.parseJsonOrNull(res))
+            if (parsed != null) parsed as Listing<String> else new Listing<String> {}
+        else new Listing<String> {}
     else new Listing<String> {}
 
 /// Retrieves the specified response header associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response header for.
-/// [headeractionID]: The name of the header to retrieve.
+/// [headerName]: The name of the header to retrieve.
 /// [str]: The value of the specified response header, or an empty string if not found.
-function responseHeader(actionID: String?, headeractionID: String?): String =
-  if (actionID != null && headeractionID != null)
-    let (res = resource(agent.resolveActionID(actionID)).Response)
-    if (res != null && res.Headers != null)
-      let (headerValue = res.Headers.getOrNull(headeractionID))
-      if (headerValue != null)
-        if (isBase64(headerValue)) headerValue.base64Decoded else headerValue
-      else ""
+function responseHeader(actionID: String?, headerName: String?): String =
+  if (actionID != null && headerName != null)
+    let (resolvedID = agent.resolveActionID(actionID))
+    let (responseData = safeGetValue(resolvedID, "response"))
+    if (responseData != "")
+        let (responseMap = core.parseJsonOrNull(responseData))
+        if (responseMap != null && responseMap is Mapping<String, Any>)
+            let (responseMapping = responseMap as Mapping<String, Any>)
+            let (headers = responseMapping.getOrNull("Headers"))
+            if (headers != null && headers is Mapping<String, String>)
+                let (headersMapping = headers as Mapping<String, String>)
+                let (headerValue = headersMapping.getOrNull(headerName))
+                if (headerValue != null)
+                    headerValue
+                else ""
+            else ""
+        else ""
     else ""
   else ""
 
-/// Parses a PKL record text and extracts the ResourceHTTPClient object for the given resource ID
-/// 
-/// [pklText]: The PKL content containing the Resources mapping or individual object
-/// [resourceId]: The ID of the resource to extract
-/// Returns a ResourceHTTPClient object with the parsed values or default values if parsing fails
-function parseResourceHTTPFromPkl(pklText: String, resourceId: String): ResourceHTTPClient =
-    if (pklText.isEmpty)
-        new ResourceHTTPClient {}
-    else
-        // Try to evaluate the PKL content as a ResourceHTTPClient object
-        let (evaluatedHTTP = evaluatePklContent(pklText))
-        if (evaluatedHTTP != null)
-            evaluatedHTTP
-        else
-            // Fallback to default ResourceHTTPClient if parsing fails
-            new ResourceHTTPClient {}
+/// Retrieves the method associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the method for.
+/// [str]: The HTTP method.
+function method(actionID: String?): String = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "method"))
+        if (res != "") res else "GET"
+    else "GET"
 
-/// Evaluates PKL content and returns a ResourceHTTPClient object if successful
-/// 
-/// [pklContent]: The PKL content to evaluate
-/// Returns the evaluated ResourceHTTPClient object or null if evaluation fails
-function evaluatePklContent(pklContent: String): ResourceHTTPClient? =
-    if (pklContent.isEmpty || pklContent.trim().isEmpty)
-        null
-    else
-        // Try to parse as JSON first (common case)
-        let (jsonResult = test.catchOrNull(() -> (new json.Parser {}).parse(pklContent)))
-        if (jsonResult != null && jsonResult is Mapping)
-            parseResourceHTTPFromJson(jsonResult as Mapping<String, Any>)
-        else
-            // Try to evaluate as PKL object content
-            parseResourceHTTPFromPklText(pklContent)
+/// Retrieves the URL associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the URL for.
+/// [str]: The URL.
+function url(actionID: String?): String = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "url"))
+        if (res != "") res else ""
+    else ""
 
-/// Parses ResourceHTTPClient from JSON mapping
-function parseResourceHTTPFromJson(jsonData: Mapping<String, Any>): ResourceHTTPClient? =
-    new ResourceHTTPClient {
-        Method = jsonData.getOrNull("Method") as String? ?? "GET"
-        Url = jsonData.getOrNull("Url") as String? ?? ""
-        Data = jsonData.getOrNull("Data") as Listing<String>?
-        Headers = jsonData.getOrNull("Headers") as Mapping<String, String>?
-        Params = jsonData.getOrNull("Params") as Mapping<String, String>?
-        Response = parseResponseFromJson(jsonData.getOrNull("Response"))
-        File = jsonData.getOrNull("File") as String?
-        ItemValues = jsonData.getOrNull("ItemValues") as Listing<String>?
-        Timestamp = jsonData.getOrNull("Timestamp") as Duration?
-        TimeoutDuration = jsonData.getOrNull("TimeoutDuration") as Duration?
-    }
+/// Retrieves the timeout duration associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the timeout for.
+/// [Duration]: The timeout duration.
+function timeoutDuration(actionID: String?): Duration = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "timeoutDuration"))
+        if (res != "") res.toDuration() else 60.s
+    else 60.s
+
+/// Retrieves the timestamp associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the timestamp for.
+/// [Duration]: The timestamp.
+function timestamp(actionID: String?): Duration = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "timestamp"))
+        if (res != "") res.toDuration() else 0.s
+    else 0.s
 
 /// Helper function to parse ResponseBlock from JSON
 function parseResponseFromJson(responseData: Any?): ResponseBlock? =
     if (responseData != null && responseData is Mapping)
         let (responseMap = responseData as Mapping<String, Any>)
         new ResponseBlock {
-            Body = responseMap.getOrNull("Body") as String?
-            Headers = responseMap.getOrNull("Headers") as Mapping<String, String>?
+            Body = let (body = responseMap.getOrNull("Body")) if (body is String) body else null
+            Headers = let (headers = responseMap.getOrNull("Headers")) if (headers is Mapping<String, String>) headers else null
         }
     else
         null
-
-/// Parses ResourceHTTPClient from PKL text content
-function parseResourceHTTPFromPklText(content: String): ResourceHTTPClient? =
-    // Handle simple object formats like: { Method = "GET"; Url = "https://example.com" }
-    if (content.trim().startsWith("{") && content.trim().endsWith("}"))
-        // Extract content between braces
-        let (innerContent = content.trim().drop(1).dropLast(1).trim())
-        let (properties = parseProperties(innerContent))
-        new ResourceHTTPClient {
-            Method = properties.getOrNull("Method") ?? "GET"
-            Url = properties.getOrNull("Url") ?? ""
-            Headers = parseHeaders(properties.getOrNull("Headers"))
-            TimeoutDuration = parseDurationOrNull(properties.getOrNull("TimeoutDuration"))
-            File = properties.getOrNull("File")
-        }
-    else
-        null
-
-/// Helper function to parse properties from PKL object content
-function parseProperties(content: String): Mapping<String, String> =
-    // Parse key-value pairs from semicolon-separated format
-    let (cleanContent = content.replaceAll("\n", ";").replaceAll("\r", ""))
-    let (pairs = cleanContent.split(";"))
-    let (parsedPairs = pairs.map((pair) -> parseKeyValuePair(pair.trim())).filter((entry) -> entry != null && entry.key != null && !entry.key.isEmpty))
-    new Mapping<String, String> {
-        for (entry in parsedPairs) {
-            [entry.key] = entry.value ?? ""
-        }
-    }
-
-/// Helper to parse a single key-value pair
-function parseKeyValuePair(pair: String): ParsedKeyValue? =
-    if (pair.isEmpty || !pair.contains("="))
-        null
-    else
-        let (equalIndex = pair.indexOf("="))
-        let (key = pair.substring(0, equalIndex).trim().replaceAll("\"", "").replaceAll("'", ""))
-        let (value = pair.substring(equalIndex + 1).trim().replaceAll("\"", "").replaceAll("'", ""))
-        if (key.isEmpty)
-            null
-        else
-            new ParsedKeyValue { key = key; value = value }
-
-/// Helper class for parsed key-value pairs
-class ParsedKeyValue {
-    key: String
-    value: String
-}
-
-/// Helper function to parse headers from string
-function parseHeaders(headersStr: String?): Mapping<String, String> =
-    if (headersStr == null || headersStr.trim().isEmpty)
-        new Mapping<String, String> {}
-    else
-        // Try to parse as JSON-like format: {"key1": "value1", "key2": "value2"}
-        let (trimmed = headersStr.trim())
-        if (trimmed.startsWith("{") && trimmed.endsWith("}"))
-            parseKeyValuePairs(trimmed.drop(1).dropLast(1))
-        else
-            new Mapping<String, String> {}
-
-/// Helper function to parse key-value pairs
-function parseKeyValuePairs(content: String): Mapping<String, String> =
-    // Parse key-value pairs from comma-separated format
-    let (cleanContent = content.replaceAll("\n", ",").replaceAll("\r", ""))
-    let (pairs = cleanContent.split(","))
-    let (parsedPairs = pairs.map((pair) -> parseKeyValuePair(pair.trim())).filter((entry) -> entry != null && entry.key != null && !entry.key.isEmpty))
-    new Mapping<String, String> {
-        for (entry in parsedPairs) {
-            [entry.key] = entry.value ?? ""
-        }
-    }
-
-/// Helper function to parse integer with default value
-function parseIntOrDefault(value: String?, defaultValue: Int): Int =
-    if (value == null || value.trim().isEmpty)
-        defaultValue
-    else
-        let (trimmed = value.trim())
-        if (trimmed.matches(Regex("^-?\\d+$")))
-            trimmed.toInt()
-        else
-            defaultValue
-
-/// Helper function to parse duration with null default
-function parseDurationOrNull(value: String?): Duration? =
-    if (value == null || value.trim().isEmpty)
-        null
-    else
-        let (trimmed = value.trim())
-        // Try to parse common duration formats
-        if (trimmed.endsWith("s"))
-            let (numberPart = trimmed.dropLast(1))
-            if (numberPart.matches(Regex("^\\d+$")))
-                numberPart.toInt().s
-            else
-                null
-        else if (trimmed.endsWith("ms"))
-            let (numberPart = trimmed.dropLast(2))
-            if (numberPart.matches(Regex("^\\d+$")))
-                numberPart.toInt().ms
-            else
-                null
-        else if (trimmed.matches(Regex("^\\d+$")))
-            // Default to seconds if just a number
-            trimmed.toInt().s
-        else
-            null

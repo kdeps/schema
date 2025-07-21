@@ -16,25 +16,22 @@ import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 import "pkl:test"
 import "Agent.pkl" as agent
-import "PklResource.pkl" as pklres
+import "Core.pkl" as core
 
-/// A mapping of resource actionIDs to their associated [ResourceExec] objects.
-/// This mapping is populated from pklres storage.
-Resources: Mapping<String, ResourceExec> = 
-    let (recordIds = pklres.getAllRecords("exec"))
-    if (recordIds.length > 0)
-        new Mapping {
-            for (id in recordIds) {
-                [id] = 
-                    let (recordObject = pklres.getPklRecord(id, "exec"))
-                    if (recordObject != null && !recordObject.text.isEmpty)
-                        parseResourceExecFromPkl(recordObject.text, id)
-                    else
-                        new ResourceExec {}
-            }
-        }
+/// Helper function to safely get a value from pklres and return empty string if not available
+function safeGetValue(collection: String?, key: String?): String =
+  if (collection != null && key != null)
+    let (result = core.safeRead("pklres://?op=get&collection=" + collection + "&key=" + key))
+    if (result != null)
+      let (jsonText = result)
+      if (jsonText != "null" && jsonText != "")
+        // For simple strings, return as-is. For nested data, it should already be JSON encoded by Go side
+        jsonText
+      else
+        ""
     else
-        new Mapping<String, ResourceExec> {}
+      ""
+  else ""
 
 /// Class representing an executable resource, which includes the command to be executed,
 /// environment variables, and execution details such as outputs and exit codes.
@@ -82,17 +79,25 @@ class ResourceExec {
 function resource(actionID: String?): ResourceExec =
   if (actionID != null)
     let (resolvedID = agent.resolveActionID(actionID))
-    // First try to get from pre-populated Resources mapping
-    if (Resources.getOrNull(resolvedID) != null)
-      Resources[resolvedID]
-    else
-      // Fallback: fetch from pklres and create resource
-      let (pklText = pklres.getPklRecord(resolvedID, "exec"))
-      if (pklText != null && !pklText.text.isEmpty)
-        parseResourceExecFromPkl(pklText.text, resolvedID)
-      else
-        // Return default ResourceExec for non-existent resources
-        new ResourceExec {}
+    let (command = safeGetValue(resolvedID, "command"))
+    let (stdout = safeGetValue(resolvedID, "stdout"))
+    let (stderr = safeGetValue(resolvedID, "stderr"))
+    let (exitCode = safeGetValue(resolvedID, "exitCode"))
+    let (file = safeGetValue(resolvedID, "file"))
+    let (timeoutDuration = safeGetValue(resolvedID, "timeoutDuration"))
+    let (timestamp = safeGetValue(resolvedID, "timestamp"))
+    
+    new ResourceExec {
+        Command = if (command != "") command else ""
+        Stdout = if (stdout != "") stdout else null
+        Stderr = if (stderr != "") stderr else null
+        ExitCode = if (exitCode != "") exitCode.toInt() else 0
+        File = if (file != "") file else null
+        TimeoutDuration = if (timeoutDuration != "") timeoutDuration.toDuration() else 60.s
+        Timestamp = if (timestamp != "") timestamp.toDuration() else null
+        Env = new Mapping<String, String> {}
+        ItemValues = new Listing<String> {}
+    }
   else
     // Return default ResourceExec for null actionID
     new ResourceExec {}
@@ -102,9 +107,12 @@ function resource(actionID: String?): ResourceExec =
 /// [actionID]: The actionID of the resource to retrieve the stderr for.
 /// [str]: The standard error output of the command.
 function stderr(actionID: String?): String = 
-    let (res = resource(actionID).Stderr)
-    if (res != null)
-        if (isBase64(res)) res.base64Decoded else res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "stderr"))
+        if (res != "")
+            res
+        else ""
     else ""
 
 /// Retrieves the standard output associated with the resource [actionID].
@@ -112,22 +120,23 @@ function stderr(actionID: String?): String =
 /// [actionID]: The actionID of the resource to retrieve the stdout for.
 /// [str]: The standard output of the command, or the stderr if stdout is empty.
 function stdout(actionID: String?): String = 
-    if (!stderr(actionID).isEmpty) 
-        stderr(actionID) 
-    else 
-        let (res = resource(actionID).Stdout)
-        if (res != null)
-            if (isBase64(res)) res.base64Decoded else res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "stdout"))
+        if (res != "")
+            res
         else ""
+    else ""
 
 /// Retrieves the exit code associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the exit code for.
 /// [int]: The exit code of the command.
 function exitCode(actionID: String?): Int = 
-    let (res = resource(actionID).ExitCode)
-    if (res != null)
-        res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "exitCode"))
+        if (res != "") res.toInt() else 0
     else 0
 
 /// Retrieves the file path containing the command output associated with the specified resource [actionID].
@@ -135,18 +144,24 @@ function exitCode(actionID: String?): Int =
 /// [actionID]: The actionID of the resource to retrieve the file for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
 function file(actionID: String?): String = 
-    let (res = resource(actionID).File)
-    if (res != null)
-        if (isBase64(res)) res.base64Decoded else res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "file"))
+        if (res != "")
+            res
+        else ""
     else ""
 
 /// Retrieves the item iteration results for the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the item values.
 function itemValues(actionID: String?): Listing<String> = 
-    let (res = resource(actionID).ItemValues)
-    if (res != null)
-        res
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "itemValues"))
+        if (res != "")
+            if (core.parseJsonOrNull(res) != null) core.parseJsonOrNull(res) as Listing<String> else new Listing<String> {}
+        else new Listing<String> {}
     else new Listing<String> {}
 
 /// Retrieves the environment variable [envName] associated with the resource [actionID].
@@ -156,111 +171,49 @@ function itemValues(actionID: String?): Listing<String> =
 /// [str]: The value of the environment variable, or an empty string if not found.
 function env(actionID: String?, envName: String?): String =
   if (actionID != null && envName != null)
-    let (res = resource(agent.resolveActionID(actionID)).Env)
-    if (res != null && res.getOrNull(envName) != null)
-      let (envValue = res[envName])
-      if (isBase64(envValue)) envValue.base64Decoded else envValue
+    let (resolvedID = agent.resolveActionID(actionID))
+    let (envData = safeGetValue(resolvedID, "env"))
+    if (envData != "")
+        let (envMap = core.parseJsonOrNull(envData))
+        if (envMap != null && envMap is Mapping<String, String>)
+            let (envMapping = envMap as Mapping<String, String>)
+            let (envValue = envMapping.getOrNull(envName))
+            if (envValue != null)
+                envValue
+            else ""
+        else ""
     else ""
   else ""
 
-/// Parses a PKL record text and extracts the ResourceExec object for the given resource ID
-/// 
-/// [pklText]: The PKL content containing the Resources mapping or individual object
-/// [resourceId]: The ID of the resource to extract
-/// Returns a ResourceExec object with the parsed values or default values if parsing fails
-function parseResourceExecFromPkl(pklText: String, resourceId: String): ResourceExec =
-    if (pklText.isEmpty)
-        new ResourceExec {}
-    else
-        // Try to evaluate the PKL content as a ResourceExec object
-        let (evaluatedExec = evaluatePklContent(pklText))
-        if (evaluatedExec != null)
-            evaluatedExec
-        else
-            // Fallback to default ResourceExec if parsing fails
-            new ResourceExec {}
+/// Retrieves the command associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the command for.
+/// [str]: The command to be executed.
+function command(actionID: String?): String = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "command"))
+        if (res != "") res else ""
+    else ""
 
-/// Evaluates PKL content and returns a ResourceExec object if successful
-/// 
-/// [pklContent]: The PKL content to evaluate
-/// Returns the evaluated ResourceExec object or null if evaluation fails
-function evaluatePklContent(pklContent: String): ResourceExec? =
-    if (pklContent.isEmpty || pklContent.trim().isEmpty)
-        null
-    else
-        // Try to parse as JSON first (common case)
-        let (jsonResult = test.catchOrNull(() -> (new json.Parser {}).parse(pklContent)))
-        if (jsonResult != null && jsonResult is Mapping)
-            parseResourceExecFromJson(jsonResult as Mapping<String, Any>)
-        else
-            // Try to evaluate as PKL object content
-            parseResourceExecFromPklText(pklContent)
+/// Retrieves the timeout duration associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the timeout for.
+/// [Duration]: The timeout duration.
+function timeoutDuration(actionID: String?): Duration = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "timeoutDuration"))
+        if (res != "") res.toDuration() else 60.s
+    else 60.s
 
-/// Parses ResourceExec from JSON mapping
-function parseResourceExecFromJson(jsonData: Mapping<String, Any>): ResourceExec? =
-    new ResourceExec {
-        Command = jsonData.getOrNull("Command") as String? ?? ""
-        Stderr = jsonData.getOrNull("Stderr") as String?
-        Stdout = jsonData.getOrNull("Stdout") as String?
-        ExitCode = jsonData.getOrNull("ExitCode") as Int? ?? 0
-        File = jsonData.getOrNull("File") as String?
-    }
-
-/// Parses ResourceExec from PKL text content
-function parseResourceExecFromPklText(content: String): ResourceExec? =
-    // Handle simple object formats like: { Command = "ls -la"; ExitCode = 0 }
-    if (content.trim().startsWith("{") && content.trim().endsWith("}"))
-        // Extract content between braces
-        let (innerContent = content.trim().drop(1).dropLast(1).trim())
-        let (properties = parseProperties(innerContent))
-        new ResourceExec {
-            Command = properties.getOrNull("Command") ?? ""
-            Stderr = properties.getOrNull("Stderr")
-            Stdout = properties.getOrNull("Stdout")
-            ExitCode = parseIntOrDefault(properties.getOrNull("ExitCode"), 0)
-            File = properties.getOrNull("File")
-        }
-    else
-        null
-
-/// Helper function to parse properties from PKL object content
-function parseProperties(content: String): Mapping<String, String> =
-    // Parse key-value pairs from semicolon-separated format
-    let (cleanContent = content.replaceAll("\n", ";").replaceAll("\r", ""))
-    let (pairs = cleanContent.split(";"))
-    let (parsedPairs = pairs.map((pair) -> parseKeyValuePair(pair.trim())).filter((entry) -> entry != null && entry.key != null && !entry.key.isEmpty))
-    new Mapping<String, String> {
-        for (entry in parsedPairs) {
-            [entry.key] = entry.value ?? ""
-        }
-    }
-
-/// Helper to parse a single key-value pair
-function parseKeyValuePair(pair: String): ParsedKeyValue? =
-    if (pair.isEmpty || !pair.contains("="))
-        null
-    else
-        let (equalIndex = pair.indexOf("="))
-        let (key = pair.substring(0, equalIndex).trim().replaceAll("\"", "").replaceAll("'", ""))
-        let (value = pair.substring(equalIndex + 1).trim().replaceAll("\"", "").replaceAll("'", ""))
-        if (key.isEmpty)
-            null
-        else
-            new ParsedKeyValue { key = key; value = value }
-
-/// Helper class for parsed key-value pairs
-class ParsedKeyValue {
-    key: String
-    value: String
-}
-
-/// Helper function to parse integer with default value
-function parseIntOrDefault(value: String?, defaultValue: Int): Int =
-    if (value == null || value.trim().isEmpty)
-        defaultValue
-    else
-        let (trimmed = value.trim())
-        if (trimmed.matches(Regex("^-?\\d+$")))
-            trimmed.toInt()
-        else
-            defaultValue
+/// Retrieves the timestamp associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the timestamp for.
+/// [Duration]: The timestamp.
+function timestamp(actionID: String?): Duration = 
+    if (actionID != null)
+        let (resolvedID = agent.resolveActionID(actionID))
+        let (res = safeGetValue(resolvedID, "timestamp"))
+        if (res != "") res.toDuration() else 0.s
+    else 0.s
