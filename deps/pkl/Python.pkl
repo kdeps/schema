@@ -3,60 +3,60 @@
 /// capturing their standard output, standard error, and handling environment
 /// variables as well as exit codes. The module provides utilities for retrieving
 /// and managing executable resources identified by unique resource actionIDs.
-@ModuleInfo { minPklVersion = "0.28.1" }
+@ModuleInfo { minPklVersion = "0.28.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/python" }
 
 open module org.kdeps.pkl.Python
 
 extends "Utils.pkl"
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 
 /// A mapping of resource actionIDs to their corresponding [ResourcePython] objects.
-resources: Mapping<String, ResourcePython>?
+Resources: Mapping<String, ResourcePython>?
 
 /// Represents an executable Python resource, including its associated script,
 /// environment variables, and execution details such as outputs and exit codes.
 class ResourcePython {
         /// Regular expression used to validate environment variable names.
-        hidden envStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
+        hidden EnvStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
 
         /// Validates the name of an environment variable.
         /// Throws an error if the name contains invalid characters, starts with a number,
         /// or is empty.
-        hidden isValidEnv = (str) -> if (str.matches(envStringRegex)) true else throw("Error: Invalid environment variable name. Ensure it includes only alphanumeric characters or underscores, starts with a letter or underscore, and is not empty.")
+        hidden isValidEnv = (str) -> if (str.matches(EnvStringRegex)) true else throw("Error: Invalid environment variable name. Ensure it includes only alphanumeric characters or underscores, starts with a letter or underscore, and is not empty.")
 
         /// A mapping of environment variable names to their values.
-        env: Mapping<String(isValidEnv), String>?
+        Env: Mapping<String(isValidEnv), String>?
 
         /// Specifies the conda environment in which this Python script will execute, if Anaconda is
         /// installed.
-        condaEnvironment: String?
+        CondaEnvironment: String?
 
         /// The Python script to be executed.
-        script: String
+        Script: String
 
         /// Captures the standard error output from the execution.
-        stderr: String?
+        Stderr: String?
 
         /// Captures the standard output from the execution.
-        stdout: String?
+        Stdout: String?
 
         /// The exit code of the executed command. Defaults to 0.
-        exitCode: Int? = 0
+        ExitCode: Int? = 0
 
         /// The file path where the Python stdout of this resource is saved
-        file: String?
+        File: String?
 
         /// The listing of the item iteration results
-        itemValues: Listing<String>?
+        ItemValues: Listing<String>?
 
         /// A timestamp indicating when the command was executed, as an unsigned 64-bit integer.
-        timestamp: Duration?
+        Timestamp: Duration?
 
         /// The maximum duration (in seconds) allowed for the command execution. Defaults to 60 seconds.
-        timeoutDuration: Duration? = 60.s
+        TimeoutDuration: Duration? = 60.s
 }
 
 /// Retrieves the [ResourcePython] associated with the specified [actionID].
@@ -67,44 +67,44 @@ class ResourcePython {
 /// - [actionID]: The actionID of the resource to retrieve.
 /// - Returns: The [ResourcePython] object associated with the specified actionID.
 function resource(actionID: String): ResourcePython =
-        if (resources.getOrNull(actionID) != null) resources[actionID] else new ResourcePython {
-                condaEnvironment = ""
-                script = ""
-                stderr = ""
-                stdout = ""
-                exitCode = 0
-                itemValues {}
+        if (Resources.getOrNull(actionID) != null) Resources[actionID] else new ResourcePython {
+                CondaEnvironment = ""
+                Script = ""
+                Stderr = ""
+                Stdout = ""
+                ExitCode = 0
+                ItemValues {}
         }
 
 /// Retrieves the standard error output for the specified resource [actionID].
 ///
 /// - [actionID]: The actionID of the resource.
 /// - Returns: The standard error output of the executed command.
-function stderr(actionID: String): String = if (isBase64(resource(actionID).stderr)) resource(actionID).stderr.base64Decoded else resource(actionID).stderr
+function stderr(actionID: String): String = if (isBase64(resource(actionID).Stderr)) resource(actionID).Stderr.base64Decoded else resource(actionID).Stderr
 
 /// Retrieves the standard output for the specified resource [actionID].
 ///
 /// - [actionID]: The actionID of the resource.
 /// - Returns: The standard output of the executed command.
-function stdout(actionID: String): String = if (!stderr(actionID).isEmpty) stderr(actionID) else if (isBase64(resource(actionID).stdout)) resource(actionID).stdout.base64Decoded else resource(actionID).stdout
+function stdout(actionID: String): String = if (!stderr(actionID).isEmpty) stderr(actionID) else if (isBase64(resource(actionID).Stdout)) resource(actionID).Stdout.base64Decoded else resource(actionID).Stdout
 
 /// Retrieves the exit code for the specified resource [actionID].
 ///
 /// - [actionID]: The actionID of the resource.
 /// - Returns: The exit code of the executed command.
-function exitCode(actionID: String): Int = if (isBase64(resource(actionID).exitCode)) resource(actionID).exitCode.base64Decoded else resource(actionID).exitCode
+function exitCode(actionID: String): Int = if (isBase64(resource(actionID).ExitCode)) resource(actionID).ExitCode.base64Decoded else resource(actionID).ExitCode
 
 /// Retrieves the file path containing the python stdout value associated with the specified resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the stdout for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(actionID: String): String = if (isBase64(resource(actionID).file)) resource(actionID).file.base64Decoded else resource(actionID).file
+function file(actionID: String): String = if (isBase64(resource(actionID).File)) resource(actionID).File.base64Decoded else resource(actionID).File
 
 /// Retrieves the item iteration responses for the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the item values.
 /// [Listing<String>]: A listing of expected item iteration output.
-function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).itemValues)) resource(actionID).itemValues.base64Decoded else resource(actionID).itemValues
+function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).ItemValues)) resource(actionID).ItemValues.base64Decoded else resource(actionID).ItemValues
 
 /// Retrieves the value of an environment variable for the specified resource [actionID].
 ///
@@ -113,12 +113,12 @@ function itemValues(actionID: String): Listing<String> = if (isBase64(resource(a
 /// - Returns: The value of the environment variable, or an empty string if the
 ///            variable is not set.
 function env(actionID: String, envName: String): String =
-if (!resource(actionID).env.isEmpty)
-  if (resource(actionID).env.containsKey(envName))
-    if (isBase64(resource(actionID).env[envName]))
-      resource(actionID).env[envName].base64Decoded
+if (!resource(actionID).Env.isEmpty)
+  if (resource(actionID).Env.containsKey(envName))
+    if (isBase64(resource(actionID).Env[envName]))
+      resource(actionID).Env[envName].base64Decoded
     else
-      resource(actionID).env[envName]
+      resource(actionID).Env[envName]
   else
     ""
 else

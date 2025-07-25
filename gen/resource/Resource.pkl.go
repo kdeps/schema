@@ -15,25 +15,25 @@ import (
 // category, dependencies, and how it runs.
 type Resource struct {
 	// The unique identifier for the resource, validated against [isValidActionID].
-	ActionID string `pkl:"actionID"`
+	ActionID string `pkl:"ActionID"`
 
 	// The name of the resource.
-	Name string `pkl:"name"`
+	Name string `pkl:"Name"`
 
 	// A description of the resource, providing additional context.
-	Description string `pkl:"description"`
+	Description string `pkl:"Description"`
 
 	// The category to which the resource belongs.
-	Category string `pkl:"category"`
+	Category string `pkl:"Category"`
 
 	// A listing of dependencies required by the resource, validated against [isValidDependency].
-	Requires *[]string `pkl:"requires"`
+	Requires *[]string `pkl:"Requires"`
 
 	// Defines the action items to be processed individually in a loop.
-	Items *[]string `pkl:"items"`
+	Items *[]string `pkl:"Items"`
 
 	// Defines the action to be taken for the resource.
-	Run *ResourceAction `pkl:"run"`
+	Run *ResourceAction `pkl:"Run"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a Resource

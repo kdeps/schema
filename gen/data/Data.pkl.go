@@ -21,7 +21,7 @@ type DataImpl struct {
 	*utils.UtilsImpl
 
 	// Files in the data folder mapped with the agent name and version
-	Files *map[string]map[string]string `pkl:"files"`
+	Files *map[string]map[string]string `pkl:"Files"`
 }
 
 // Files in the data folder mapped with the agent name and version

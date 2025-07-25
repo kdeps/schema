@@ -4,38 +4,38 @@
 /// server settings such as host IP and port number, as well as route definitions. The API server
 /// is designed to handle incoming requests and route them to the appropriate handlers, ensuring
 /// proper management of HTTP methods and deferred processing.
-@ModuleInfo { minPklVersion = "0.28.1" }
+@ModuleInfo { minPklVersion = "0.28.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/api_server" }
 
 open module org.kdeps.pkl.APIServer
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "APIServerResponse.pkl"
 import "APIServerRequest.pkl"
 
 /// Class representing the configuration settings for the API server.
 class APIServerSettings {
         /// The IP address the API server will bind to. Defaults to "127.0.0.1".
-        hostIP: String = "127.0.0.1"
+        HostIP: String = "127.0.0.1"
 
         /// The port number the API server will listen on. Defaults to 3000.
-        portNum: UInt16 = 3000
+        PortNum: UInt16 = 3000
 
         /// A list of trusted proxies (IPv4, IPv6, or CIDR ranges).
         /// If set, only requests passing through these proxies will have their `X-Forwarded-For`
         /// header trusted.
         /// If unset, all proxies—including potentially malicious ones—are considered trusted,
         /// which may expose the server to IP spoofing and other attacks.
-        trustedProxies: Listing<String>?
+        TrustedProxies: Listing<String>?
 
         /// A listing of routes configured for the API server.
         ///
         /// Each route defines a path and the allowed HTTP methods for that path.
-        routes: Listing<APIServerRoutes>
+        Routes: Listing<APIServerRoutes>
 
         /// Cross-Origin Resource Sharing (CORS) configuration
-        cors: CORS
+        CORS: CORSConfig
 }
 
 /// Class representing a route in the API server configuration.
@@ -49,49 +49,49 @@ class APIServerRoutes {
         hidden isValidHTTPMethod = (str) -> if (str.matches(APIServerMethodRegex)) true else throw("Error: Unsupported HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, or HEAD.")
 
         /// The path for the route in the API server.
-        path: String
+        Path: String
 
         /// A listing of allowed HTTP methods for this route, validated by the HTTP method regex.
-        methods: Listing<String(isValidHTTPMethod)>
+        Methods: Listing<String(isValidHTTPMethod)>
 }
 
 /// Cross-Origin Resource Sharing (CORS) configuration
-class CORS {
+class CORSConfig {
         /// Regex pattern for validating supported HTTP methods
-        hidden methodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
+        hidden MethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|OPTIONS|DELETE|HEAD))"#)
 
         /// Validates the HTTP method used in CORS configuration
         ///
         /// Throws an error if the method is not supported
-        hidden isValidHTTPMethod = (str) -> if (str.matches(methodRegex)) true else
+        hidden isValidHTTPMethod = (str) -> if (str.matches(MethodRegex)) true else
         throw("Unsupported HTTP method. Use: GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD")
 
         /// Enables or disables CORS support (default: false)
-        enableCORS: Boolean = false
+        EnableCORS: Boolean = false
 
         /// List of allowed origin domains for CORS requests (e.g., "https://example.com")
         ///
         /// If unset, no origins are allowed unless CORS is disabled
-        allowOrigins: Listing<String>?
+        AllowOrigins: Listing<String>?
 
         /// List of HTTP methods allowed for CORS requests, validated by regex
         ///
         /// If unset, defaults to methods specified in the route configuration
-        allowMethods: Listing<String(isValidHTTPMethod)>?
+        AllowMethods: Listing<String(isValidHTTPMethod)>?
 
         /// List of request headers allowed in CORS requests (e.g., "Content-Type")
         ///
         /// If unset, no additional headers are allowed
-        allowHeaders: Listing<String>?
+        AllowHeaders: Listing<String>?
 
         /// List of response headers exposed to clients in CORS requests
         ///
         /// If unset, no headers are exposed beyond defaults
-        exposeHeaders: Listing<String>?
+        ExposeHeaders: Listing<String>?
 
         /// Allows credentials (e.g., cookies, HTTP authentication) in CORS requests (default: true)
-        allowCredentials: Boolean = true
+        AllowCredentials: Boolean = true
 
         /// Maximum duration (in hours) for which CORS preflight responses can be cached (default: 12 hours)
-        maxAge: Duration = 12.h
+        MaxAge: Duration = 12.h
 }

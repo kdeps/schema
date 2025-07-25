@@ -40,7 +40,7 @@ var _ APIServerRequest = (*APIServerRequestImpl)(nil)
 // - Filtering files by MIME type.
 type APIServerRequestImpl struct {
 	// Represents the request URI path.
-	Path string `pkl:"path"`
+	Path string `pkl:"Path"`
 
 	// Represents the Client IP.
 	IP string `pkl:"IP"`
@@ -49,19 +49,19 @@ type APIServerRequestImpl struct {
 	ID string `pkl:"ID"`
 
 	// The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
-	Method string `pkl:"method"`
+	Method string `pkl:"Method"`
 
 	// The body data of the request, which is optional.
-	Data *string `pkl:"data"`
+	Data *string `pkl:"Data"`
 
 	// Query parameters sent with the request.
-	Params *map[string]string `pkl:"params"`
+	Params *map[string]string `pkl:"Params"`
 
 	// Headers sent with the request.
-	Headers *map[string]string `pkl:"headers"`
+	Headers *map[string]string `pkl:"Headers"`
 
 	// Files uploaded with the request, represented as a mapping of file keys to upload metadata.
-	Files *map[string]*APIServerRequestUploads `pkl:"files"`
+	Files *map[string]*APIServerRequestUploads `pkl:"Files"`
 }
 
 // Represents the request URI path.

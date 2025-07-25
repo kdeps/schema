@@ -1,15 +1,15 @@
 /// Abstractions for Data folder
-@ModuleInfo { minPklVersion = "0.28.1" }
+@ModuleInfo { minPklVersion = "0.28.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/data" }
 
 open module org.kdeps.pkl.Data
 
 extends "Utils.pkl"
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 
 /// Files in the data folder mapped with the agent name and version
-files: Mapping<String, Mapping<String, String>>?
+Files: Mapping<String, Mapping<String, String>>?
 
 /// Retrieves data file path of a given [agentName] and [fileName]
 ///
@@ -18,4 +18,4 @@ files: Mapping<String, Mapping<String, String>>?
 ///
 /// [agentName]: The key of the agent name.
 /// [fileName]: The key of the file to retrieve from the agent.
-function filepath(agentName: String, fileName: String) = if ((files.getOrNull(agentName).ifNonNull((v) -> v.containsKey(fileName))) ?? false) if (isBase64(files[agentName][fileName])) files[agentName][fileName].base64Decoded else files[agentName][fileName] else ""
+function filepath(agentName: String, fileName: String) = if ((Files.getOrNull(agentName).ifNonNull((v) -> v.containsKey(fileName))) ?? false) if (isBase64(Files[agentName][fileName])) Files[agentName][fileName].base64Decoded else Files[agentName][fileName] else ""

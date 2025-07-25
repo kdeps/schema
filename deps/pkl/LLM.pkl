@@ -13,39 +13,39 @@
 /// - Providing methods to retrieve various pieces of information related to the LLM interaction,
 /// such as the prompt text, response text, file paths, JSON keys, and whether image generation was
 /// involved.
-@ModuleInfo { minPklVersion = "0.28.1" }
+@ModuleInfo { minPklVersion = "0.28.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/llm" }
 
 open module org.kdeps.pkl.LLM
 
 extends "Utils.pkl"
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "pkl:json"
 
 /// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-resources: Mapping<String, ResourceChat>?
+Resources: Mapping<String, ResourceChat>?
 
 /// Class representing the details of a chat interaction with an LLM model, including prompts, responses,
 /// file generation, and additional metadata.
 class ResourceChat {
         /// The name of the LLM model used for the chat.
-        model: String = "llama3.2"
+        Model: String = "llama3.2"
 
         /// The role used to instruct the LLM model.
-        role: String?
+        Role: String?
 
         /// The prompt text sent to the LLM model.
-        prompt: String?
+        Prompt: String?
 
         /// A scenario is where a series of conditions to be sent for this chat.
-        scenario: Listing<MultiChat>?
+        Scenario: Listing<MultiChat>?
 
         /// Tools that interact with the LLM model
-        tools: Listing<Tool>?
+        Tools: Listing<Tool>?
 
         /// A listing of file paths or identifiers associated with the chat.
-        files: Listing<String>?
+        Files: Listing<String>?
 
         /// Whether the LLM's response is in JSON format. Defaults to `false`.
         JSONResponse: Boolean? = false
@@ -54,55 +54,55 @@ class ResourceChat {
         JSONResponseKeys: Listing<String>?
 
         /// The actual response returned from the LLM model.
-        response: String?
+        Response: String?
 
         /// The file path where the LLM response of this resource is saved
-        file: String?
+        File: String?
 
         /// The listing of the item iteration results
-        itemValues: Listing<String>?
+        ItemValues: Listing<String>?
 
         /// A timestamp of when the response was generated, represented as an unsigned 64-bit integer.
-        timestamp: Duration?
+        Timestamp: Duration?
 
         /// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
-        timeoutDuration: Duration? = 60.s
+        TimeoutDuration: Duration? = 60.s
 }
 
 /// Class representing the details of a multi-prompt interaction with an LLM model
 class MultiChat {
         /// The role used to instruct the LLM model.
-        role: String?
+        Role: String?
 
         /// The prompt text sent to the LLM model.
-        prompt: String?
+        Prompt: String?
 }
 
 /// Class representing the details of a tool interaction with an LLM model
 class Tool {
         /// name of the function
-        name: String?
+        Name: String?
 
         /// path of the script or inline
-        script: String?
+        Script: String?
 
         /// description of what the tool does
-        description: String?
+        Description: String?
 
         /// mapping of parameter names to their properties
-        parameters: Mapping<String, ToolProperties>?
+        Parameters: Mapping<String, ToolProperties>?
 }
 
 /// Class representing a single parameter's properties in a tool definition
 class ToolProperties {
         /// Whether this parameter is required; defaults to true
-        required: Boolean? = true
+        Required: Boolean? = true
 
         /// Data type of the parameter (e.g., 'string', 'integer')
-        type: String?
+        Type: String?
 
         /// description of the parameter for clarity
-        description: String?
+        Description: String?
 }
 
 /// Retrieves the [ResourceChat] associated with the given [actionID].
@@ -112,25 +112,25 @@ class ToolProperties {
 /// [actionID]: The actionID of the resource to retrieve.
 /// [ResourceChat]: The [ResourceChat] object associated with the resource actionID.
 function resource(actionID: String): ResourceChat =
-        if (resources.getOrNull(actionID) != null) resources[actionID] else new ResourceChat {
-                prompt = ""
-                response = ""
+        if (Resources.getOrNull(actionID) != null) Resources[actionID] else new ResourceChat {
+                Prompt = ""
+                Response = ""
                 JSONResponse = false
                 JSONResponseKeys {}
-                itemValues {}
+                ItemValues {}
         }
 
 /// Retrieves the response text associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response for.
 /// [str]: The response text returned by the LLM model.
-function response(actionID: String): String = if (isBase64(resource(actionID).response)) resource(actionID).response.base64Decoded else resource(actionID).response
+function response(actionID: String): String = if (isBase64(resource(actionID).Response)) resource(actionID).Response.base64Decoded else resource(actionID).Response
 
 /// Retrieves the prompt text associated with the resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the prompt for.
 /// [str]: The prompt text sent to the LLM model.
-function prompt(actionID: String): String = if (isBase64(resource(actionID).prompt)) resource(actionID).prompt.base64Decoded else resource(actionID).prompt
+function prompt(actionID: String): String = if (isBase64(resource(actionID).Prompt)) resource(actionID).Prompt.base64Decoded else resource(actionID).Prompt
 
 /// Retrieves whether the LLM's response for the resource [actionID] is in JSON format.
 ///
@@ -148,10 +148,10 @@ function JSONResponseKeys(actionID: String): Listing<String> = if (isBase64(reso
 ///
 /// [actionID]: The actionID of the resource to retrieve the item values.
 /// [Listing<String>]: A listing of expected item iteration output.
-function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).itemValues)) resource(actionID).itemValues.base64Decoded else resource(actionID).itemValues
+function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).ItemValues)) resource(actionID).ItemValues.base64Decoded else resource(actionID).ItemValues
 
 /// Retrieves the file path containing the LLM response associated with the specified resource [actionID].
 ///
 /// [actionID]: The actionID of the resource to retrieve the response for.
 /// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
-function file(actionID: String): String = if (isBase64(resource(actionID).file)) resource(actionID).file.base64Decoded else resource(actionID).file
+function file(actionID: String): String = if (isBase64(resource(actionID).File)) resource(actionID).File.base64Decoded else resource(actionID).File

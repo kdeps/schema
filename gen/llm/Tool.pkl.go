@@ -4,14 +4,14 @@ package llm
 // Class representing the details of a tool interaction with an LLM model
 type Tool struct {
 	// name of the function
-	Name *string `pkl:"name"`
+	Name *string `pkl:"Name"`
 
 	// path of the script or inline
-	Script *string `pkl:"script"`
+	Script *string `pkl:"Script"`
 
 	// description of what the tool does
-	Description *string `pkl:"description"`
+	Description *string `pkl:"Description"`
 
 	// mapping of parameter names to their properties
-	Parameters *map[string]*ToolProperties `pkl:"parameters"`
+	Parameters *map[string]*ToolProperties `pkl:"Parameters"`
 }

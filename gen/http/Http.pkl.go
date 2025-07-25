@@ -25,7 +25,7 @@ type HTTPImpl struct {
 	*utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-	Resources *map[string]*ResourceHTTPClient `pkl:"resources"`
+	Resources *map[string]*ResourceHTTPClient `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.

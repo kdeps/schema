@@ -2,57 +2,57 @@
 /// resources within the KDEPS framework. It allows for the specification
 /// of package management, including additional package repositories (PPAs)
 /// and models to be used within Docker containers.
-@ModuleInfo { minPklVersion = "0.28.1" }
+@ModuleInfo { minPklVersion = "0.28.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/docker" }
 
 module org.kdeps.pkl.Docker
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 
 /// Class representing the settings for Docker configurations.
 /// It includes options for specifying packages, PPAs, and models.
 class DockerSettings {
         /// Regular expression for validating params variable names.
-        hidden paramStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
+        hidden ParamStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
 
         /// Function to check if a given params variable name is valid.
-        hidden isValidParams = (str) -> if (str.matches(paramStringRegex)) true else throw("Error: Invalid params name: The params name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
+        hidden isValidParams = (str) -> if (str.matches(ParamStringRegex)) true else throw("Error: Invalid params name: The params name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
 
         /// Sets the timezone (see the TZ Identifier here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-        timezone: String = "Etc/UTC"
+        Timezone: String = "Etc/UTC"
 
         /// Sets if Anaconda3 will be pre-installed in the Image
-        installAnaconda: Boolean = false
+        InstallAnaconda: Boolean = false
 
-        /// Conda packages to install when `installAnaconda` is set to true.
+        /// Conda packages to install when `InstallAnaconda` is set to true.
         ///
         /// Example:
-        /// condaPackages {
+        /// CondaPackages {
         ///   ["base"] { // The name of the Anaconda environment
         ///     ["main"] = "diffuser"  // Package "diffuser" from the "main" channel
         ///   }
         /// }
-        condaPackages: Mapping<String, Mapping<String, String>>?
+        CondaPackages: Mapping<String, Mapping<String, String>>?
 
         /// Python packages that will be pre-installed.
-        pythonPackages: Listing<String>?
+        PythonPackages: Listing<String>?
 
         /// A list of packages to be installed in the Docker container.
-        packages: Listing<String>?
+        Packages: Listing<String>?
 
         /// A list of APT or PPA repos to be added.
-        repositories: Listing<String>?
+        Repositories: Listing<String>?
 
         /// A mandatory list of models to be used in the Docker environment.
-        models: Listing<String>
+        Models: Listing<String>
 
         /// Sets the Ollama Docker version to be use as the base image
-        ollamaImageTag: String = "0.6.5"
+        OllamaImageTag: String = "0.6.5"
 
         /// A mapping of build arguments variable name
-        args: Mapping<String(isValidParams), String>?
+        Args: Mapping<String(isValidParams), String>?
 
         /// A mapping of build env variable names that persist in the image and container
-        env: Mapping<String(isValidParams), String>?
+        Env: Mapping<String(isValidParams), String>?
 }
