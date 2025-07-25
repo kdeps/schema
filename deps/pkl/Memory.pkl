@@ -1,11 +1,11 @@
 /// Abstractions for Memory records
-@ModuleInfo { minPklVersion = "0.28.1" }
+@ModuleInfo { minPklVersion = "0.28.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/memory" }
 
 open module org.kdeps.pkl.Memory
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.9.0#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
 import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
 
 /// Retrieves a memory record by its [id]

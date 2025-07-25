@@ -7,22 +7,22 @@ import "github.com/apple/pkl-go/pkl"
 // file generation, and additional metadata.
 type ResourceChat struct {
 	// The name of the LLM model used for the chat.
-	Model string `pkl:"model"`
+	Model string `pkl:"Model"`
 
 	// The role used to instruct the LLM model.
-	Role *string `pkl:"role"`
+	Role *string `pkl:"Role"`
 
 	// The prompt text sent to the LLM model.
-	Prompt *string `pkl:"prompt"`
+	Prompt *string `pkl:"Prompt"`
 
 	// A scenario is where a series of conditions to be sent for this chat.
-	Scenario *[]*MultiChat `pkl:"scenario"`
+	Scenario *[]*MultiChat `pkl:"Scenario"`
 
 	// Tools that interact with the LLM model
-	Tools *[]*Tool `pkl:"tools"`
+	Tools *[]*Tool `pkl:"Tools"`
 
 	// A listing of file paths or identifiers associated with the chat.
-	Files *[]string `pkl:"files"`
+	Files *[]string `pkl:"Files"`
 
 	// Whether the LLM's response is in JSON format. Defaults to `false`.
 	JSONResponse *bool `pkl:"JSONResponse"`
@@ -31,17 +31,17 @@ type ResourceChat struct {
 	JSONResponseKeys *[]string `pkl:"JSONResponseKeys"`
 
 	// The actual response returned from the LLM model.
-	Response *string `pkl:"response"`
+	Response *string `pkl:"Response"`
 
 	// The file path where the LLM response of this resource is saved
-	File *string `pkl:"file"`
+	File *string `pkl:"File"`
 
 	// The listing of the item iteration results
-	ItemValues *[]string `pkl:"itemValues"`
+	ItemValues *[]string `pkl:"ItemValues"`
 
 	// A timestamp of when the response was generated, represented as an unsigned 64-bit integer.
-	Timestamp *pkl.Duration `pkl:"timestamp"`
+	Timestamp *pkl.Duration `pkl:"Timestamp"`
 
 	// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
-	TimeoutDuration *pkl.Duration `pkl:"timeoutDuration"`
+	TimeoutDuration *pkl.Duration `pkl:"TimeoutDuration"`
 }

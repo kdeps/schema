@@ -7,5 +7,5 @@ func init() {
 	pkl.RegisterMapping("org.kdeps.pkl.APIServer#APIServerSettings", APIServerSettings{})
 	pkl.RegisterMapping("org.kdeps.pkl.APIServer#APIServerRoutes", APIServerRoutes{})
 	pkl.RegisterMapping("org.kdeps.pkl.APIServer", APIServerImpl{})
-	pkl.RegisterMapping("org.kdeps.pkl.APIServer#CORS", CORS{})
+	pkl.RegisterMapping("org.kdeps.pkl.APIServer#CORSConfig", CORSConfig{})
 }

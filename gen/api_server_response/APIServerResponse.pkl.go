@@ -39,25 +39,25 @@ type APIServerResponseImpl struct {
 	//
 	// - `true`: The request was successful.
 	// - `false`: The request encountered an error.
-	Success bool `pkl:"success"`
+	Success bool `pkl:"Success"`
 
 	// Additional metadata related to the API request.
 	//
 	// Provides request-specific details such as headers, properties, and tracking information.
-	Meta *APIServerResponseMetaBlock `pkl:"meta"`
+	Meta *APIServerResponseMetaBlock `pkl:"Meta"`
 
 	// The response block containing data returned by the API server in a successful request, if any.
 	//
 	// If the request was successful, this block contains the data associated with the response.
 	// [APIServerResponseBlock]: Contains a listing of the returned data items.
-	Response *APIServerResponseBlock `pkl:"response"`
+	Response *APIServerResponseBlock `pkl:"Response"`
 
 	// The error block containing details of any error encountered during the API request.
 	//
 	// If the request was unsuccessful, this block contains the error code and error message
 	// returned by the server.
 	// [APIServerErrorsBlock]: Contains the error code and message explaining the issue.
-	Errors *[]*APIServerErrorsBlock `pkl:"errors"`
+	Errors *[]*APIServerErrorsBlock `pkl:"Errors"`
 }
 
 // A Boolean flag indicating whether the API request was successful.

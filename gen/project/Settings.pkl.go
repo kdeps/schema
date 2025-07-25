@@ -38,5 +38,5 @@ type Settings struct {
 	// These settings define how the Docker agent should be configured for the project.
 	// [Docker.DockerSettings]: Includes properties such as Docker image, container settings, and other
 	// Docker-specific configurations.
-	AgentSettings *docker.DockerSettings `pkl:"agentSettings"`
+	AgentSettings *docker.DockerSettings `pkl:"AgentSettings"`
 }

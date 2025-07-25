@@ -25,7 +25,7 @@ type ExecImpl struct {
 	*utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceExec] objects.
-	Resources *map[string]*ResourceExec `pkl:"resources"`
+	Resources *map[string]*ResourceExec `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceExec] objects.

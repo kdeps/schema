@@ -47,40 +47,40 @@ var _ Workflow = (*WorkflowImpl)(nil)
 // workflow references, action formats, and versioning patterns.
 type WorkflowImpl struct {
 	// The name of the workflow, validated to contain only alphanumeric characters.
-	Name string `pkl:"name"`
+	Name string `pkl:"Name"`
 
 	// A description of the workflow, providing details about its purpose and behavior.
-	Description string `pkl:"description"`
+	Description string `pkl:"Description"`
 
 	// A URI pointing to the website or landing page for the workflow, if available.
-	Website *string `pkl:"website"`
+	Website *string `pkl:"Website"`
 
 	// A listing of the authors or contributors to the workflow.
-	Authors *[]string `pkl:"authors"`
+	Authors *[]string `pkl:"Authors"`
 
 	// A URI pointing to the documentation for the workflow, if available.
-	Documentation *string `pkl:"documentation"`
+	Documentation *string `pkl:"Documentation"`
 
 	// A URI pointing to the repository where the workflow's code or configuration can be found.
-	Repository *string `pkl:"repository"`
+	Repository *string `pkl:"Repository"`
 
 	// Hero image to be used on this AI Agent.
-	HeroImage *string `pkl:"heroImage"`
+	HeroImage *string `pkl:"HeroImage"`
 
 	// The icon to be used on this AI agent.
-	AgentIcon *string `pkl:"agentIcon"`
+	AgentIcon *string `pkl:"AgentIcon"`
 
 	// The version of the workflow, following semantic versioning rules (e.g., 1.0.0).
-	Version string `pkl:"version"`
+	Version string `pkl:"Version"`
 
 	// The default action to be performed by the workflow, validated to ensure proper formatting.
-	TargetActionID string `pkl:"targetActionID"`
+	TargetActionID string `pkl:"TargetActionID"`
 
 	// A listing of external workflows referenced by this workflow, validated by format.
-	Workflows []string `pkl:"workflows"`
+	Workflows []string `pkl:"Workflows"`
 
 	// The project settings that this workflow depends on.
-	Settings *project.Settings `pkl:"settings"`
+	Settings *project.Settings `pkl:"Settings"`
 }
 
 // The name of the workflow, validated to contain only alphanumeric characters.

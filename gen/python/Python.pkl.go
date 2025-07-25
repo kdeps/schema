@@ -25,7 +25,7 @@ type PythonImpl struct {
 	*utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their corresponding [ResourcePython] objects.
-	Resources *map[string]*ResourcePython `pkl:"resources"`
+	Resources *map[string]*ResourcePython `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their corresponding [ResourcePython] objects.

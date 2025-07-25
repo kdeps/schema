@@ -35,7 +35,7 @@ type LLMImpl struct {
 	*utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-	Resources *map[string]*ResourceChat `pkl:"resources"`
+	Resources *map[string]*ResourceChat `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceChat] objects.
