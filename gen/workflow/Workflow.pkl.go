@@ -9,7 +9,7 @@ import (
 )
 
 type Workflow interface {
-	GetName() string
+	GetAgentID() string
 
 	GetDescription() string
 
@@ -47,7 +47,7 @@ var _ Workflow = (*WorkflowImpl)(nil)
 // workflow references, action formats, and versioning patterns.
 type WorkflowImpl struct {
 	// The name of the workflow, validated to contain only alphanumeric characters.
-	Name string `pkl:"Name"`
+	AgentID string `pkl:"AgentID"`
 
 	// A description of the workflow, providing details about its purpose and behavior.
 	Description string `pkl:"Description"`
@@ -84,8 +84,8 @@ type WorkflowImpl struct {
 }
 
 // The name of the workflow, validated to contain only alphanumeric characters.
-func (rcv *WorkflowImpl) GetName() string {
-	return rcv.Name
+func (rcv *WorkflowImpl) GetAgentID() string {
+	return rcv.AgentID
 }
 
 // A description of the workflow, providing details about its purpose and behavior.
