@@ -35,6 +35,12 @@ type DockerSettings struct {
 	// Sets the Ollama Docker version to be use as the base image
 	OllamaImageTag string `pkl:"OllamaImageTag"`
 
+	// Boolean flag to enable or disable offline mode for the agent.
+	//
+	// - `true`: The agent runs in offline mode with no internet access.
+	// - `false`: The agent can access external resources. Default is `false`.
+	OfflineMode bool `pkl:"OfflineMode"`
+
 	// A mapping of build arguments variable name
 	Args *map[string]string `pkl:"Args"`
 
