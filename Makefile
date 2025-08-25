@@ -26,3 +26,5 @@ generate:
 			mv $(OUTPUT_DIR)/github.com/kdeps/schema/deps/pkl $(OUTPUT_DIR); \
 			rm -rf $(OUTPUT_DIR)/github.com; \
 		fi
+
+		@mkdir -p assets/pkl && cp deps/pkl/*.pkl assets/pkl/
