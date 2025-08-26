@@ -1,5 +1,5 @@
 plugins {
-  id("org.pkl-lang") version "0.28.2"
+  id("org.pkl-lang") version "0.29.0"
 }
 
 val maybeVersion = System.getenv("VERSION")
@@ -11,7 +11,11 @@ pkl {
         if (maybeVersion != null) {
           environmentVariables.put("VERSION", maybeVersion)
         }
-        projectDirectories.from(file("deps/pkl/"))
+        projectDirectories.from(
+          file("deps/pkl/"),
+          file("deps/pkl/external/pkl-pantry/packages/k8s.contrib/"),
+          file("deps/pkl/external/pkl-pantry/packages/pkl.pipe/")
+        )
       }
     }
   }
@@ -19,8 +23,7 @@ pkl {
   if (maybeVersion != null) {
     pkldocGenerators {
       register("pkldoc") {
-        sourceModules =
-          listOf(uri("package://schema.kdeps.com/core@$maybeVersion"))
+        sourceModules = listOf(uri("package://schema.kdeps.com/core@$maybeVersion"))
       }
     }
   }
