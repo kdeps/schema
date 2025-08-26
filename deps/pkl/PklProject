@@ -50,4 +50,9 @@ dependencies {
     ["pkl.pipe"] = import("external/pkl-pantry/packages/pkl.pipe/PklProject")
     ["openapi"] = import("external/pkl-pantry/packages/org.openapis.v3/PklProject")
     ["org.openapis.v3.contrib"] = import("external/pkl-pantry/packages/org.openapis.v3.contrib/PklProject")
+    ["jsonschema"] = import("external/pkl-pantry/packages/org.json_schema/PklProject")
+    ["jsonschema.contrib"] = import("external/pkl-pantry/packages/org.json_schema.contrib/PklProject")
+    ["syntax"] = import("external/pkl-pantry/packages/pkl.experimental.syntax/PklProject")
+    ["toml"] = import("external/pkl-pantry/packages/pkl.toml/PklProject")
+    ["deepToTyped"] = import("external/pkl-pantry/packages/pkl.experimental.deepToTyped/PklProject")
 }
