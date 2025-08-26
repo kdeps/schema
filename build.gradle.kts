@@ -12,8 +12,7 @@ pkl {
           environmentVariables.put("VERSION", maybeVersion)
         }
         projectDirectories.from(
-          file("deps/pkl/"),
-          file("assets/external/pkl-pantry/packages/pkl.experimental.uri/")
+          file("deps/pkl/")
         )
       }
     }
