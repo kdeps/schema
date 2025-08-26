@@ -6,7 +6,7 @@
 open module org.kdeps.pkl.Data
 
 extends "Utils.pkl"
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
 
 /// Files in the data folder mapped with the agent name and version
 Files: Mapping<String, Mapping<String, String>>?

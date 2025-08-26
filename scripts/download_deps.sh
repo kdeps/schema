@@ -3,7 +3,7 @@
 # Script to download external PKL dependencies for offline use
 set -e
 
-DEPS_DIR="assets/external"
+DEPS_DIR="assets/pkl/external"
 VERSIONS_FILE="versions.json"
 
 # Check if versions.json exists

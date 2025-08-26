@@ -23,6 +23,8 @@ setup-offline:
 	@echo "🛠️  Setting up offline dependencies..."
 	@./scripts/download_deps.sh
 	@mkdir -p assets/pkl && cp deps/pkl/*.pkl assets/pkl/
+	@mkdir -p assets/pkl/external
+	@echo "🔗 Updating imports to use local paths..."
 	@./scripts/update_imports.sh
 	@echo "✅ Offline dependencies setup complete!"
 
@@ -48,7 +50,9 @@ generate: setup-offline
 	@echo "📁 Recreating embedded assets..."
 	@rm -rf assets/pkl
 	@mkdir -p assets/pkl && cp deps/pkl/*.pkl assets/pkl/
-	@mkdir -p assets/external
+	@mkdir -p assets/pkl/external
+	@echo "🔗 Updating imports to use local paths..."
+	@./scripts/update_imports.sh
 
 	@echo "🧪 Testing offline functionality..."
 	@if pkl eval deps/pkl/Tool.pkl --no-cache --format json >/dev/null 2>&1; then \
@@ -83,7 +87,7 @@ clean-all:
 	@echo "🧹 Cleaning all generated files and dependencies..."
 	@rm -rf gen/
 	@rm -rf assets/pkl/
-	@rm -rf assets/external/
+	@rm -rf assets/pkl/external/
 	@echo "✅ Full clean completed!"
 
 # Show help

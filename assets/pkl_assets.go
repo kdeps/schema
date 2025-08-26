@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-//go:embed pkl external
+//go:embed pkl
 var PKLFS embed.FS
 
 // GetPKLFile reads a specific PKL file from the embedded filesystem
@@ -19,7 +19,7 @@ func GetPKLFile(filename string) ([]byte, error) {
 	}
 
 	// Try external directory
-	path = fmt.Sprintf("external/%s", filename)
+	path = fmt.Sprintf("pkl/external/%s", filename)
 	return PKLFS.ReadFile(path)
 }
 
@@ -40,7 +40,7 @@ func GetPKLFileFromPKL(filename string) ([]byte, error) {
 
 // GetExternalFile reads a specific file from the external directory
 func GetExternalFile(filename string) ([]byte, error) {
-	path := fmt.Sprintf("external/%s", filename)
+	path := fmt.Sprintf("pkl/external/%s", filename)
 	return PKLFS.ReadFile(path)
 }
 
@@ -63,7 +63,7 @@ func ListPKLFiles() ([]string, error) {
 // ListExternalFiles returns all files in the external directory (recursive)
 func ListExternalFiles() ([]string, error) {
 	var files []string
-	err := walkDir("external", &files)
+	err := walkDir("pkl/external", &files)
 	return files, err
 }
 

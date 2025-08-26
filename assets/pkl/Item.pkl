@@ -8,8 +8,8 @@
 
 open module org.kdeps.pkl.Item
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl"
-import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
+import "external/pkl-pantry/packages/pkl.experimental.uri/URI.pkl"
 import "pkl:test"
 import "pkl:json"
 

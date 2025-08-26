@@ -15,6 +15,14 @@ pkl {
           file("deps/pkl/")
         )
       }
+      register("makePackagesOffline") {
+        if (maybeVersion != null) {
+          environmentVariables.put("VERSION", maybeVersion)
+        }
+        projectDirectories.from(
+          file("assets/pkl/")
+        )
+      }
     }
   }
   // ./gradlew pkldoc
