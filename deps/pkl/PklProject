@@ -44,3 +44,8 @@ package {
     // A brief description of the package's purpose.
     description = "Core PKL modules for KDEPS"
 }
+
+dependencies {
+    ["k8s.contrib"] = import("external/pkl-pantry/packages/k8s.contrib/PklProject")
+    ["pkl.pipe"] = import("external/pkl-pantry/packages/pkl.pipe/PklProject")
+}

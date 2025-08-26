@@ -20,6 +20,22 @@
           "files": [
             "URI.pkl"
           ]
+        },
+        "k8s.contrib": {
+          "version": "1.0.2",
+          "files": [
+            "convert.pkl"
+          ]
+        },
+        "pkl.pipe": {
+          "version": "1.0.2",
+          "files": [
+            "kubeval.pkl",
+            "text.pkl",
+            "yaml.pkl",
+            "json.pkl",
+            "shellshortcuts.pkl"
+          ]
         }
       }
     }
