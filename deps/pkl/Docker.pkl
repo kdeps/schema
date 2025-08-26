@@ -8,7 +8,7 @@
 
 module org.kdeps.pkl.Docker
 
-import "external/pkl-go/codegen/src/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl"
 
 /// Class representing the settings for Docker configurations.
 /// It includes options for specifying packages, PPAs, and models.
