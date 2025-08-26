@@ -1,13 +1,13 @@
 /// Common parser and document renderer functions used across all resources.
 ///
 /// Tools for Parsing and Generating JSON, YAML and XML documents
-@ModuleInfo { minPklVersion = "0.28.2" }
+@ModuleInfo { minPklVersion = "0.29.0" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/document" }
 
 open module org.kdeps.pkl.Document
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
 
 import "pkl:json"
 import "pkl:test"

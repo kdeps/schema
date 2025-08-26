@@ -1,0 +1,47 @@
+{
+  "pkl": {
+    "version": "0.29.0",
+    "url": "https://github.com/apple/pkl/releases"
+  },
+  "dependencies": {
+    "pkl-go": {
+      "version": "0.11.1",
+      "url": "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1",
+      "files": [
+        "go.pkl"
+      ]
+    },
+    "pkl-pantry": {
+      "version": "1.0.3", 
+      "url": "package://pkg.pkl-lang.org/pkl-pantry",
+      "packages": {
+        "pkl.experimental.uri": {
+          "version": "1.0.3",
+          "files": [
+            "URI.pkl"
+          ]
+        },
+        "pkl.toml": {
+          "version": "1.0.2",
+          "files": [
+            "toml.pkl"
+          ]
+        },
+        "pkl.experimental.net": {
+          "version": "1.0.1",
+          "files": [
+            "ipv4.pkl",
+            "ipv6.pkl",
+            "u128.pkl"
+          ]
+        },
+        "pkl.experimental.syntax": {
+          "version": "1.0.0",
+          "files": [
+            "syntax.pkl"
+          ]
+        }
+      }
+    }
+  }
+}

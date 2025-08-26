@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-//go:embed pkl/*.pkl
+//go:embed pkl
 var PKLFS embed.FS
 
 // GetPKLFile reads a specific PKL file from the embedded filesystem
