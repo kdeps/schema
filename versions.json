@@ -36,6 +36,44 @@
             "json.pkl",
             "shellshortcuts.pkl"
           ]
+        },
+        "org.openapis.v3": {
+          "version": "2.1.2",
+          "files": [
+            "Schema.pkl",
+            "Document.pkl",
+            "Info.pkl",
+            "Components.pkl",
+            "Operation.pkl",
+            "Parameter.pkl",
+            "Response.pkl",
+            "SecurityScheme.pkl",
+            "Server.pkl",
+            "PathItem.pkl",
+            "MediaType.pkl",
+            "RequestBody.pkl",
+            "Header.pkl",
+            "Tag.pkl",
+            "Contact.pkl",
+            "License.pkl",
+            "ExternalDocs.pkl",
+            "Example.pkl",
+            "Encoding.pkl",
+            "Reference.pkl",
+            "Link.pkl",
+            "OAuthFlows.pkl",
+            "Security.pkl",
+            "ServerVariable.pkl",
+            "BaseParameter.pkl",
+            "HTTPResponse.pkl",
+            "expressions.pkl"
+          ]
+        },
+        "org.openapis.v3.contrib": {
+          "version": "1.0.4",
+          "files": [
+            "SchemaGenerator.pkl"
+          ]
         }
       }
     }

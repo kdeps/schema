@@ -48,4 +48,6 @@ package {
 dependencies {
     ["k8s.contrib"] = import("external/pkl-pantry/packages/k8s.contrib/PklProject")
     ["pkl.pipe"] = import("external/pkl-pantry/packages/pkl.pipe/PklProject")
+    ["openapi"] = import("external/pkl-pantry/packages/org.openapis.v3/PklProject")
+    ["org.openapis.v3.contrib"] = import("external/pkl-pantry/packages/org.openapis.v3.contrib/PklProject")
 }
