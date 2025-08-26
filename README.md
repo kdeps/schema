@@ -9,12 +9,31 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.38
-  - update readme/relnotes
+### Latest Release: v0.2.44
+  - Offline part 2 (#34)
+    * added embedded assets support
+    
+    * implement offline-ready PKL dependency management system
+
+### Previous Highlights
+- **v0.2.43**:   - added OfflineMode to run agents on offline (#33)
+    
+    added AGENTS.md file
+
+- **v0.2.42**:   - Change workflow Name -> AgentID for much clearer config id
+
+- **v0.2.41**:   - hotfix: upgrade pkl version to 0.28.2
+    
+    new uniform schema semantics (#32)
+
+- **v0.2.40**:   - embed deps/pkl schema files via go:embed
+
+- **v0.2.39**:   - add the pkl files in the output_dir for expose to tests
+
+- **v0.2.38**:   - update readme/relnotes
     
     add resource#itemValues function to obtain item iteration values
 
-### Previous Highlights
 - **v0.2.37**:   - add pkl:json imports per each resource
 
 - **v0.2.36**:   - added the itemValues per resource to obtain the iteration results
