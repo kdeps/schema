@@ -28,7 +28,7 @@
           ]
         },
         "pkl.pipe": {
-          "version": "1.0.1",
+          "version": "1.0.2",
           "files": [
             "kubeval.pkl",
             "text.pkl",
