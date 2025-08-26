@@ -28,13 +28,51 @@
           ]
         },
         "pkl.pipe": {
-          "version": "1.0.2",
+          "version": "1.0.1",
           "files": [
             "kubeval.pkl",
             "text.pkl",
             "yaml.pkl",
             "json.pkl",
             "shellshortcuts.pkl"
+          ]
+        },
+        "org.openapis.v3": {
+          "version": "2.1.2",
+          "files": [
+            "Schema.pkl",
+            "Document.pkl",
+            "Info.pkl",
+            "Components.pkl",
+            "Operation.pkl",
+            "Parameter.pkl",
+            "Response.pkl",
+            "SecurityScheme.pkl",
+            "Server.pkl",
+            "PathItem.pkl",
+            "MediaType.pkl",
+            "RequestBody.pkl",
+            "Header.pkl",
+            "Tag.pkl",
+            "Contact.pkl",
+            "License.pkl",
+            "ExternalDocs.pkl",
+            "Example.pkl",
+            "Encoding.pkl",
+            "Reference.pkl",
+            "Link.pkl",
+            "OAuthFlows.pkl",
+            "Security.pkl",
+            "ServerVariable.pkl",
+            "BaseParameter.pkl",
+            "HTTPResponse.pkl",
+            "expressions.pkl"
+          ]
+        },
+        "org.openapis.v3.contrib": {
+          "version": "1.0.4",
+          "files": [
+            "SchemaGenerator.pkl"
           ]
         }
       }
