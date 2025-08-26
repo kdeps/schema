@@ -46,15 +46,5 @@ package {
 }
 
 dependencies {
-    ["k8s.contrib"] = import("external/pkl-pantry/packages/k8s.contrib/PklProject")
-    ["pkl.pipe"] = import("external/pkl-pantry/packages/pkl.pipe/PklProject")
-    ["openapi"] = import("external/pkl-pantry/packages/org.openapis.v3/PklProject")
-    ["org.openapis.v3.contrib"] = import("external/pkl-pantry/packages/org.openapis.v3.contrib/PklProject")
-    ["jsonschema"] = import("external/pkl-pantry/packages/org.json_schema/PklProject")
-    ["jsonschema.contrib"] = import("external/pkl-pantry/packages/org.json_schema.contrib/PklProject")
-    ["syntax"] = import("external/pkl-pantry/packages/pkl.experimental.syntax/PklProject")
-    ["toml"] = import("external/pkl-pantry/packages/pkl.toml/PklProject")
-    ["deepToTyped"] = import("external/pkl-pantry/packages/pkl.experimental.deepToTyped/PklProject")
-    ["uri"] = import("external/pkl-pantry/packages/pkl.experimental.uri/PklProject")
-    ["k8s"] { uri = "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1" }
+    ["uri"] { uri = "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3" }
 }
