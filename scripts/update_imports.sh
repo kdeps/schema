@@ -3,7 +3,7 @@
 # Script to update PKL imports to use local dependencies based on versions.json
 set -e
 
-PKL_DIR="deps/pkl"
+PKL_DIR="assets/pkl"
 VERSIONS_FILE="versions.json"
 
 # Check if versions.json exists
@@ -12,7 +12,7 @@ if [ ! -f "$VERSIONS_FILE" ]; then
     exit 1
 fi
 
-echo "Updating PKL imports to use local dependencies based on $VERSIONS_FILE..."
+echo "Updating PKL imports in $PKL_DIR to use local dependencies based on $VERSIONS_FILE..."
 
 # Process each dependency from versions.json
 jq -r '.dependencies | to_entries[] | @base64' "$VERSIONS_FILE" | while IFS= read -r row; do
@@ -30,7 +30,7 @@ jq -r '.dependencies | to_entries[] | @base64' "$VERSIONS_FILE" | while IFS= rea
             echo "$dependency" | jq -r '.value.files[]' | while IFS= read -r file; do
                 echo "  Updating imports for file: $file"
                 
-                local_path="external/pkl-go/codegen/src/$file"
+                local_path="../external/pkl-go/codegen/src/$file"
                 remote_pattern="package://pkg\.pkl-lang\.org/pkl-go/pkl\.golang@[^\"]*#/$file"
                 
                 # Update imports in all PKL files
@@ -54,7 +54,7 @@ jq -r '.dependencies | to_entries[] | @base64' "$VERSIONS_FILE" | while IFS= rea
                     
                     # Convert package name to path (e.g., pkl.experimental.uri -> pkl/experimental/uri)
                     pkg_path=$(echo "$pkg_name" | tr '.' '/')
-                    local_path="external/pkl-pantry/packages/$pkg_name/$file"
+                    local_path="../external/pkl-pantry/packages/$pkg_name/$file"
                     remote_pattern="package://pkg\.pkl-lang\.org/pkl-pantry/$pkg_name@[^\"]*#/$file"
                     
                     # Update imports in all PKL files

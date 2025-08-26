@@ -13,7 +13,7 @@ pkl {
         }
         projectDirectories.from(
           file("deps/pkl/"),
-          file("deps/pkl/external/pkl-pantry/packages/pkl.experimental.uri/")
+          file("assets/external/pkl-pantry/packages/pkl.experimental.uri/")
         )
       }
     }

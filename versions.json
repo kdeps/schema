@@ -80,7 +80,7 @@
           ]
         },
         "pkl.experimental.syntax": {
-          "version": "1.0.2",
+          "version": "1.1.0",
           "files": [
             "TypeNode.pkl",
             "ExpressionNode.pkl",
@@ -94,7 +94,7 @@
           ]
         },
         "pkl.toml": {
-          "version": "1.0.1",
+          "version": "1.0.2",
           "files": [
             "toml.pkl"
           ]
@@ -112,7 +112,7 @@
           ]
         },
         "pkl.pipe": {
-          "version": "1.0.1",
+          "version": "1.0.2",
           "files": [
             "kubeval.pkl",
             "text.pkl",
@@ -134,7 +134,7 @@
           ]
         },
         "pkl.table": {
-          "version": "1.0.1",
+          "version": "1.1.0",
           "files": [
             "TableRenderer.pkl"
           ]
