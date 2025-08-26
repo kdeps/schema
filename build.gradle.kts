@@ -16,7 +16,13 @@ pkl {
           file("deps/pkl/external/pkl-pantry/packages/k8s.contrib/"),
           file("deps/pkl/external/pkl-pantry/packages/pkl.pipe/"),
           file("deps/pkl/external/pkl-pantry/packages/org.openapis.v3/"),
-          file("deps/pkl/external/pkl-pantry/packages/org.openapis.v3.contrib/")
+          file("deps/pkl/external/pkl-pantry/packages/org.openapis.v3.contrib/"),
+          file("deps/pkl/external/pkl-pantry/packages/org.json_schema/"),
+          file("deps/pkl/external/pkl-pantry/packages/org.json_schema.contrib/"),
+          file("deps/pkl/external/pkl-pantry/packages/pkl.experimental.syntax/"),
+          file("deps/pkl/external/pkl-pantry/packages/pkl.toml/"),
+          file("deps/pkl/external/pkl-pantry/packages/pkl.experimental.deepToTyped/"),
+          file("deps/pkl/external/pkl-pantry/packages/pkl.experimental.uri/")
         )
       }
     }
