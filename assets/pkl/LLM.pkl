@@ -1,0 +1,157 @@
+/// Abstractions for Kdeps LLM Resource
+///
+/// This module provides an abstraction layer for managing resources related to
+/// large language model (LLM) interactions within the Kdeps system.
+///
+/// It defines the [ResourceChat] class, which encapsulates the metadata and responses
+/// related to LLM model interactions. The class allows for managing prompts, responses,
+/// file generations, image generation flags, and the handling of JSON responses.
+///
+/// Key functionalities include:
+/// - Managing a collection of resources that represent LLM interactions through a mapping of unique
+/// resource actionIDs to [ResourceChat] objects.
+/// - Providing methods to retrieve various pieces of information related to the LLM interaction,
+/// such as the prompt text, response text, file paths, JSON keys, and whether image generation was
+/// involved.
+@ModuleInfo { minPklVersion = "0.29.0" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/llm" }
+
+open module org.kdeps.pkl.LLM
+
+extends "Utils.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
+import "pkl:json"
+
+/// A mapping of resource actionIDs to their associated [ResourceChat] objects.
+Resources: Mapping<String, ResourceChat>?
+
+/// Class representing the details of a chat interaction with an LLM model, including prompts, responses,
+/// file generation, and additional metadata.
+class ResourceChat {
+        /// The name of the LLM model used for the chat.
+        Model: String = "llama3.2"
+
+        /// The role used to instruct the LLM model.
+        Role: String?
+
+        /// The prompt text sent to the LLM model.
+        Prompt: String?
+
+        /// A scenario is where a series of conditions to be sent for this chat.
+        Scenario: Listing<MultiChat>?
+
+        /// Tools that interact with the LLM model
+        Tools: Listing<Tool>?
+
+        /// A listing of file paths or identifiers associated with the chat.
+        Files: Listing<String>?
+
+        /// Whether the LLM's response is in JSON format. Defaults to `false`.
+        JSONResponse: Boolean? = false
+
+        /// A listing of keys expected in the JSON response from the LLM model.
+        JSONResponseKeys: Listing<String>?
+
+        /// The actual response returned from the LLM model.
+        Response: String?
+
+        /// The file path where the LLM response of this resource is saved
+        File: String?
+
+        /// The listing of the item iteration results
+        ItemValues: Listing<String>?
+
+        /// A timestamp of when the response was generated, represented as an unsigned 64-bit integer.
+        Timestamp: Duration?
+
+        /// The timeout duration (in seconds) for the LLM interaction. Defaults to 60 seconds.
+        TimeoutDuration: Duration? = 60.s
+}
+
+/// Class representing the details of a multi-prompt interaction with an LLM model
+class MultiChat {
+        /// The role used to instruct the LLM model.
+        Role: String?
+
+        /// The prompt text sent to the LLM model.
+        Prompt: String?
+}
+
+/// Class representing the details of a tool interaction with an LLM model
+class Tool {
+        /// name of the function
+        Name: String?
+
+        /// path of the script or inline
+        Script: String?
+
+        /// description of what the tool does
+        Description: String?
+
+        /// mapping of parameter names to their properties
+        Parameters: Mapping<String, ToolProperties>?
+}
+
+/// Class representing a single parameter's properties in a tool definition
+class ToolProperties {
+        /// Whether this parameter is required; defaults to true
+        Required: Boolean? = true
+
+        /// Data type of the parameter (e.g., 'string', 'integer')
+        Type: String?
+
+        /// description of the parameter for clarity
+        Description: String?
+}
+
+/// Retrieves the [ResourceChat] associated with the given [actionID].
+///
+/// If the resource is not found, returns a new [ResourceChat] with default values.
+///
+/// [actionID]: The actionID of the resource to retrieve.
+/// [ResourceChat]: The [ResourceChat] object associated with the resource actionID.
+function resource(actionID: String): ResourceChat =
+        if (Resources.getOrNull(actionID) != null) Resources[actionID] else new ResourceChat {
+                Prompt = ""
+                Response = ""
+                JSONResponse = false
+                JSONResponseKeys {}
+                ItemValues {}
+        }
+
+/// Retrieves the response text associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the response for.
+/// [str]: The response text returned by the LLM model.
+function response(actionID: String): String = if (isBase64(resource(actionID).Response)) resource(actionID).Response.base64Decoded else resource(actionID).Response
+
+/// Retrieves the prompt text associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the prompt for.
+/// [str]: The prompt text sent to the LLM model.
+function prompt(actionID: String): String = if (isBase64(resource(actionID).Prompt)) resource(actionID).Prompt.base64Decoded else resource(actionID).Prompt
+
+/// Retrieves whether the LLM's response for the resource [actionID] is in JSON format.
+///
+/// [actionID]: The actionID of the resource to check for JSON response.
+/// [bool]: True if the response is in JSON format, otherwise False.
+function JSONResponse(actionID: String): Boolean = if (isBase64(resource(actionID).JSONResponse)) resource(actionID).JSONResponse.base64Decoded else resource(actionID).JSONResponse
+
+/// Retrieves the JSON response keys for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the JSON response keys for.
+/// [Listing<String>]: A listing of expected JSON keys in the response.
+function JSONResponseKeys(actionID: String): Listing<String> = if (isBase64(resource(actionID).JSONResponseKeys)) resource(actionID).JSONResponseKeys.base64Decoded else resource(actionID).JSONResponseKeys
+
+/// Retrieves the item iteration responses for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the item values.
+/// [Listing<String>]: A listing of expected item iteration output.
+function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).ItemValues)) resource(actionID).ItemValues.base64Decoded else resource(actionID).ItemValues
+
+/// Retrieves the file path containing the LLM response associated with the specified resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the response for.
+/// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
+function file(actionID: String): String = if (isBase64(resource(actionID).File)) resource(actionID).File.base64Decoded else resource(actionID).File

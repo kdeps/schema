@@ -1,0 +1,64 @@
+/// This module defines the settings and configurations for Docker-related
+/// resources within the KDEPS framework. It allows for the specification
+/// of package management, including additional package repositories (PPAs)
+/// and models to be used within Docker containers.
+@ModuleInfo { minPklVersion = "0.29.0" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/docker" }
+
+module org.kdeps.pkl.Docker
+
+import "external/pkl-go/codegen/src/go.pkl"
+
+/// Class representing the settings for Docker configurations.
+/// It includes options for specifying packages, PPAs, and models.
+class DockerSettings {
+        /// Regular expression for validating params variable names.
+        hidden ParamStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
+
+        /// Function to check if a given params variable name is valid.
+        hidden isValidParams = (str) -> if (str.matches(ParamStringRegex)) true else throw("Error: Invalid params name: The params name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
+
+        /// Sets the timezone (see the TZ Identifier here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+        Timezone: String = "Etc/UTC"
+
+        /// Sets if Anaconda3 will be pre-installed in the Image
+        InstallAnaconda: Boolean = false
+
+        /// Conda packages to install when `InstallAnaconda` is set to true.
+        ///
+        /// Example:
+        /// CondaPackages {
+        ///   ["base"] { // The name of the Anaconda environment
+        ///     ["main"] = "diffuser"  // Package "diffuser" from the "main" channel
+        ///   }
+        /// }
+        CondaPackages: Mapping<String, Mapping<String, String>>?
+
+        /// Python packages that will be pre-installed.
+        PythonPackages: Listing<String>?
+
+        /// A list of packages to be installed in the Docker container.
+        Packages: Listing<String>?
+
+        /// A list of APT or PPA repos to be added.
+        Repositories: Listing<String>?
+
+        /// A mandatory list of models to be used in the Docker environment.
+        Models: Listing<String>
+
+        /// Sets the Ollama Docker version to be use as the base image
+        OllamaImageTag: String = "0.6.5"
+
+        /// Boolean flag to enable or disable offline mode for the agent.
+        ///
+        /// - `true`: The agent runs in offline mode with no internet access.
+        /// - `false`: The agent can access external resources. Default is `false`.
+        OfflineMode: Boolean = false
+
+        /// A mapping of build arguments variable name
+        Args: Mapping<String(isValidParams), String>?
+
+        /// A mapping of build env variable names that persist in the image and container
+        Env: Mapping<String(isValidParams), String>?
+}

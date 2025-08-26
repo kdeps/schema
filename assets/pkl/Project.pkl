@@ -1,0 +1,51 @@
+/// Abstractions for Kdeps Project Settings
+///
+/// This module defines the structure for project-specific settings in the Kdeps system. It includes
+/// configurations related to the API server, Docker agent settings, and security settings. These
+/// settings allow customization of the project's environment, such as enabling API server mode or
+/// configuring Docker and security parameters.
+@ModuleInfo { minPklVersion = "0.29.0" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/project" }
+
+open module org.kdeps.pkl.Project
+
+import "external/pkl-go/codegen/src/go.pkl"
+
+import "APIServer.pkl"
+import "WebServer.pkl"
+import "Docker.pkl"
+
+/// Class representing the settings and configurations for a project.
+class Settings {
+        /// Boolean flag to enable or disable API server mode for the project.
+        ///
+        /// - `true`: The project runs in API server mode.
+        /// - `false`: The project does not run in API server mode. Default is `false`.
+        APIServerMode: Boolean = false
+
+        /// Settings for configuring the API server, which is optional.
+        ///
+        /// If API server mode is enabled, these settings provide additional configuration for the API server.
+        /// [APIServer.APIServerSettings]: Defines the structure and properties for API server settings.
+        APIServer: APIServer.APIServerSettings?
+
+        /// Boolean flag to enable or disable Web server mode for the project.
+        ///
+        /// - `true`: The project runs in Web server mode.
+        /// - `false`: The project does not run in Web server mode. Default is `false`.
+        WebServerMode: Boolean = false
+
+        /// Settings for configuring the Web server, which is optional.
+        ///
+        /// If Web server mode is enabled, these settings provide additional configuration for the Web server.
+        /// [WebServer.WebServerConfig]: Defines the structure and properties for Web server settings.
+        WebServer: WebServer.WebServerSettings?
+
+        /// Docker-related settings for the project's agent.
+        ///
+        /// These settings define how the Docker agent should be configured for the project.
+        /// [Docker.DockerSettings]: Includes properties such as Docker image, container settings, and other
+        /// Docker-specific configurations.
+        AgentSettings: Docker.DockerSettings
+}

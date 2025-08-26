@@ -1,0 +1,36 @@
+/// Abstractions for Session records
+@ModuleInfo { minPklVersion = "0.29.0" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/session" }
+
+open module org.kdeps.pkl.Session
+
+import "external/pkl-go/codegen/src/go.pkl"
+import "external/pkl-pantry/packages/pkl.experimental.uri/URI.pkl"
+
+/// Retrieves a session record by its [id]
+///
+/// Returns the textual content of the session entry, or an empty string if not found.
+///
+/// [id]: The identifier of the session record.
+function getRecord(id: String): String = read("session:/\(id)")?.text ?? ""
+
+/// Sets or updates a session record with a new [value]
+///
+/// Returns the set value as confirmation.
+///
+/// [id]: The identifier of the session record.
+/// [value]: The value to store.
+function setRecord(id: String, value: String): String = read("session:/\(id)?op=set&value=\(URI.encodeComponent(value))")?.text ?? ""
+
+/// Deletes a session record by its [id]
+///
+/// Returns a confirmation message or an empty string if the record was not found.
+///
+/// [id]: The identifier of the session record.
+function deleteRecord(id: String): String = read("session:/\(id)?op=delete")?.text ?? ""
+
+/// Clears all session records
+///
+/// Returns a confirmation message.
+function clear(): String = read("session:/_?op=clear")?.text ?? ""

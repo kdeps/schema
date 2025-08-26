@@ -1,0 +1,276 @@
+= Changelog
+
+
+[[release-0.11.1]]
+== 0.11.1 (2025-08-11)
+
+=== Fixes
+
+* Support loading certs from ~/.pkl/cacerts in pkl-gen-go (https://github.com/apple/pkl-go/pull/154[#154], https://github.com/apple/pkl-go/pull/155[#155]).
+
+=== Contributors ❤️
+
+Thank you to all the contributors for this release!
+
+* https://github.com/bioball[@bioball]
+* https://github.com/HT154[@HT154]
+
+
+[[release-0.11.0]]
+== 0.11.0 (2025-07-28)
+
+=== Additions
+
+* Add support for interop with `Bytes` introduced in Pkl 0.29 (https://github.com/apple/pkl-go/pull/150[#150]).
+** `Bytes` maps to type `[]byte` during codegen.
+** Add methods `Evaluator.EvaluateOutputBytes` and `Evaluator.EvaluateOutputFilesBytes`.
+* Add support for HTTP rewrites (https://github.com/apple/pkl-go/pull/147[#147]).
++
+As part of this change, this adds field `EvaluatorOptions.Rewrites` and `ProjectEvaluatorSettingsHttp.Rewrites`.
+* Add method `pkl.RegisterStrictMapping` (https://github.com/apple/pkl-go/pull/136[#136]).
+
+=== Changes
+
+* Change `pkl-gen-go` to generate non-pointers for object types (https://github.com/apple/pkl-go/pull/136[#136]).
++
+Currently, `pkl-gen-go` will generate pointers for object types (values backed by a Go struct).
+At the same time, it will also generate pointers for Pkl nullable types.
+As a result, it's not possible to tell whether an object is nullable or not just by looking at the Go type.
+To address this, all object types are generated as their plain type, without pointers.
++
+Code generated with older versions of `pkl-gen-go` will continue to work as-is.
++
+Thanks to https://github.com/thomaspurchas[@thomaspurchas] for their contributions to this feature!
+
+=== Fixes
+
+* Fix abstract class extending another abstract class (https://github.com/apple/pkl-go/pull/140[#140]).
+* Incorrect conversion logic in `DataSize.ToUnit` method (https://github.com/apple/pkl-go/issues/145[#145]).
+
+=== Breaking Changes
+
+* `pkl-gen-go` now requires Pkl 0.29.
+
+=== Miscellaneous
+
+* Code improvements (https://github.com/apple/pkl-go/pull/127[#127], https://github.com/apple/pkl-go/pull/133[#133], https://github.com/apple/pkl-go/pull/143[#143]).
+
+=== Contributors ❤️
+
+Thank you to all the contributors for this release!
+
+* https://github.com/alexeyxo[@alexeyxo]
+* https://github.com/bioball[@bioball]
+* https://github.com/dovys[@dovys]
+* https://github.com/kasugamirai[@kasugamirai]
+* https://github.com/KushalP[@KushalP]
+* https://github.com/thomaspurchas[@thomaspurchas]
+
+[[release-0.10.0]]
+== 0.10.0 (2025-04-03)
+
+=== Additions
+
+* Bump go version to 1.23 (https://github.com/apple/pkl-go/pull/129[#129]).
+* pkl-gen-go: Add support for `tool` directive in `go.mod` (used by go 1.24) (https://github.com/apple/pkl-go/pull/128[#128]).
+
+=== Changes
+
+* `EvaluateExpression` uses `any` instead of `interface{}` (https://github.com/apple/pkl-go/pull/113[#113]).
+
+=== Miscellaneous
+
+* Add license header formatting using hawkeye (https://github.com/apple/pkl-go/pull/124[#124]).
+* Refactor resource and module reader lookup methods for improved readability (https://github.com/apple/pkl-go/pull/123[#123]).
+
+=== Fixes
+
+* Run evaluator tests in serial to avoid race conditions (https://github.com/apple/pkl-go/pull/126[#126]).
+
+=== Contributors ❤️
+
+Thank you to all the contributors for this release!
+
+* https://github.com/beauhoyt[@beauhoyt]
+* https://github.com/bioball[@bioball]
+* https://github.com/hvhiggins[@hvhiggins]
+* https://github.com/kasugamirai[@kasugamirai]
+
+[[release-0.9.0]]
+== 0.9.0 (2024-12-18)
+
+=== Additions
+
+* Add new struct fields to match added standard library properties in Pkl 0.27 (https://github.com/apple/pkl-go/pull/101[#101], https://github.com/apple/pkl-go/pull/119[#119]).
+* Add a new API called `ExternalReaderClient`, which provides a way to write an external module or resource reader (https://github.com/apple/pkl-go/pull/101[#101]).
+
+=== Miscellaneous
+
+* Codebase improvements (https://github.com/apple/pkl-go/pull/110[#110], https://github.com/apple/pkl-go/pull/112[#112]).
+
+=== Fixes
+
+* Fix a memory leak where `NewProjectEvaluatorWithCommand` creates an ephemeral evaluator but does not close it (https://github.com/apple/pkl-go/pull/112[#112]).
+
+=== Contributors ❤️
+
+Thank you to all the contributors for this release!
+
+* https://github.com/bioball[@bioball]
+* https://github.com/HT154[@HT154]
+* https://github.com/kasugamirai[@kasugamirai]
+
+[[release-0.8.1]]
+== 0.8.1 (2024-10-10)
+
+=== Fixes
+
+* Fix an issue where `EvaluatorOptions.Http.Proxy.NoProxy` is being ignored (https://github.com/apple/pkl-go/pull/106[#106]).
+
+=== Miscellaneous
+
+* Documentation improvements (https://github.com/apple/pkl-go/pull/94[#94], https://github.com/apple/pkl-go/pull/105[#105]).
+
+=== Contributors ❤️
+
+Thank you to all the contributors for this release!
+
+* https://github.com/HT154[@HT154]
+* https://github.com/StefMa[@StefMa]
+* https://github.com/kitsune7[@kitsune7]
+
+[[release-0.8.0]]
+== 0.8.0 (2024-07-04)
+
+=== Additions
+
+* Support for Pkl 0.26
+
+=== Fixes
+
+* Make the loading of `generator-settings.pkl` observe the CLI's `--cache-dir` for air-gapped use.
+* Fix decoding of sets when input type is any.
+
+=== Miscellaneous
+
+* Improved performance and clarity of version comparison.
+* Fix unhandled error in the evaluator manager.
+* Reduced lock contention in `atomicRandom`.
+* Use `path.join` to make the resolution of `PklProject` files platform independent.
+
+=== Breaking changes
+
+* `NewProjectEvaluator` now interprets `PklProject` files with the same configuration as the modules in the project.
+
+=== Contributors ❤️
+
+Thank you to all the contributors for this release!
+
+* https://github.com/bioball[@bioball]
+* https://github.com/holzensp[@holzensp]
+* https://github.com/kasugamirai[@kasugamirai]
+* https://github.com/HT154[@HT154]
+
+[[release-0.7.0]]
+== 0.7.0 (2024-06-06)
+
+=== Additions
+
+* Add a way to set the cache dir when running `pkl-gen-go`.
+    - Add `--cache-dir` flag to the CLI.
+    - Add `cacheDir` property to `GeneratorSettings.pkl`.
+
+=== Fixes
+
+* Correct typos in some doc comments.
+* Address a possible race condition that prevents correctly closing the evaluator.
+* Gracefully shut down the `pkl` child process. The process is now given five seconds to shut down before forcefully terminated.
+* Change pkl-gen-go to handle path separators correctly on Windows.
+* Fix unix file permissions when writing files.
+* Correctly resolve pkl-gen-go's `--project-dir` flag when given a relative path.
+
+=== Miscellaneous
+
+* Fix typos.
+* Update doc comments on modules to prevent godoc from processing license headers as documentation.
+
+=== Breaking changes
+
+* `type DurationUnit` and `type DataSizeUnit` are now backed by `int64`, to avoid possible int overflow issues on 32 bit systems.
+* `EvaluatorOptions.ProjectDir` is renamed to `EvaluatorOptions.ProjectBaseURI` to be forwards-compatible with scheme-agnostic projects coming in Pkl 0.27.
+
+=== Contributors ❤️
+
+Thank you to all the contributors for this release!
+
+* https://github.com/bioball[@bioball]
+* https://github.com/stackoverflow[@stackoverflow]
+* https://github.com/kasugamirai[@kasugamirai]
+* https://github.com/jstrachan[@jstrachan]
+* https://github.com/candy12t[@candy12t]
+* https://github.com/KushalP[@KushalP]
+* https://github.com/HT154[@HT154]
+
+[[release-0.6.0]]
+== 0.6.0 (2024-03-11)
+
+=== Additions
+
+* Add support for using `pkl-gen-go` with projects (link:https://github.com/apple/pkl-go/pull/22[#22])
+** Add `--project-dir` flag to `pkl-gen-go` command.
+** Add `uri` and `projectDir` setting to `GeneratorSettings.pkl`.
+
+=== Changes
+
+* Bump Go to 1.21 (link:https://github.com/apple/pkl-go/pull/13[#13])
+
+=== Micellaneous
+
+* Documentation fixes (link:https://github.com/apple/pkl-go/pull/19[#19])
+
+=== Contributors ❤️
+
+Thank you to all the contributors for this release!
+
+* https://github.com/bioball[@bioball]
+* https://github.com/Nasfame[@Nasfame]
+* https://github.com/vincentvdk[@vince]
+
+[[release-0.5.3]]
+== 0.5.3 (2024-02-09)
+
+=== Fixes
+
+* Fixes an issue where `pkl-gen-go` can address an invalid path if installed through `go install`.
+
+[[release-0.5.2]]
+== 0.5.2 (2024-02-08)
+
+=== Fixes
+
+* Fixes an issue where `pkl-gen-go` can address an invalid path to GeneratorSettings.pkl (link:https://github.com/apple/pkl-go/pull/3[#3]) (thanks, link:https://github.com/kasugamirai[@kasugamirai]!).
+* Addresses possible nil panics if URLs from `pkl server` are invalid (link:https://github.com/apple/pkl-go/pull/5[#5]).
+* Fixes some documentation bugs (link:https://github.com/apple/pkl-go/pull/1[#1], link:https://github.com/apple/pkl-go/pull/6[#6]).
+
+=== Contributors ❤️
+
+Thank you to all the contributors for this release!
+
+* https://github.com/bioball[@bioball]
+* https://github.com/kasugamirai[@kasugamirai]
+
+[[release-0.5.1]]
+== 0.5.1 (2024-02-02)
+
+* Fixes an issue where pkl-gen-go includes broken links
+
+=== Contributors ❤️
+
+Thank you to all the contributors for this release!
+
+* https://github.com/bioball[@bioball]
+
+[[release-0.5.0]]
+== 0.5.0 (2024-02-02)
+
+Initial library release.

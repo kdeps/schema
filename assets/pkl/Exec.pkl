@@ -1,0 +1,117 @@
+/// This module defines the execution resources for the KDEPS framework.
+/// It allows for the management and execution of commands, capturing their
+/// standard output and error, as well as handling environment variables and
+/// exit codes. The module provides functionalities to retrieve and manage
+/// executable resources based on their identifiers.
+@ModuleInfo { minPklVersion = "0.29.0" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/exec" }
+
+open module org.kdeps.pkl.Exec
+
+extends "Utils.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
+import "pkl:json"
+
+/// A mapping of resource actionIDs to their associated [ResourceExec] objects.
+Resources: Mapping<String, ResourceExec>?
+
+/// Class representing an executable resource, which includes the command to be executed,
+/// its environment variables, and various output/error properties.
+class ResourceExec {
+        /// Regular expression for validating environment variable names.
+        hidden EnvStringRegex = Regex(#"^[a-zA-Z_]\w*$"#)
+
+        /// Function to check if a given environment variable name is valid.
+        hidden isValidEnv = (str) -> if (str.matches(EnvStringRegex)) true else throw("Error: Invalid env name: The env name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers), does not start with a number, and is not empty.")
+
+        /// A mapping of environment variable names to their values.
+        Env: Mapping<String(isValidEnv), String>?
+
+        /// The command to be executed.
+        Command: String
+
+        /// The standard error output from the execution.
+        Stderr: String?
+
+        /// The standard output from the execution.
+        Stdout: String?
+
+        /// The exit code of the executed command. Defaults to 0.
+        ExitCode: Int? = 0
+
+        /// The file path where the stdout value of this resource is saved
+        File: String?
+
+        /// The listing of the item iteration results
+        ItemValues: Listing<String>?
+
+        /// A timestamp of when the command was executed, represented as an unsigned 64-bit integer.
+        Timestamp: Duration?
+
+        /// The timeout duration (in seconds) for the command execution. Defaults to 60 seconds.
+        TimeoutDuration: Duration? = 60.s
+}
+
+/// Retrieves the [ResourceExec] associated with the given [actionID].
+///
+/// If the resource is not found, returns a new [ResourceExec] with default values.
+///
+/// [actionID]: The actionID of the resource to retrieve.
+/// [ResourceExec]: The [ResourceExec] object associated with the resource actionID.
+function resource(actionID: String): ResourceExec =
+        if (Resources.getOrNull(actionID) != null) Resources[actionID] else new ResourceExec {
+                Command = ""
+                Stderr = ""
+                Stdout = ""
+                ExitCode = 0
+                File = ""
+                ItemValues {}
+        }
+
+/// Retrieves the standard error output associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the standard error output for.
+/// [str]: The standard error output from the executed command.
+function stderr(actionID: String): String = if (isBase64(resource(actionID).Stderr)) resource(actionID).Stderr.base64Decoded else resource(actionID).Stderr
+
+/// Retrieves the standard output associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the standard output for.
+/// [str]: The standard output from the executed command.
+function stdout(actionID: String): String = if (!stderr(actionID).isEmpty) stderr(actionID) else if (isBase64(resource(actionID).Stdout)) resource(actionID).Stdout.base64Decoded else resource(actionID).Stdout
+
+/// Retrieves the exit code associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the exit code for.
+/// [int]: The exit code of the executed command.
+function exitCode(actionID: String): Int = if (isBase64(resource(actionID).ExitCode)) resource(actionID).ExitCode.base64Decoded else resource(actionID).ExitCode
+
+/// Retrieves the file path containing the standard output associated with the specified resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the standard output for.
+/// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
+function file(actionID: String): String = if (isBase64(resource(actionID).File)) resource(actionID).File.base64Decoded else resource(actionID).File
+
+/// Retrieves the item iteration responses for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the item values.
+/// [Listing<String>]: A listing of expected item iteration output.
+function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).ItemValues)) resource(actionID).ItemValues.base64Decoded else resource(actionID).ItemValues
+
+/// Retrieves the value of the specified environment variable for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the environment variable for.
+/// [envName]: The name of the environment variable to retrieve.
+/// [str]: The value of the specified environment variable, or an empty string if not found.
+function env(actionID: String, envName: String): String =
+if (!resource(actionID).Env.isEmpty)
+  if (resource(actionID).Env.containsKey(envName))
+    if (isBase64(resource(actionID).Env[envName]))
+      resource(actionID).Env[envName].base64Decoded
+    else
+      resource(actionID).Env[envName]
+  else
+    ""
+else
+  ""

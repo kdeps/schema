@@ -1,0 +1,38 @@
+/// Abstractions for managing records in a for loop
+///
+/// This module provides functions to interact with records representing iterations or elements in a for loop.
+/// The module supports retrieving, navigating, and listing records without requiring a specific identifier.
+@ModuleInfo { minPklVersion = "0.29.0" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/item" }
+
+open module org.kdeps.pkl.Item
+
+import "external/pkl-go/codegen/src/go.pkl"
+import "external/pkl-pantry/packages/pkl.experimental.uri/URI.pkl"
+import "pkl:test"
+import "pkl:json"
+
+/// Retrieves the record for the current iteration
+///
+/// Returns the textual content of the most recent loop record, or an empty string if no record is found.
+function current(): String = read("item:/_?op=current")?.text ?? ""
+
+/// Retrieves the record for the previous iteration
+///
+/// Returns the textual content of the previous loop record, or an empty string if no previous record exists.
+function prev(): String = read("item:/_?op=prev")?.text ?? ""
+
+/// Retrieves the record for the next iteration
+///
+/// Returns the textual content of the next loop record, or an empty string if no next record exists.
+function next(): String = read("item:/_?op=next")?.text ?? ""
+
+/// Lists all record results associated with the for loop
+///
+/// Returns a textual representation of all loop records, or an empty string if no records are found.
+function values(id: String): Listing<String> =
+  if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(read("item:/\(id)?op=values")?.text)) == null)
+    new Listing {...?(new json.Parser { useMapping = false }).parse(read("item:/\(id)?op=values")?.text)}
+  else
+    new Listing {}

@@ -1,0 +1,120 @@
+/// This module defines the settings and configurations for HTTP client
+/// resources within the KDEPS framework. It enables the management of
+/// HTTP requests, including method specifications, request data, headers,
+/// and handling of responses. This module provides functionalities to
+/// retrieve and manage HTTP client resources based on their identifiers.
+@ModuleInfo { minPklVersion = "0.29.0" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/http" }
+
+open module org.kdeps.pkl.HTTP
+
+extends "Utils.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
+import "pkl:json"
+
+/// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
+Resources: Mapping<String, ResourceHTTPClient>?
+
+/// Class representing an HTTP client resource, which includes details
+/// about the HTTP method, URL, request data, headers, and response.
+class ResourceHTTPClient {
+        /// Regular expression for validating HTTP methods.
+        hidden ApiMethodRegex = Regex(#"^(?i:(GET|POST|PUT|PATCH|DELETE|HEAD))"#)
+
+        /// Function to check if a given HTTP method is valid.
+        hidden isValidHTTPMethod = (str) -> if (str.matches(ApiMethodRegex)) true else throw("Error: Invalid HTTP method. The provided HTTP method is not supported. Please use one of the following methods: GET, POST, PUT, PATCH, DELETE, or HEAD.")
+
+        /// The HTTP method to be used for the request.
+        Method: String(isValidHTTPMethod)
+
+        /// The URL to which the request will be sent.
+        Url: Uri
+
+        /// Optional data to be sent with the request.
+        Data: Listing<String>?
+
+        /// A mapping of headers to be included in the request.
+        Headers: Mapping<String, String>?
+
+        /// A mapping of parameters to be included in the request.
+        Params: Mapping<String, String>?
+
+        /// The response received from the HTTP request.
+        Response: ResponseBlock?
+
+        /// The file path where the response body value of this resource is saved
+        File: String?
+
+        /// The listing of the item iteration results
+        ItemValues: Listing<String>?
+
+        /// A timestamp of when the request was made, represented as an unsigned 64-bit integer.
+        Timestamp: Duration?
+
+        /// The timeout duration (in seconds) for the HTTP request. Defaults to 60 seconds.
+        TimeoutDuration: Duration? = 60.s
+}
+
+/// Class representing the response block of an HTTP request.
+/// It contains the body and headers of the response.
+class ResponseBlock {
+        /// The body of the response.
+        Body: String?
+
+        /// A mapping of response headers.
+        Headers: Mapping<String, String>?
+}
+
+/// Retrieves the [ResourceHTTPClient] associated with the given [actionID].
+///
+/// If the resource is not found, returns a new [ResourceHTTPClient] with default values.
+///
+/// [actionID]: The actionID of the resource to retrieve.
+/// [ResourceHTTPClient]: The [ResourceHTTPClient] object associated with the resource actionID.
+function resource(actionID: String): ResourceHTTPClient =
+        if (Resources.getOrNull(actionID) != null) Resources[actionID] else new ResourceHTTPClient {
+                Method = "GET"
+                Url = ""
+                Data {}
+                Headers {}
+                Params {}
+                Response {}
+                File = ""
+                ItemValues {}
+        }
+
+/// Retrieves the body of the response associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the response body for.
+/// [str]: The body of the response from the HTTP request.
+function responseBody(actionID: String): String = if (isBase64(resource(actionID).Response.Body)) resource(actionID).Response.Body.base64Decoded else resource(actionID).Response.Body
+
+/// Retrieves the file path containing the response body associated with the specified resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the response body for.
+/// Returns the decoded content if the file is Base64-encoded; otherwise, returns the file content as-is.
+function file(actionID: String): String = if (isBase64(resource(actionID).File)) resource(actionID).File.base64Decoded else resource(actionID).File
+
+/// Retrieves the item iteration responses for the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the item values.
+/// [Listing<String>]: A listing of expected item iteration output.
+function itemValues(actionID: String): Listing<String> = if (isBase64(resource(actionID).ItemValues)) resource(actionID).ItemValues.base64Decoded else resource(actionID).ItemValues
+
+/// Retrieves the specified response header associated with the resource [actionID].
+///
+/// [actionID]: The actionID of the resource to retrieve the response header for.
+/// [headeractionID]: The name of the header to retrieve.
+/// [str]: The value of the specified response header, or an empty string if not found.
+function responseHeader(actionID: String, headeractionID: String): String =
+if (!resource(actionID).Response.Headers.isEmpty)
+  if (resource(actionID).Response.Headers.containsKey(headeractionID))
+    if (isBase64(resource(actionID).Response.Headers[headeractionID]))
+      resource(actionID).Response.Headers[headeractionID].base64Decoded
+    else
+      resource(actionID).Response.Headers[headeractionID]
+  else
+    ""
+else
+  ""

@@ -1,0 +1,75 @@
+/// Common parser and document renderer functions used across all resources.
+///
+/// Tools for Parsing and Generating JSON, YAML and XML documents
+@ModuleInfo { minPklVersion = "0.29.0" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/document" }
+
+open module org.kdeps.pkl.Document
+
+import "external/pkl-go/codegen/src/go.pkl"
+
+import "pkl:json"
+import "pkl:test"
+import "pkl:math"
+import "pkl:platform"
+import "pkl:semver"
+import "pkl:shell"
+import "pkl:xml"
+import "pkl:yaml"
+
+/// Parses JSON data and returns a Dynamic type.
+function JSONParser(data: String) =
+  if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)) == null)
+    (new json.Parser { useMapping = false }).parse(data)
+  else
+    null
+
+/// Parses JSON data and returns a Mapping type.
+function JSONParserMapping(data: String) =
+  if (test.catchOrNull(() -> (new json.Parser { useMapping = true }).parse(data)) == null)
+    (new json.Parser { useMapping = true }).parse(data)
+  else
+    null
+
+/// Renders a JSON document.
+function JSONRenderDocument(value: Any) =
+  if (test.catchOrNull(() -> (new JsonRenderer {}).renderDocument(value)) == null)
+    (new JsonRenderer {}).renderDocument(value)
+  else
+    null
+
+/// Renders a single JSON value.
+function JSONRenderValue(value: Any) =
+  if (test.catchOrNull(() -> (new JsonRenderer {}).renderValue(value)) == null)
+    (new JsonRenderer {}).renderValue(value)
+  else
+    null
+
+/// Renders a YAML document.
+function yamlRenderDocument(value: Any) =
+  if (test.catchOrNull(() -> (new YamlRenderer {}).renderDocument(value)) == null)
+    (new YamlRenderer {}).renderDocument(value)
+  else
+    null
+
+/// Renders a single YAML value.
+function yamlRenderValue(value: Any) =
+  if (test.catchOrNull(() -> (new YamlRenderer {}).renderValue(value)) == null)
+    (new YamlRenderer {}).renderValue(value)
+  else
+    null
+
+/// Renders an XML document.
+function xmlRenderDocument(value: Any) =
+  if (test.catchOrNull(() -> (new PListRenderer {}).renderDocument(value)) == null)
+    (new PListRenderer {}).renderDocument(value)
+  else
+    null
+
+/// Renders a single XML value.
+function xmlRenderValue(value: Any) =
+  if (test.catchOrNull(() -> (new PListRenderer {}).renderValue(value)) == null)
+    (new PListRenderer {}).renderValue(value)
+  else
+    null

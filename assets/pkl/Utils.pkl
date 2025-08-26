@@ -1,0 +1,14 @@
+/// Tools for Kdeps Resources
+///
+/// This module includes tools for interacting with Kdeps
+@ModuleInfo { minPklVersion = "0.29.0" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/utils" }
+
+open module org.kdeps.pkl.Utils
+
+import "external/pkl-go/codegen/src/go.pkl"
+import "pkl:test"
+
+// Test if string is Base64Encoded
+function isBase64(str: String) = test.catchOrNull(() -> str.base64Decoded) == null

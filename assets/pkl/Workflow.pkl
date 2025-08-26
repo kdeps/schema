@@ -1,0 +1,86 @@
+/// Abstractions for Kdeps Workflow Management
+///
+/// This module provides functionality for defining and managing workflows within the Kdeps system.
+/// It handles workflow validation, versioning, and linking to external actions, repositories, and
+/// documentation. Workflows are defined by a name, description, version, actions, and can reference
+/// external workflows and settings.
+///
+/// This module also ensures the proper structure of workflows using validation checks for names,
+/// workflow references, action formats, and versioning patterns.
+@ModuleInfo { minPklVersion = "0.29.0" }
+
+@go.Package { name = "github.com/kdeps/schema/gen/workflow" }
+
+open module org.kdeps.pkl.Workflow
+
+import "external/pkl-go/codegen/src/go.pkl"
+
+import "Project.pkl"
+
+/// Regex pattern for validating workflow names (alphanumeric characters only).
+hidden NameStringRegex = Regex(#"(^\w+$)"#)
+
+/// Regex pattern for validating actions (alphanumeric or `@package/action:version`).
+hidden ActionStringRegex = Regex(#"^(\w+|@\w+(/[\w-]+)(:[\w.]+)?)$"#)
+
+/// Regex pattern for validating workflows (`@package/action:version`).
+hidden WorkflowStringRegex = Regex(#"^@[\w-]+(/[\w-]+)?(:[\w.]+)?$"#)
+
+/// Regex pattern for validating version numbers (e.g., 1.0.0, 2.1).
+hidden VersionStringRegex = Regex(#"^(\d+\.)?(\d+\.)?(\*|\d+)$"#)
+
+/// Checks if the provided name is valid (alphanumeric only).
+///
+/// Throws an error if the name contains invalid characters.
+hidden isValidName = (str) -> if (str.matches(NameStringRegex)) true else throw("Error: Invalid name: The name contains invalid characters. Please ensure it only includes alphanumeric characters (letters and numbers) and is not empty.")
+
+/// Validates the format of a workflow reference string.
+///
+/// The workflow must start with `@`, followed by a package name, and optionally a path segment and version.
+hidden isValidWorkflow = (str) -> if (str.matches(WorkflowStringRegex)) true else throw("External workflows must start with `@`, followed by a package name, with an optional `/action` path segment and an optional `:version` (e.g., `@example`, `@example/action`, or `@example/action:1.0.0`). Ensure your input matches this format.")
+
+/// Validates the format of an action string.
+///
+/// The action must be either alphanumeric or follow the `@package/action:version` format.
+hidden isValidAction = (str) -> if (str.matches(ActionStringRegex)) true else throw("Default action must be either a simple alphanumeric string or start with `@`, followed by `/action` and an optional `:version` (e.g., `@agent/action:1.0.0`).")
+
+/// Validates the format of the version string.
+///
+/// The version must follow the semantic versioning pattern (major.minor.patch).
+hidden isValidVersion = (str) -> if (str.matches(VersionStringRegex)) true else throw("Error: Invalid version format. Expected format: major.minor.patch or major.minor.")
+
+/// The name of the workflow, validated to contain only alphanumeric characters.
+AgentID: String(isValidName)
+
+/// A description of the workflow, providing details about its purpose and behavior.
+Description: String
+
+/// A URI pointing to the website or landing page for the workflow, if available.
+Website: Uri?
+
+/// A listing of the authors or contributors to the workflow.
+Authors: Listing<String>?
+
+/// A URI pointing to the documentation for the workflow, if available.
+Documentation: Uri?
+
+/// A URI pointing to the repository where the workflow's code or configuration can be found.
+Repository: Uri?
+
+/// Hero image to be used on this AI Agent.
+HeroImage: String?
+
+/// The icon to be used on this AI agent.
+AgentIcon: String?
+
+/// The version of the workflow, following semantic versioning rules (e.g., 1.0.0).
+Version: String(isValidVersion) = "1.0.0"
+
+/// The default action to be performed by the workflow, validated to ensure proper formatting.
+TargetActionID: String(isValidAction)
+
+/// A listing of external workflows referenced by this workflow, validated by format.
+Workflows: Listing<String(isValidWorkflow)>
+
+/// The project settings that this workflow depends on.
+Settings: Project.Settings

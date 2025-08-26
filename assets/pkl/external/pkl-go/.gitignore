@@ -1,0 +1,17 @@
+/antlr/gen
+/parser/antlr
+/.idea
+.run/
+*.pb.go
+.gradle/
+*.jar
+libpkl/
+out/
+docker/files/bin/
+.vscode/
+build/
+.env
+.out
+.cicd/
+test-results/
+.pkl-lsp
