@@ -1,12 +1,12 @@
 /// Abstractions for Tool records
-@ModuleInfo { minPklVersion = "0.28.2" }
+@ModuleInfo { minPklVersion = "0.29.0" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/tool" }
 
 open module org.kdeps.pkl.Tool
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
-import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
+import "external/pkl-pantry/packages/pkl.experimental.uri/URI.pkl"
 
 /// Retrieves the output of a previously run script by its [id]
 ///

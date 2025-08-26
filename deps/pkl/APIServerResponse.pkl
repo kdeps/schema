@@ -17,7 +17,7 @@
 
 open module org.kdeps.pkl.APIServerResponse
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
 
 import "pkl:json"
 import "pkl:test"

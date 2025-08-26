@@ -1,12 +1,12 @@
 /// Abstractions for Data folder
-@ModuleInfo { minPklVersion = "0.28.2" }
+@ModuleInfo { minPklVersion = "0.29.0" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/data" }
 
 open module org.kdeps.pkl.Data
 
 extends "Utils.pkl"
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
 
 /// Files in the data folder mapped with the agent name and version
 Files: Mapping<String, Mapping<String, String>>?

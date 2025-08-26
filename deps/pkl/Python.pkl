@@ -3,14 +3,14 @@
 /// capturing their standard output, standard error, and handling environment
 /// variables as well as exit codes. The module provides utilities for retrieving
 /// and managing executable resources identified by unique resource actionIDs.
-@ModuleInfo { minPklVersion = "0.28.2" }
+@ModuleInfo { minPklVersion = "0.29.0" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/python" }
 
 open module org.kdeps.pkl.Python
 
 extends "Utils.pkl"
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
 import "pkl:json"
 
 /// A mapping of resource actionIDs to their corresponding [ResourcePython] objects.

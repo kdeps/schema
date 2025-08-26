@@ -13,14 +13,14 @@
 /// - Providing methods to retrieve various pieces of information related to the LLM interaction,
 /// such as the prompt text, response text, file paths, JSON keys, and whether image generation was
 /// involved.
-@ModuleInfo { minPklVersion = "0.28.2" }
+@ModuleInfo { minPklVersion = "0.29.0" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/llm" }
 
 open module org.kdeps.pkl.LLM
 
 extends "Utils.pkl"
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.10.0#/go.pkl"
+import "external/pkl-go/codegen/src/go.pkl"
 import "pkl:json"
 
 /// A mapping of resource actionIDs to their associated [ResourceChat] objects.
