@@ -55,4 +55,6 @@ dependencies {
     ["syntax"] = import("external/pkl-pantry/packages/pkl.experimental.syntax/PklProject")
     ["toml"] = import("external/pkl-pantry/packages/pkl.toml/PklProject")
     ["deepToTyped"] = import("external/pkl-pantry/packages/pkl.experimental.deepToTyped/PklProject")
+    ["uri"] = import("external/pkl-pantry/packages/pkl.experimental.uri/PklProject")
+    ["k8s"] { uri = "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1" }
 }

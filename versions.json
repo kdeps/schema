@@ -86,7 +86,13 @@
           "version": "1.0.4",
           "files": [
             "ref.pkl",
-            "generate.pkl"
+            "generate.pkl",
+            "internal/Type.pkl",
+            "internal/TypesGenerator.pkl",
+            "internal/utils.pkl",
+            "internal/ModuleGenerator.pkl",
+            "internal/ModulesGenerator.pkl",
+            "internal/singularize.pkl"
           ]
         },
         "pkl.experimental.syntax": {
@@ -114,8 +120,43 @@
           "files": [
             "deepToTyped.pkl"
           ]
+        },
+        "k8s.contrib.crd": {
+          "version": "1.0.6",
+          "files": [
+            "generate.pkl"
+          ]
+        },
+        "k8s.contrib.appEnvCluster": {
+          "version": "1.0.2",
+          "files": [
+            "AppEnvCluster.pkl"
+          ]
         }
       }
+    },
+    "pkl-k8s": {
+      "version": "1.0.1",
+      "url": "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1",
+      "files": [
+        "K8sObject.pkl",
+        "K8sResource.pkl",
+        "k8sSchema.pkl",
+        "api/core/v1/EnvVar.pkl",
+        "api/core/v1/ResourceRequirements.pkl",
+        "api/core/v1/ConfigMap.pkl",
+        "api/core/v1/PersistentVolumeClaim.pkl",
+        "api/core/v1/Pod.pkl",
+        "api/core/v1/Secret.pkl",
+        "api/core/v1/Service.pkl",
+        "api/apps/v1/Deployment.pkl",
+        "api/apps/v1/StatefulSet.pkl",
+        "api/networking/v1/NetworkPolicy.pkl",
+        "api/networking/v1/Ingress.pkl",
+        "apiextensions-apiserver/pkg/apis/apiextensions/v1/CustomResourceDefinition.pkl",
+        "apiextensions-apiserver/pkg/apis/apiextensions/v1beta1/CustomResourceDefinition.pkl",
+        "apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+      ]
     }
   }
 }
