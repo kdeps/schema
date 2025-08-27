@@ -21,22 +21,6 @@
             "URI.pkl"
           ]
         },
-        "k8s.contrib": {
-          "version": "1.0.2",
-          "files": [
-            "convert.pkl"
-          ]
-        },
-        "pkl.pipe": {
-          "version": "1.0.2",
-          "files": [
-            "kubeval.pkl",
-            "text.pkl",
-            "yaml.pkl",
-            "json.pkl",
-            "shellshortcuts.pkl"
-          ]
-        },
         "org.openapis.v3": {
           "version": "2.1.2",
           "files": [
@@ -83,7 +67,7 @@
           ]
         },
         "org.json_schema.contrib": {
-          "version": "1.0.4",
+          "version": "1.0.7",
           "files": [
             "ref.pkl",
             "generate.pkl",
@@ -121,6 +105,22 @@
             "deepToTyped.pkl"
           ]
         },
+        "k8s.contrib": {
+          "version": "1.0.2",
+          "files": [
+            "convert.pkl"
+          ]
+        },
+        "pkl.pipe": {
+          "version": "1.0.2",
+          "files": [
+            "kubeval.pkl",
+            "text.pkl",
+            "yaml.pkl",
+            "json.pkl",
+            "shellshortcuts.pkl"
+          ]
+        },
         "k8s.contrib.crd": {
           "version": "1.0.6",
           "files": [
@@ -132,31 +132,56 @@
           "files": [
             "AppEnvCluster.pkl"
           ]
+        },
+        "pkl.table": {
+          "version": "1.1.0",
+          "files": [
+            "TableRenderer.pkl"
+          ]
+        },
+        "pkl.lua": {
+          "version": "1.1.1",
+          "files": [
+            "Lua.pkl"
+          ]
+        },
+        "pkl.experimental.net": {
+          "version": "1.2.1",
+          "files": [
+            "Network.pkl"
+          ]
+        },
+        "pkl.csv": {
+          "version": "1.0.1",
+          "files": [
+            "CSV.pkl"
+          ]
+        },
+        "com.circleci.v2": {
+          "version": "1.1.3",
+          "files": [
+            "CircleCI.pkl"
+          ]
+        },
+        "com.influxdata.telegraf": {
+          "version": "1.1.1",
+          "files": [
+            "Telegraf.pkl"
+          ]
+        },
+        "io.prometheus": {
+          "version": "1.1.3",
+          "files": [
+            "Prometheus.pkl"
+          ]
+        },
+        "org.apache.spark": {
+          "version": "1.0.2",
+          "files": [
+            "Spark.pkl"
+          ]
         }
       }
-    },
-    "pkl-k8s": {
-      "version": "1.0.1",
-      "url": "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1",
-      "files": [
-        "K8sObject.pkl",
-        "K8sResource.pkl",
-        "k8sSchema.pkl",
-        "api/core/v1/EnvVar.pkl",
-        "api/core/v1/ResourceRequirements.pkl",
-        "api/core/v1/ConfigMap.pkl",
-        "api/core/v1/PersistentVolumeClaim.pkl",
-        "api/core/v1/Pod.pkl",
-        "api/core/v1/Secret.pkl",
-        "api/core/v1/Service.pkl",
-        "api/apps/v1/Deployment.pkl",
-        "api/apps/v1/StatefulSet.pkl",
-        "api/networking/v1/NetworkPolicy.pkl",
-        "api/networking/v1/Ingress.pkl",
-        "apiextensions-apiserver/pkg/apis/apiextensions/v1/CustomResourceDefinition.pkl",
-        "apiextensions-apiserver/pkg/apis/apiextensions/v1beta1/CustomResourceDefinition.pkl",
-        "apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
-      ]
     }
   }
 }

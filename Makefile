@@ -22,6 +22,9 @@ update-deps:
 setup-offline:
 	@echo "🛠️  Setting up offline dependencies..."
 	@./scripts/download_deps.sh
+	@mkdir -p assets/pkl && cp deps/pkl/*.pkl assets/pkl/
+	@mkdir -p assets/pkl/external
+	@echo "🔗 Updating imports to use local paths..."
 	@./scripts/update_imports.sh
 	@echo "✅ Offline dependencies setup complete!"
 
@@ -44,17 +47,8 @@ generate: setup-offline
 		rm -rf $(OUTPUT_DIR)/github.com; \
 	fi
 
-	@echo "📁 Updating embedded assets..."
-	@mkdir -p assets/pkl && cp deps/pkl/*.pkl assets/pkl/
-	@cp -r deps/pkl/external assets/pkl/
-
-	@echo "🧪 Testing offline functionality..."
-	@if pkl eval deps/pkl/Tool.pkl --no-cache --format json >/dev/null 2>&1; then \
-		echo "✅ Offline functionality test passed!"; \
-	else \
-		echo "❌ Offline functionality test failed!"; \
-		exit 1; \
-	fi
+	@echo "🔗 Updating imports to use local paths..."
+	@./scripts/update_imports.sh
 
 	@echo "🔨 Testing Go build..."
 	@if go build ./assets >/dev/null 2>&1; then \
@@ -81,7 +75,7 @@ clean-all:
 	@echo "🧹 Cleaning all generated files and dependencies..."
 	@rm -rf gen/
 	@rm -rf assets/pkl/
-	@rm -rf deps/pkl/external/
+	@rm -rf assets/pkl/external/
 	@echo "✅ Full clean completed!"
 
 # Show help

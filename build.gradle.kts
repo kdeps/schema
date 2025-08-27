@@ -12,19 +12,15 @@ pkl {
           environmentVariables.put("VERSION", maybeVersion)
         }
         projectDirectories.from(
-          file("deps/pkl/"),
-          file("deps/pkl/external/pkl-pantry/packages/k8s.contrib/"),
-          file("deps/pkl/external/pkl-pantry/packages/pkl.pipe/"),
-          file("deps/pkl/external/pkl-pantry/packages/org.openapis.v3/"),
-          file("deps/pkl/external/pkl-pantry/packages/org.openapis.v3.contrib/"),
-          file("deps/pkl/external/pkl-pantry/packages/org.json_schema/"),
-          file("deps/pkl/external/pkl-pantry/packages/org.json_schema.contrib/"),
-          file("deps/pkl/external/pkl-pantry/packages/pkl.experimental.syntax/"),
-          file("deps/pkl/external/pkl-pantry/packages/pkl.toml/"),
-          file("deps/pkl/external/pkl-pantry/packages/pkl.experimental.deepToTyped/"),
-          file("deps/pkl/external/pkl-pantry/packages/pkl.experimental.uri/"),
-          file("deps/pkl/external/pkl-pantry/packages/k8s.contrib.crd/"),
-          file("deps/pkl/external/pkl-pantry/packages/k8s.contrib.appEnvCluster/")
+          file("deps/pkl/")
+        )
+      }
+      register("makePackagesOffline") {
+        if (maybeVersion != null) {
+          environmentVariables.put("VERSION", maybeVersion)
+        }
+        projectDirectories.from(
+          file("assets/pkl/")
         )
       }
     }
