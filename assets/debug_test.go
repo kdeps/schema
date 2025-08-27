@@ -27,11 +27,13 @@ func TestDebugEmbeddedFiles(t *testing.T) {
 
 	// Try to read the first go.pkl file if it exists
 	if len(goPklFiles) > 0 {
-		data, err := GetExternalFile(goPklFiles[0])
+		// Extract the relative path by removing the pkl/external/ prefix
+		relativePath := strings.TrimPrefix(goPklFiles[0], "pkl/external/")
+		data, err := GetExternalFile(relativePath)
 		if err != nil {
 			t.Errorf("Failed to read %s: %v", goPklFiles[0], err)
 		} else {
-			fmt.Printf("Successfully read %s (%d bytes)\n", goPklFiles[0], len(data))
+			fmt.Printf("Successfully read %s (%d bytes)\n", relativePath, len(data))
 		}
 	}
 

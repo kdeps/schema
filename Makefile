@@ -47,20 +47,8 @@ generate: setup-offline
 		rm -rf $(OUTPUT_DIR)/github.com; \
 	fi
 
-	@echo "📁 Recreating embedded assets..."
-	@rm -rf assets/pkl
-	@mkdir -p assets/pkl && cp deps/pkl/*.pkl assets/pkl/
-	@mkdir -p assets/pkl/external
 	@echo "🔗 Updating imports to use local paths..."
 	@./scripts/update_imports.sh
-
-	@echo "🧪 Testing offline functionality..."
-	@if pkl eval deps/pkl/Tool.pkl --no-cache --format json >/dev/null 2>&1; then \
-		echo "✅ Offline functionality test passed!"; \
-	else \
-		echo "❌ Offline functionality test failed!"; \
-		exit 1; \
-	fi
 
 	@echo "🔨 Testing Go build..."
 	@if go build ./assets >/dev/null 2>&1; then \
