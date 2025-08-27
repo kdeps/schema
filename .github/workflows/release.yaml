@@ -28,7 +28,7 @@ jobs:
         cd assets && go test -v ./...
     - name: build
       env:
-        VERSION: "0.0.0-$(git rev-parse --short HEAD)"
+        VERSION: "0.0.0.0"
       run: |
         echo "Building with version: $VERSION"
         VERSION="$VERSION" ./gradlew makePackages
@@ -47,7 +47,7 @@ jobs:
     - uses: gradle/actions/setup-gradle@v4
     - name: build
       env:
-        VERSION: "0.0.0-$(git rev-parse --short HEAD)"
+        VERSION: "0.0.0.0"
       run: |
         echo "Building on main/master merge..."
         VERSION="$VERSION" ./gradlew makePackages
