@@ -9,13 +9,75 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.2.44
-  - Offline part 2 (#34)
+### Latest Release: v0.2.50
+  - Offline phase 3 (#39)
+    * upgraded gradle and fix pkldoc GHA step
+    
+    * add org.openapis.v3 to list of dependencies
+    
+    * use pkl-pipe 1.0.2
+    
+    * added new dependencies to fix pkldoc
+    
+    * add more deps to fix pkldoc GHA generation
+    
+    * cleanup dependencies and version to only include pkl-pantry and pkl-go
+    
+    * move external to assets folder
+    
+    * use remote package resource in deps/pkl
+    
+    * streamline gha flows on push to branch/master and tag
+    
+    * target offline/local on assets/pkl
+    
+    * fix assets tests and fix Makefile generate step
+    
+    * fix GHA build step
+    
+    * fixed pkl version handling for non-tagged build
+    
+    * add redundant local and offline conversion of PKL files through assets library
+
+### Previous Highlights
+- **v0.2.49**:   - Fix pkldoc 3 (#38)
+    * upgraded gradle and fix pkldoc GHA step
+    
+    * add org.openapis.v3 to list of dependencies
+    
+    * use pkl-pipe 1.0.2
+    
+    * added new dependencies to fix pkldoc
+    
+    * add more deps to fix pkldoc GHA generation
+
+- **v0.2.48**:   - Fix pkldoc 2 (#37)
+    * upgraded gradle and fix pkldoc GHA step
+    
+    * add org.openapis.v3 to list of dependencies
+    
+    * use pkl-pipe 1.0.2
+    
+    * added new dependencies to fix pkldoc
+
+- **v0.2.47**:   - Fix pkldoc 1 (#36)
+    * upgraded gradle and fix pkldoc GHA step
+    
+    * add org.openapis.v3 to list of dependencies
+    
+    * use pkl-pipe 1.0.2
+
+- **v0.2.46**:   - upgraded gradle and fix pkldoc GHA step (#35)
+
+- **v0.2.45**:   - added the embedded assets/pkl/ to the release
+    
+    updated README.md
+
+- **v0.2.44**:   - Offline part 2 (#34)
     * added embedded assets support
     
     * implement offline-ready PKL dependency management system
 
-### Previous Highlights
 - **v0.2.43**:   - added OfflineMode to run agents on offline (#33)
     
     added AGENTS.md file
