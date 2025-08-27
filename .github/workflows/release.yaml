@@ -27,9 +27,8 @@ jobs:
         echo "Running tests on branch push..."
         cd assets && go test -v ./...
     - name: build
-      env:
-        VERSION: "0.0.0.0"
       run: |
+        VERSION="0.0.0-$(git rev-parse --short HEAD)"
         echo "Building with version: $VERSION"
         VERSION="$VERSION" ./gradlew makePackages
         
@@ -46,10 +45,9 @@ jobs:
         cache: gradle
     - uses: gradle/actions/setup-gradle@v4
     - name: build
-      env:
-        VERSION: "0.0.0.0"
       run: |
-        echo "Building on main/master merge..."
+        VERSION="0.0.0-$(git rev-parse --short HEAD)"
+        echo "Building on main/master merge with version: $VERSION"
         VERSION="$VERSION" ./gradlew makePackages
         
   upload:
