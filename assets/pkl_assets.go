@@ -109,12 +109,17 @@ func ConvertPackageURLsToLocalPaths(content string) string {
 	pklPantryPattern := regexp.MustCompile(`package://pkg\.pkl-lang\.org/pkl-pantry/([^@"]+)@[^"#]*#/([^"]+)`)
 	content = pklPantryPattern.ReplaceAllString(content, `external/pkl-pantry/packages/$1/$2`)
 
+	// Convert schema.kdeps.com core package URLs to local paths
+	// This handles URLs like package://schema.kdeps.com/core@1.0.0#/Workflow.pkl
+	schemaCorePattern := regexp.MustCompile(`package://schema\.kdeps\.com/core@[^"#]*#/([^"]+)`)
+	content = schemaCorePattern.ReplaceAllString(content, `$1`)
+
 	return content
 }
 
 // ConvertImportStatements converts import and amends statements from package URLs to local paths
 func ConvertImportStatements(content string) string {
-	// Convert import statements
+	// Convert import statements for pkg.pkl-lang.org
 	importPattern := regexp.MustCompile(`(import\s+)"(package://pkg\.pkl-lang\.org/[^"]+)"`)
 	content = importPattern.ReplaceAllStringFunc(content, func(match string) string {
 		parts := importPattern.FindStringSubmatch(match)
@@ -126,10 +131,34 @@ func ConvertImportStatements(content string) string {
 		return match
 	})
 
-	// Convert amends statements
+	// Convert amends statements for pkg.pkl-lang.org
 	amendsPattern := regexp.MustCompile(`(amends\s+)"(package://pkg\.pkl-lang\.org/[^"]+)"`)
 	content = amendsPattern.ReplaceAllStringFunc(content, func(match string) string {
 		parts := amendsPattern.FindStringSubmatch(match)
+		if len(parts) == 3 {
+			localPath := ConvertPackageURLsToLocalPaths(`"` + parts[2] + `"`)
+			localPath = strings.Trim(localPath, `"`)
+			return parts[1] + `"` + localPath + `"`
+		}
+		return match
+	})
+
+	// Convert import statements for schema.kdeps.com
+	schemaImportPattern := regexp.MustCompile(`(import\s+)"(package://schema\.kdeps\.com/[^"]+)"`)
+	content = schemaImportPattern.ReplaceAllStringFunc(content, func(match string) string {
+		parts := schemaImportPattern.FindStringSubmatch(match)
+		if len(parts) == 3 {
+			localPath := ConvertPackageURLsToLocalPaths(`"` + parts[2] + `"`)
+			localPath = strings.Trim(localPath, `"`)
+			return parts[1] + `"` + localPath + `"`
+		}
+		return match
+	})
+
+	// Convert amends statements for schema.kdeps.com
+	schemaAmendsPattern := regexp.MustCompile(`(amends\s+)"(package://schema\.kdeps\.com/[^"]+)"`)
+	content = schemaAmendsPattern.ReplaceAllStringFunc(content, func(match string) string {
+		parts := schemaAmendsPattern.FindStringSubmatch(match)
 		if len(parts) == 3 {
 			localPath := ConvertPackageURLsToLocalPaths(`"` + parts[2] + `"`)
 			localPath = strings.Trim(localPath, `"`)
@@ -157,9 +186,18 @@ func GetPKLFileWithFullConversion(filename string) (string, error) {
 
 // ValidateLocalPaths checks if a PKL file content has any remaining package:// URLs
 func ValidateLocalPaths(content string) (bool, []string) {
-	packageURLPattern := regexp.MustCompile(`package://pkg\.pkl-lang\.org/[^"]+`)
-	matches := packageURLPattern.FindAllString(content, -1)
-	return len(matches) == 0, matches
+	// Check for pkg.pkl-lang.org URLs
+	pklLangPattern := regexp.MustCompile(`package://pkg\.pkl-lang\.org/[^"\s]+`)
+	pklLangMatches := pklLangPattern.FindAllString(content, -1)
+	
+	// Check for schema.kdeps.com URLs  
+	schemaPattern := regexp.MustCompile(`package://schema\.kdeps\.com/[^"\s]+`)
+	schemaMatches := schemaPattern.FindAllString(content, -1)
+	
+	// Combine all matches
+	allMatches := append(pklLangMatches, schemaMatches...)
+	
+	return len(allMatches) == 0, allMatches
 }
 
 // ValidateAllPKLFiles checks all PKL files for remaining package:// URLs

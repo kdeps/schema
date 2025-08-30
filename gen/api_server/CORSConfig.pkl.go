@@ -32,5 +32,5 @@ type CORSConfig struct {
 	AllowCredentials bool `pkl:"AllowCredentials"`
 
 	// Maximum duration (in hours) for which CORS preflight responses can be cached (default: 12 hours)
-	MaxAge *pkl.Duration `pkl:"MaxAge"`
+	MaxAge pkl.Duration `pkl:"MaxAge"`
 }

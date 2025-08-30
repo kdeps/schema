@@ -4,5 +4,5 @@ package tool
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Tool", ToolImpl{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.Tool", ToolImpl{})
 }

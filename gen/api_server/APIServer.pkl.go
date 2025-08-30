@@ -10,7 +10,7 @@ import (
 type APIServer interface {
 }
 
-var _ APIServer = (*APIServerImpl)(nil)
+var _ APIServer = APIServerImpl{}
 
 // Abstractions for Kdeps API Server Configuration
 //
@@ -25,7 +25,7 @@ type APIServerImpl struct {
 func LoadFromPath(ctx context.Context, path string) (ret APIServer, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -40,8 +40,6 @@ func LoadFromPath(ctx context.Context, path string) (ret APIServer, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a APIServer
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (APIServer, error) {
 	var ret APIServerImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

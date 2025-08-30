@@ -31,10 +31,10 @@ type Workflow interface {
 
 	GetWorkflows() []string
 
-	GetSettings() *project.Settings
+	GetSettings() project.Settings
 }
 
-var _ Workflow = (*WorkflowImpl)(nil)
+var _ Workflow = WorkflowImpl{}
 
 // Abstractions for Kdeps Workflow Management
 //
@@ -80,66 +80,66 @@ type WorkflowImpl struct {
 	Workflows []string `pkl:"Workflows"`
 
 	// The project settings that this workflow depends on.
-	Settings *project.Settings `pkl:"Settings"`
+	Settings project.Settings `pkl:"Settings"`
 }
 
 // The name of the workflow, validated to contain only alphanumeric characters.
-func (rcv *WorkflowImpl) GetAgentID() string {
+func (rcv WorkflowImpl) GetAgentID() string {
 	return rcv.AgentID
 }
 
 // A description of the workflow, providing details about its purpose and behavior.
-func (rcv *WorkflowImpl) GetDescription() string {
+func (rcv WorkflowImpl) GetDescription() string {
 	return rcv.Description
 }
 
 // A URI pointing to the website or landing page for the workflow, if available.
-func (rcv *WorkflowImpl) GetWebsite() *string {
+func (rcv WorkflowImpl) GetWebsite() *string {
 	return rcv.Website
 }
 
 // A listing of the authors or contributors to the workflow.
-func (rcv *WorkflowImpl) GetAuthors() *[]string {
+func (rcv WorkflowImpl) GetAuthors() *[]string {
 	return rcv.Authors
 }
 
 // A URI pointing to the documentation for the workflow, if available.
-func (rcv *WorkflowImpl) GetDocumentation() *string {
+func (rcv WorkflowImpl) GetDocumentation() *string {
 	return rcv.Documentation
 }
 
 // A URI pointing to the repository where the workflow's code or configuration can be found.
-func (rcv *WorkflowImpl) GetRepository() *string {
+func (rcv WorkflowImpl) GetRepository() *string {
 	return rcv.Repository
 }
 
 // Hero image to be used on this AI Agent.
-func (rcv *WorkflowImpl) GetHeroImage() *string {
+func (rcv WorkflowImpl) GetHeroImage() *string {
 	return rcv.HeroImage
 }
 
 // The icon to be used on this AI agent.
-func (rcv *WorkflowImpl) GetAgentIcon() *string {
+func (rcv WorkflowImpl) GetAgentIcon() *string {
 	return rcv.AgentIcon
 }
 
 // The version of the workflow, following semantic versioning rules (e.g., 1.0.0).
-func (rcv *WorkflowImpl) GetVersion() string {
+func (rcv WorkflowImpl) GetVersion() string {
 	return rcv.Version
 }
 
 // The default action to be performed by the workflow, validated to ensure proper formatting.
-func (rcv *WorkflowImpl) GetTargetActionID() string {
+func (rcv WorkflowImpl) GetTargetActionID() string {
 	return rcv.TargetActionID
 }
 
 // A listing of external workflows referenced by this workflow, validated by format.
-func (rcv *WorkflowImpl) GetWorkflows() []string {
+func (rcv WorkflowImpl) GetWorkflows() []string {
 	return rcv.Workflows
 }
 
 // The project settings that this workflow depends on.
-func (rcv *WorkflowImpl) GetSettings() *project.Settings {
+func (rcv WorkflowImpl) GetSettings() project.Settings {
 	return rcv.Settings
 }
 
@@ -147,7 +147,7 @@ func (rcv *WorkflowImpl) GetSettings() *project.Settings {
 func LoadFromPath(ctx context.Context, path string) (ret Workflow, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -162,8 +162,6 @@ func LoadFromPath(ctx context.Context, path string) (ret Workflow, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Workflow
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Workflow, error) {
 	var ret WorkflowImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

@@ -4,8 +4,8 @@ package apiserver
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.APIServer#APIServerSettings", APIServerSettings{})
-	pkl.RegisterMapping("org.kdeps.pkl.APIServer#APIServerRoutes", APIServerRoutes{})
-	pkl.RegisterMapping("org.kdeps.pkl.APIServer", APIServerImpl{})
-	pkl.RegisterMapping("org.kdeps.pkl.APIServer#CORSConfig", CORSConfig{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.APIServer#APIServerSettings", APIServerSettings{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.APIServer#APIServerRoutes", APIServerRoutes{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.APIServer", APIServerImpl{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.APIServer#CORSConfig", CORSConfig{})
 }

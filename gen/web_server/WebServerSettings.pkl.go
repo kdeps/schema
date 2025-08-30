@@ -19,5 +19,5 @@ type WebServerSettings struct {
 	// List of routes configured for the server
 	//
 	// Each route specifies a path and its server behavior
-	Routes []*WebServerRoutes `pkl:"Routes"`
+	Routes []WebServerRoutes `pkl:"Routes"`
 }

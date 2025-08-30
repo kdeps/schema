@@ -4,7 +4,7 @@ package http
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.HTTP#ResourceHTTPClient", ResourceHTTPClient{})
-	pkl.RegisterMapping("org.kdeps.pkl.HTTP#ResponseBlock", ResponseBlock{})
-	pkl.RegisterMapping("org.kdeps.pkl.HTTP", HTTPImpl{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.HTTP#ResourceHTTPClient", ResourceHTTPClient{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.HTTP#ResponseBlock", ResponseBlock{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.HTTP", HTTPImpl{})
 }

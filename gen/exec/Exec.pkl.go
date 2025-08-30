@@ -11,10 +11,10 @@ import (
 type Exec interface {
 	utils.Utils
 
-	GetResources() *map[string]*ResourceExec
+	GetResources() *map[string]ResourceExec
 }
 
-var _ Exec = (*ExecImpl)(nil)
+var _ Exec = ExecImpl{}
 
 // This module defines the execution resources for the KDEPS framework.
 // It allows for the management and execution of commands, capturing their
@@ -22,14 +22,14 @@ var _ Exec = (*ExecImpl)(nil)
 // exit codes. The module provides functionalities to retrieve and manage
 // executable resources based on their identifiers.
 type ExecImpl struct {
-	*utils.UtilsImpl
+	utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceExec] objects.
-	Resources *map[string]*ResourceExec `pkl:"Resources"`
+	Resources *map[string]ResourceExec `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceExec] objects.
-func (rcv *ExecImpl) GetResources() *map[string]*ResourceExec {
+func (rcv ExecImpl) GetResources() *map[string]ResourceExec {
 	return rcv.Resources
 }
 
@@ -37,7 +37,7 @@ func (rcv *ExecImpl) GetResources() *map[string]*ResourceExec {
 func LoadFromPath(ctx context.Context, path string) (ret Exec, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -52,8 +52,6 @@ func LoadFromPath(ctx context.Context, path string) (ret Exec, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Exec
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Exec, error) {
 	var ret ExecImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

@@ -4,5 +4,5 @@ package item
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Item", ItemImpl{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.Item", ItemImpl{})
 }

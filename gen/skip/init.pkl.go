@@ -4,5 +4,5 @@ package skip
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Skip", SkipImpl{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.Skip", SkipImpl{})
 }

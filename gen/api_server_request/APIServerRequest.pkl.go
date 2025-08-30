@@ -22,10 +22,10 @@ type APIServerRequest interface {
 
 	GetHeaders() *map[string]string
 
-	GetFiles() *map[string]*APIServerRequestUploads
+	GetFiles() *map[string]APIServerRequestUploads
 }
 
-var _ APIServerRequest = (*APIServerRequestImpl)(nil)
+var _ APIServerRequest = APIServerRequestImpl{}
 
 // Abstractions for Kdeps API Server Requests
 //
@@ -61,46 +61,46 @@ type APIServerRequestImpl struct {
 	Headers *map[string]string `pkl:"Headers"`
 
 	// Files uploaded with the request, represented as a mapping of file keys to upload metadata.
-	Files *map[string]*APIServerRequestUploads `pkl:"Files"`
+	Files *map[string]APIServerRequestUploads `pkl:"Files"`
 }
 
 // Represents the request URI path.
-func (rcv *APIServerRequestImpl) GetPath() string {
+func (rcv APIServerRequestImpl) GetPath() string {
 	return rcv.Path
 }
 
 // Represents the Client IP.
-func (rcv *APIServerRequestImpl) GetIP() string {
+func (rcv APIServerRequestImpl) GetIP() string {
 	return rcv.IP
 }
 
 // Represents the Request ID.
-func (rcv *APIServerRequestImpl) GetID() string {
+func (rcv APIServerRequestImpl) GetID() string {
 	return rcv.ID
 }
 
 // The HTTP method used for the request. Must be a valid method, as determined by [isValidHTTPMethod].
-func (rcv *APIServerRequestImpl) GetMethod() string {
+func (rcv APIServerRequestImpl) GetMethod() string {
 	return rcv.Method
 }
 
 // The body data of the request, which is optional.
-func (rcv *APIServerRequestImpl) GetData() *string {
+func (rcv APIServerRequestImpl) GetData() *string {
 	return rcv.Data
 }
 
 // Query parameters sent with the request.
-func (rcv *APIServerRequestImpl) GetParams() *map[string]string {
+func (rcv APIServerRequestImpl) GetParams() *map[string]string {
 	return rcv.Params
 }
 
 // Headers sent with the request.
-func (rcv *APIServerRequestImpl) GetHeaders() *map[string]string {
+func (rcv APIServerRequestImpl) GetHeaders() *map[string]string {
 	return rcv.Headers
 }
 
 // Files uploaded with the request, represented as a mapping of file keys to upload metadata.
-func (rcv *APIServerRequestImpl) GetFiles() *map[string]*APIServerRequestUploads {
+func (rcv APIServerRequestImpl) GetFiles() *map[string]APIServerRequestUploads {
 	return rcv.Files
 }
 
@@ -108,7 +108,7 @@ func (rcv *APIServerRequestImpl) GetFiles() *map[string]*APIServerRequestUploads
 func LoadFromPath(ctx context.Context, path string) (ret APIServerRequest, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -123,8 +123,6 @@ func LoadFromPath(ctx context.Context, path string) (ret APIServerRequest, err e
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a APIServerRequest
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (APIServerRequest, error) {
 	var ret APIServerRequestImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }
