@@ -502,6 +502,17 @@ amends "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/Generator.pkl"
 class MixedClass {}`,
 				description: "PKL file with both converted and missed URLs",
 			},
+			{
+				name: "schema_core_workflow_error",
+				input: `/// This simulates the problematic test case
+amends "package://schema.kdeps.com/core@1.0.0#/Workflow.pkl"
+
+local testData = "example"
+workflow {
+    targetActionID = "test"
+}`,
+				description: "PKL file with schema.kdeps.com core URL (the problematic case)",
+			},
 		}
 
 		for _, tc := range testCases {
@@ -537,8 +548,15 @@ class MixedClass {}`,
 				}
 
 				// 6. Check that local paths are properly formatted
-				if !strings.Contains(fullyConverted, "external/") {
-					t.Error("Converted content should contain local external/ paths")
+				// For schema.kdeps.com URLs, we expect direct local paths (not external/)
+				// For pkg.pkl-lang.org URLs, we expect external/ paths
+				containsExternal := strings.Contains(fullyConverted, "external/")
+				containsSchema := strings.Contains(tc.input, "schema.kdeps.com")
+				
+				if !containsSchema && !containsExternal {
+					t.Error("Converted content should contain local external/ paths for pkg.pkl-lang.org URLs")
+				} else if containsSchema && containsExternal {
+					t.Error("Schema.kdeps.com URLs should be converted to direct local paths, not external/ paths")
 				}
 
 				// 7. Ensure no double conversion issues
@@ -578,6 +596,21 @@ class MixedClass {}`,
 				name:     "multiple_same_line",
 				input:    `// Both package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl and package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl`,
 				expected: `// Both external/pkl-go/codegen/src/go.pkl and external/pkl-pantry/packages/pkl.experimental.uri/URI.pkl`,
+			},
+			{
+				name:     "schema_kdeps_core_url",
+				input:    `amends "package://schema.kdeps.com/core@1.0.0#/Workflow.pkl"`,
+				expected: `amends "Workflow.pkl"`,
+			},
+			{
+				name:     "schema_kdeps_core_different_version",
+				input:    `import "package://schema.kdeps.com/core@0.2.42#/Resource.pkl"`,
+				expected: `import "Resource.pkl"`,
+			},
+			{
+				name:     "mixed_schema_and_pkl_urls",
+				input:    `import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl"\namends "package://schema.kdeps.com/core@1.0.0#/Workflow.pkl"`,
+				expected: `import "external/pkl-go/codegen/src/go.pkl"\namends "Workflow.pkl"`,
 			},
 		}
 
