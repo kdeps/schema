@@ -14,10 +14,10 @@ type APIServerResponse interface {
 
 	GetResponse() *APIServerResponseBlock
 
-	GetErrors() *[]*APIServerErrorsBlock
+	GetErrors() *[]APIServerErrorsBlock
 }
 
-var _ APIServerResponse = (*APIServerResponseImpl)(nil)
+var _ APIServerResponse = APIServerResponseImpl{}
 
 // Abstractions for Kdeps API Server Responses
 //
@@ -57,21 +57,21 @@ type APIServerResponseImpl struct {
 	// If the request was unsuccessful, this block contains the error code and error message
 	// returned by the server.
 	// [APIServerErrorsBlock]: Contains the error code and message explaining the issue.
-	Errors *[]*APIServerErrorsBlock `pkl:"Errors"`
+	Errors *[]APIServerErrorsBlock `pkl:"Errors"`
 }
 
 // A Boolean flag indicating whether the API request was successful.
 //
 // - `true`: The request was successful.
 // - `false`: The request encountered an error.
-func (rcv *APIServerResponseImpl) GetSuccess() bool {
+func (rcv APIServerResponseImpl) GetSuccess() bool {
 	return rcv.Success
 }
 
 // Additional metadata related to the API request.
 //
 // Provides request-specific details such as headers, properties, and tracking information.
-func (rcv *APIServerResponseImpl) GetMeta() *APIServerResponseMetaBlock {
+func (rcv APIServerResponseImpl) GetMeta() *APIServerResponseMetaBlock {
 	return rcv.Meta
 }
 
@@ -79,7 +79,7 @@ func (rcv *APIServerResponseImpl) GetMeta() *APIServerResponseMetaBlock {
 //
 // If the request was successful, this block contains the data associated with the response.
 // [APIServerResponseBlock]: Contains a listing of the returned data items.
-func (rcv *APIServerResponseImpl) GetResponse() *APIServerResponseBlock {
+func (rcv APIServerResponseImpl) GetResponse() *APIServerResponseBlock {
 	return rcv.Response
 }
 
@@ -88,7 +88,7 @@ func (rcv *APIServerResponseImpl) GetResponse() *APIServerResponseBlock {
 // If the request was unsuccessful, this block contains the error code and error message
 // returned by the server.
 // [APIServerErrorsBlock]: Contains the error code and message explaining the issue.
-func (rcv *APIServerResponseImpl) GetErrors() *[]*APIServerErrorsBlock {
+func (rcv APIServerResponseImpl) GetErrors() *[]APIServerErrorsBlock {
 	return rcv.Errors
 }
 
@@ -96,7 +96,7 @@ func (rcv *APIServerResponseImpl) GetErrors() *[]*APIServerErrorsBlock {
 func LoadFromPath(ctx context.Context, path string) (ret APIServerResponse, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -111,8 +111,6 @@ func LoadFromPath(ctx context.Context, path string) (ret APIServerResponse, err 
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a APIServerResponse
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (APIServerResponse, error) {
 	var ret APIServerResponseImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

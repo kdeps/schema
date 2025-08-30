@@ -4,5 +4,5 @@ package session
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Session", SessionImpl{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.Session", SessionImpl{})
 }

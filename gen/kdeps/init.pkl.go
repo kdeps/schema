@@ -4,5 +4,5 @@ package kdeps
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Kdeps", Kdeps{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.Kdeps", Kdeps{})
 }

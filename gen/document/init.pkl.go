@@ -4,5 +4,5 @@ package document
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Document", DocumentImpl{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.Document", DocumentImpl{})
 }

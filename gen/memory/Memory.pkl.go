@@ -10,7 +10,7 @@ import (
 type Memory interface {
 }
 
-var _ Memory = (*MemoryImpl)(nil)
+var _ Memory = MemoryImpl{}
 
 // Abstractions for Memory records
 type MemoryImpl struct {
@@ -20,7 +20,7 @@ type MemoryImpl struct {
 func LoadFromPath(ctx context.Context, path string) (ret Memory, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -35,8 +35,6 @@ func LoadFromPath(ctx context.Context, path string) (ret Memory, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Memory
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Memory, error) {
 	var ret MemoryImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

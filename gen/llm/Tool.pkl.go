@@ -13,5 +13,5 @@ type Tool struct {
 	Description *string `pkl:"Description"`
 
 	// mapping of parameter names to their properties
-	Parameters *map[string]*ToolProperties `pkl:"Parameters"`
+	Parameters *map[string]ToolProperties `pkl:"Parameters"`
 }

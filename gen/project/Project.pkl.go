@@ -10,7 +10,7 @@ import (
 type Project interface {
 }
 
-var _ Project = (*ProjectImpl)(nil)
+var _ Project = ProjectImpl{}
 
 // Abstractions for Kdeps Project Settings
 //
@@ -25,7 +25,7 @@ type ProjectImpl struct {
 func LoadFromPath(ctx context.Context, path string) (ret Project, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -40,8 +40,6 @@ func LoadFromPath(ctx context.Context, path string) (ret Project, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Project
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Project, error) {
 	var ret ProjectImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

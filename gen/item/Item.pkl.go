@@ -10,7 +10,7 @@ import (
 type Item interface {
 }
 
-var _ Item = (*ItemImpl)(nil)
+var _ Item = ItemImpl{}
 
 // Abstractions for managing records in a for loop
 //
@@ -23,7 +23,7 @@ type ItemImpl struct {
 func LoadFromPath(ctx context.Context, path string) (ret Item, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -38,8 +38,6 @@ func LoadFromPath(ctx context.Context, path string) (ret Item, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Item
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Item, error) {
 	var ret ItemImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

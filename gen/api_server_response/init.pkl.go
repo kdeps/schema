@@ -4,8 +4,8 @@ package apiserverresponse
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.APIServerResponse", APIServerResponseImpl{})
-	pkl.RegisterMapping("org.kdeps.pkl.APIServerResponse#APIServerResponseMetaBlock", APIServerResponseMetaBlock{})
-	pkl.RegisterMapping("org.kdeps.pkl.APIServerResponse#APIServerResponseBlock", APIServerResponseBlock{})
-	pkl.RegisterMapping("org.kdeps.pkl.APIServerResponse#APIServerErrorsBlock", APIServerErrorsBlock{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.APIServerResponse", APIServerResponseImpl{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.APIServerResponse#APIServerResponseMetaBlock", APIServerResponseMetaBlock{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.APIServerResponse#APIServerResponseBlock", APIServerResponseBlock{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.APIServerResponse#APIServerErrorsBlock", APIServerErrorsBlock{})
 }

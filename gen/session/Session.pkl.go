@@ -10,7 +10,7 @@ import (
 type Session interface {
 }
 
-var _ Session = (*SessionImpl)(nil)
+var _ Session = SessionImpl{}
 
 // Abstractions for Session records
 type SessionImpl struct {
@@ -20,7 +20,7 @@ type SessionImpl struct {
 func LoadFromPath(ctx context.Context, path string) (ret Session, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -35,8 +35,6 @@ func LoadFromPath(ctx context.Context, path string) (ret Session, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Session
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Session, error) {
 	var ret SessionImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

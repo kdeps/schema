@@ -16,10 +16,10 @@ type ResourceChat struct {
 	Prompt *string `pkl:"Prompt"`
 
 	// A scenario is where a series of conditions to be sent for this chat.
-	Scenario *[]*MultiChat `pkl:"Scenario"`
+	Scenario *[]MultiChat `pkl:"Scenario"`
 
 	// Tools that interact with the LLM model
-	Tools *[]*Tool `pkl:"Tools"`
+	Tools *[]Tool `pkl:"Tools"`
 
 	// A listing of file paths or identifiers associated with the chat.
 	Files *[]string `pkl:"Files"`

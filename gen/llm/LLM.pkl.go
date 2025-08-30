@@ -11,10 +11,10 @@ import (
 type LLM interface {
 	utils.Utils
 
-	GetResources() *map[string]*ResourceChat
+	GetResources() *map[string]ResourceChat
 }
 
-var _ LLM = (*LLMImpl)(nil)
+var _ LLM = LLMImpl{}
 
 // Abstractions for Kdeps LLM Resource
 //
@@ -32,14 +32,14 @@ var _ LLM = (*LLMImpl)(nil)
 // such as the prompt text, response text, file paths, JSON keys, and whether image generation was
 // involved.
 type LLMImpl struct {
-	*utils.UtilsImpl
+	utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceChat] objects.
-	Resources *map[string]*ResourceChat `pkl:"Resources"`
+	Resources *map[string]ResourceChat `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceChat] objects.
-func (rcv *LLMImpl) GetResources() *map[string]*ResourceChat {
+func (rcv LLMImpl) GetResources() *map[string]ResourceChat {
 	return rcv.Resources
 }
 
@@ -47,7 +47,7 @@ func (rcv *LLMImpl) GetResources() *map[string]*ResourceChat {
 func LoadFromPath(ctx context.Context, path string) (ret LLM, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -62,8 +62,6 @@ func LoadFromPath(ctx context.Context, path string) (ret LLM, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a LLM
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (LLM, error) {
 	var ret LLMImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

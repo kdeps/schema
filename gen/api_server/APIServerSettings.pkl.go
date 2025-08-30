@@ -19,8 +19,8 @@ type APIServerSettings struct {
 	// A listing of routes configured for the API server.
 	//
 	// Each route defines a path and the allowed HTTP methods for that path.
-	Routes []*APIServerRoutes `pkl:"Routes"`
+	Routes []APIServerRoutes `pkl:"Routes"`
 
 	// Cross-Origin Resource Sharing (CORS) configuration
-	CORS *CORSConfig `pkl:"CORS"`
+	CORS CORSConfig `pkl:"CORS"`
 }

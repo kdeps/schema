@@ -10,7 +10,7 @@ import (
 type Skip interface {
 }
 
-var _ Skip = (*SkipImpl)(nil)
+var _ Skip = SkipImpl{}
 
 // Skip condition functions used across all resources.
 //
@@ -22,7 +22,7 @@ type SkipImpl struct {
 func LoadFromPath(ctx context.Context, path string) (ret Skip, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -37,8 +37,6 @@ func LoadFromPath(ctx context.Context, path string) (ret Skip, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Skip
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Skip, error) {
 	var ret SkipImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

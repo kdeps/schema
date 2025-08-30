@@ -4,5 +4,5 @@ package data
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Data", DataImpl{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.Data", DataImpl{})
 }

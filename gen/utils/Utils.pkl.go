@@ -10,7 +10,7 @@ import (
 type Utils interface {
 }
 
-var _ Utils = (*UtilsImpl)(nil)
+var _ Utils = UtilsImpl{}
 
 // Tools for Kdeps Resources
 //
@@ -22,7 +22,7 @@ type UtilsImpl struct {
 func LoadFromPath(ctx context.Context, path string) (ret Utils, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -37,8 +37,6 @@ func LoadFromPath(ctx context.Context, path string) (ret Utils, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Utils
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Utils, error) {
 	var ret UtilsImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

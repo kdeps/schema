@@ -14,18 +14,18 @@ type Data interface {
 	GetFiles() *map[string]map[string]string
 }
 
-var _ Data = (*DataImpl)(nil)
+var _ Data = DataImpl{}
 
 // Abstractions for Data folder
 type DataImpl struct {
-	*utils.UtilsImpl
+	utils.UtilsImpl
 
 	// Files in the data folder mapped with the agent name and version
 	Files *map[string]map[string]string `pkl:"Files"`
 }
 
 // Files in the data folder mapped with the agent name and version
-func (rcv *DataImpl) GetFiles() *map[string]map[string]string {
+func (rcv DataImpl) GetFiles() *map[string]map[string]string {
 	return rcv.Files
 }
 
@@ -33,7 +33,7 @@ func (rcv *DataImpl) GetFiles() *map[string]map[string]string {
 func LoadFromPath(ctx context.Context, path string) (ret Data, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -48,8 +48,6 @@ func LoadFromPath(ctx context.Context, path string) (ret Data, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Data
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Data, error) {
 	var ret DataImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

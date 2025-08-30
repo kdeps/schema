@@ -11,10 +11,10 @@ import (
 type Python interface {
 	utils.Utils
 
-	GetResources() *map[string]*ResourcePython
+	GetResources() *map[string]ResourcePython
 }
 
-var _ Python = (*PythonImpl)(nil)
+var _ Python = PythonImpl{}
 
 // This module defines the execution resources for the KDEPS framework.
 // It facilitates the management and execution of Python-based commands,
@@ -22,14 +22,14 @@ var _ Python = (*PythonImpl)(nil)
 // variables as well as exit codes. The module provides utilities for retrieving
 // and managing executable resources identified by unique resource actionIDs.
 type PythonImpl struct {
-	*utils.UtilsImpl
+	utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their corresponding [ResourcePython] objects.
-	Resources *map[string]*ResourcePython `pkl:"Resources"`
+	Resources *map[string]ResourcePython `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their corresponding [ResourcePython] objects.
-func (rcv *PythonImpl) GetResources() *map[string]*ResourcePython {
+func (rcv PythonImpl) GetResources() *map[string]ResourcePython {
 	return rcv.Resources
 }
 
@@ -37,7 +37,7 @@ func (rcv *PythonImpl) GetResources() *map[string]*ResourcePython {
 func LoadFromPath(ctx context.Context, path string) (ret Python, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -52,8 +52,6 @@ func LoadFromPath(ctx context.Context, path string) (ret Python, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a Python
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (Python, error) {
 	var ret PythonImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

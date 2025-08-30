@@ -11,10 +11,10 @@ import (
 type HTTP interface {
 	utils.Utils
 
-	GetResources() *map[string]*ResourceHTTPClient
+	GetResources() *map[string]ResourceHTTPClient
 }
 
-var _ HTTP = (*HTTPImpl)(nil)
+var _ HTTP = HTTPImpl{}
 
 // This module defines the settings and configurations for HTTP client
 // resources within the KDEPS framework. It enables the management of
@@ -22,14 +22,14 @@ var _ HTTP = (*HTTPImpl)(nil)
 // and handling of responses. This module provides functionalities to
 // retrieve and manage HTTP client resources based on their identifiers.
 type HTTPImpl struct {
-	*utils.UtilsImpl
+	utils.UtilsImpl
 
 	// A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-	Resources *map[string]*ResourceHTTPClient `pkl:"Resources"`
+	Resources *map[string]ResourceHTTPClient `pkl:"Resources"`
 }
 
 // A mapping of resource actionIDs to their associated [ResourceHTTPClient] objects.
-func (rcv *HTTPImpl) GetResources() *map[string]*ResourceHTTPClient {
+func (rcv HTTPImpl) GetResources() *map[string]ResourceHTTPClient {
 	return rcv.Resources
 }
 
@@ -37,7 +37,7 @@ func (rcv *HTTPImpl) GetResources() *map[string]*ResourceHTTPClient {
 func LoadFromPath(ctx context.Context, path string) (ret HTTP, err error) {
 	evaluator, err := pkl.NewEvaluator(ctx, pkl.PreconfiguredOptions)
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
 	defer func() {
 		cerr := evaluator.Close()
@@ -52,8 +52,6 @@ func LoadFromPath(ctx context.Context, path string) (ret HTTP, err error) {
 // Load loads the pkl module at the given source and evaluates it with the given evaluator into a HTTP
 func Load(ctx context.Context, evaluator pkl.Evaluator, source *pkl.ModuleSource) (HTTP, error) {
 	var ret HTTPImpl
-	if err := evaluator.EvaluateModule(ctx, source, &ret); err != nil {
-		return nil, err
-	}
-	return &ret, nil
+	err := evaluator.EvaluateModule(ctx, source, &ret)
+	return ret, err
 }

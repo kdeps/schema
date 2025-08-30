@@ -4,5 +4,5 @@ package memory
 import "github.com/apple/pkl-go/pkl"
 
 func init() {
-	pkl.RegisterMapping("org.kdeps.pkl.Memory", MemoryImpl{})
+	pkl.RegisterStrictMapping("org.kdeps.pkl.Memory", MemoryImpl{})
 }
