@@ -1,5 +1,5 @@
 /// Abstractions for Memory records
-@ModuleInfo { minPklVersion = "0.29.0" }
+@ModuleInfo { minPklVersion = "0.29.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/memory" }
 
