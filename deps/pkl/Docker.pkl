@@ -2,7 +2,7 @@
 /// resources within the KDEPS framework. It allows for the specification
 /// of package management, including additional package repositories (PPAs)
 /// and models to be used within Docker containers.
-@ModuleInfo { minPklVersion = "0.29.0" }
+@ModuleInfo { minPklVersion = "0.29.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/docker" }
 
