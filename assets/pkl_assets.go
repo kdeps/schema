@@ -4,6 +4,9 @@ package assets
 import (
 	"embed"
 	"fmt"
+	"io/fs"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -264,4 +267,259 @@ func EnsureOfflineCompatibility() error {
 	}
 
 	return nil
+}
+
+// CopyAssetsToTempDir copies all embedded PKL assets to a temporary directory
+// and returns the complete path to the temporary directory.
+func CopyAssetsToTempDir() (string, error) {
+	// Create a temporary directory
+	tempDir, err := os.MkdirTemp("", "pkl-assets-*")
+	if err != nil {
+		return "", fmt.Errorf("failed to create temp directory: %w", err)
+	}
+
+	// Copy all files from the embedded filesystem to the temp directory
+	err = fs.WalkDir(PKLFS, "pkl", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Calculate the destination path in the temp directory
+		relPath, err := filepath.Rel("pkl", path)
+		if err != nil {
+			return fmt.Errorf("failed to get relative path for %s: %w", path, err)
+		}
+		destPath := filepath.Join(tempDir, relPath)
+
+		// If it's a directory, create it
+		if d.IsDir() {
+			return os.MkdirAll(destPath, 0755)
+		}
+
+		// Read the file from embedded FS
+		data, err := PKLFS.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("failed to read embedded file %s: %w", path, err)
+		}
+
+		// Write the file to the temp directory
+		if err := os.WriteFile(destPath, data, 0644); err != nil {
+			return fmt.Errorf("failed to write file %s: %w", destPath, err)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		// Clean up on error
+		os.RemoveAll(tempDir)
+		return "", fmt.Errorf("failed to copy assets: %w", err)
+	}
+
+	return tempDir, nil
+}
+
+// CopyAssetsToTempDirWithConversion copies all embedded PKL assets to a temporary directory
+// with package URL to local path conversion applied, and returns the complete path.
+func CopyAssetsToTempDirWithConversion() (string, error) {
+	// Create a temporary directory
+	tempDir, err := os.MkdirTemp("", "pkl-assets-*")
+	if err != nil {
+		return "", fmt.Errorf("failed to create temp directory: %w", err)
+	}
+
+	// Copy all files from the embedded filesystem to the temp directory
+	err = fs.WalkDir(PKLFS, "pkl", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Calculate the destination path in the temp directory
+		relPath, err := filepath.Rel("pkl", path)
+		if err != nil {
+			return fmt.Errorf("failed to get relative path for %s: %w", path, err)
+		}
+		destPath := filepath.Join(tempDir, relPath)
+
+		// If it's a directory, create it
+		if d.IsDir() {
+			return os.MkdirAll(destPath, 0755)
+		}
+
+		// Read the file from embedded FS
+		data, err := PKLFS.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("failed to read embedded file %s: %w", path, err)
+		}
+
+		// Apply conversion if it's a .pkl file
+		content := string(data)
+		if filepath.Ext(path) == ".pkl" {
+			content = ConvertPackageURLsToLocalPaths(content)
+			content = ConvertImportStatements(content)
+		}
+
+		// Write the file to the temp directory
+		if err := os.WriteFile(destPath, []byte(content), 0644); err != nil {
+			return fmt.Errorf("failed to write file %s: %w", destPath, err)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		// Clean up on error
+		os.RemoveAll(tempDir)
+		return "", fmt.Errorf("failed to copy assets with conversion: %w", err)
+	}
+
+	return tempDir, nil
+}
+
+// WriteAssetsToDir writes all embedded PKL assets to the specified directory.
+// If the directory doesn't exist, it will be created.
+// Returns the complete path to the directory.
+func WriteAssetsToDir(targetDir string) error {
+	// Create the target directory if it doesn't exist
+	if err := os.MkdirAll(targetDir, 0755); err != nil {
+		return fmt.Errorf("failed to create target directory: %w", err)
+	}
+
+	// Copy all files from the embedded filesystem to the target directory
+	err := fs.WalkDir(PKLFS, "pkl", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Calculate the destination path in the target directory
+		relPath, err := filepath.Rel("pkl", path)
+		if err != nil {
+			return fmt.Errorf("failed to get relative path for %s: %w", path, err)
+		}
+		destPath := filepath.Join(targetDir, relPath)
+
+		// If it's a directory, create it
+		if d.IsDir() {
+			return os.MkdirAll(destPath, 0755)
+		}
+
+		// Read the file from embedded FS
+		data, err := PKLFS.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("failed to read embedded file %s: %w", path, err)
+		}
+
+		// Write the file to the target directory
+		if err := os.WriteFile(destPath, data, 0644); err != nil {
+			return fmt.Errorf("failed to write file %s: %w", destPath, err)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return fmt.Errorf("failed to write assets to directory: %w", err)
+	}
+
+	return nil
+}
+
+// WriteAssetsToDirWithConversion writes all embedded PKL assets to the specified directory
+// with package URL to local path conversion applied.
+// If the directory doesn't exist, it will be created.
+func WriteAssetsToDirWithConversion(targetDir string) error {
+	// Create the target directory if it doesn't exist
+	if err := os.MkdirAll(targetDir, 0755); err != nil {
+		return fmt.Errorf("failed to create target directory: %w", err)
+	}
+
+	// Copy all files from the embedded filesystem to the target directory
+	err := fs.WalkDir(PKLFS, "pkl", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Calculate the destination path in the target directory
+		relPath, err := filepath.Rel("pkl", path)
+		if err != nil {
+			return fmt.Errorf("failed to get relative path for %s: %w", path, err)
+		}
+		destPath := filepath.Join(targetDir, relPath)
+
+		// If it's a directory, create it
+		if d.IsDir() {
+			return os.MkdirAll(destPath, 0755)
+		}
+
+		// Read the file from embedded FS
+		data, err := PKLFS.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("failed to read embedded file %s: %w", path, err)
+		}
+
+		// Apply conversion if it's a .pkl file
+		content := string(data)
+		if filepath.Ext(path) == ".pkl" {
+			content = ConvertPackageURLsToLocalPaths(content)
+			content = ConvertImportStatements(content)
+		}
+
+		// Write the file to the target directory
+		if err := os.WriteFile(destPath, []byte(content), 0644); err != nil {
+			return fmt.Errorf("failed to write file %s: %w", destPath, err)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return fmt.Errorf("failed to write assets to directory with conversion: %w", err)
+	}
+
+	return nil
+}
+
+// GetPKLFileFromTempDir is a helper function that combines CopyAssetsToTempDir
+// and reading a specific file. It returns the file content and a cleanup function.
+// The caller should defer the cleanup function to remove the temp directory.
+func GetPKLFileFromTempDir(filename string) (content string, tempDir string, cleanup func(), err error) {
+	tempDir, err = CopyAssetsToTempDir()
+	if err != nil {
+		return "", "", nil, fmt.Errorf("failed to copy assets to temp dir: %w", err)
+	}
+
+	cleanup = func() {
+		os.RemoveAll(tempDir)
+	}
+
+	filePath := filepath.Join(tempDir, filename)
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		cleanup()
+		return "", "", nil, fmt.Errorf("failed to read file %s: %w", filename, err)
+	}
+
+	return string(data), tempDir, cleanup, nil
+}
+
+// GetPKLFileFromTempDirWithConversion is similar to GetPKLFileFromTempDir but
+// applies package URL conversion to all files in the temp directory.
+func GetPKLFileFromTempDirWithConversion(filename string) (content string, tempDir string, cleanup func(), err error) {
+	tempDir, err = CopyAssetsToTempDirWithConversion()
+	if err != nil {
+		return "", "", nil, fmt.Errorf("failed to copy assets to temp dir with conversion: %w", err)
+	}
+
+	cleanup = func() {
+		os.RemoveAll(tempDir)
+	}
+
+	filePath := filepath.Join(tempDir, filename)
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		cleanup()
+		return "", "", nil, fmt.Errorf("failed to read file %s: %w", filename, err)
+	}
+
+	return string(data), tempDir, cleanup, nil
 }

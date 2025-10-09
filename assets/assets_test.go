@@ -1,6 +1,8 @@
 package assets
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -426,6 +428,432 @@ func TestEnsureOfflineCompatibility(t *testing.T) {
 	if err != nil {
 		t.Errorf("Offline compatibility check failed: %v", err)
 	}
+}
+
+func TestCopyAssetsToTempDir(t *testing.T) {
+	// Test copying assets to a temporary directory
+	tempDir, err := CopyAssetsToTempDir()
+	if err != nil {
+		t.Fatalf("Failed to copy assets to temp dir: %v", err)
+	}
+	defer os.RemoveAll(tempDir) // Clean up
+
+	// Verify the temp directory exists
+	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
+		t.Fatalf("Temp directory was not created: %s", tempDir)
+	}
+
+	t.Logf("Assets copied to temp directory: %s", tempDir)
+
+	// Verify some expected files exist
+	expectedFiles := []string{
+		"Tool.pkl",
+		"Resource.pkl",
+		"Workflow.pkl",
+		"LLM.pkl",
+	}
+
+	for _, filename := range expectedFiles {
+		filePath := filepath.Join(tempDir, filename)
+		if _, err := os.Stat(filePath); os.IsNotExist(err) {
+			t.Errorf("Expected file %s does not exist in temp dir", filename)
+		} else {
+			t.Logf("✅ Found file: %s", filename)
+		}
+	}
+
+	// Verify external directory structure exists
+	externalDir := filepath.Join(tempDir, "external")
+	if _, err := os.Stat(externalDir); os.IsNotExist(err) {
+		t.Errorf("External directory does not exist in temp dir")
+	} else {
+		t.Logf("✅ External directory exists")
+	}
+
+	// Verify we can read a file from the temp directory
+	toolPath := filepath.Join(tempDir, "Tool.pkl")
+	data, err := os.ReadFile(toolPath)
+	if err != nil {
+		t.Fatalf("Failed to read Tool.pkl from temp dir: %v", err)
+	}
+
+	if len(data) == 0 {
+		t.Error("Tool.pkl in temp dir is empty")
+	}
+
+	content := string(data)
+	if !strings.Contains(content, "module") {
+		t.Error("Tool.pkl in temp dir doesn't contain expected PKL content")
+	}
+
+	t.Logf("✅ Successfully copied and verified assets in temp directory")
+}
+
+func TestCopyAssetsToTempDirWithConversion(t *testing.T) {
+	// Test copying assets with conversion
+	tempDir, err := CopyAssetsToTempDirWithConversion()
+	if err != nil {
+		t.Fatalf("Failed to copy assets with conversion to temp dir: %v", err)
+	}
+	defer os.RemoveAll(tempDir) // Clean up
+
+	// Verify the temp directory exists
+	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
+		t.Fatalf("Temp directory was not created: %s", tempDir)
+	}
+
+	t.Logf("Assets copied with conversion to temp directory: %s", tempDir)
+
+	// Read some PKL files and verify they don't contain package URLs
+	testFiles := []string{"Tool.pkl", "Resource.pkl", "Workflow.pkl"}
+
+	for _, filename := range testFiles {
+		filePath := filepath.Join(tempDir, filename)
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			t.Errorf("Failed to read %s from temp dir: %v", filename, err)
+			continue
+		}
+
+		content := string(data)
+		isValid, remaining := ValidateLocalPaths(content)
+		if !isValid {
+			t.Errorf("File %s in temp dir still contains package URLs after conversion: %v", filename, remaining)
+		} else {
+			t.Logf("✅ File %s has no package URLs", filename)
+		}
+	}
+
+	t.Logf("✅ Successfully copied and converted assets in temp directory")
+}
+
+func TestTempDirCleanup(t *testing.T) {
+	// Test that we can create and clean up temp directories
+	tempDir1, err := CopyAssetsToTempDir()
+	if err != nil {
+		t.Fatalf("Failed to create first temp dir: %v", err)
+	}
+
+	tempDir2, err := CopyAssetsToTempDir()
+	if err != nil {
+		t.Fatalf("Failed to create second temp dir: %v", err)
+	}
+
+	// Verify both directories exist and are different
+	if tempDir1 == tempDir2 {
+		t.Error("Two calls to CopyAssetsToTempDir returned the same directory")
+	}
+
+	if _, err := os.Stat(tempDir1); os.IsNotExist(err) {
+		t.Error("First temp directory does not exist")
+	}
+
+	if _, err := os.Stat(tempDir2); os.IsNotExist(err) {
+		t.Error("Second temp directory does not exist")
+	}
+
+	// Clean up first directory
+	err = os.RemoveAll(tempDir1)
+	if err != nil {
+		t.Errorf("Failed to remove first temp dir: %v", err)
+	}
+
+	// Verify it's gone
+	if _, err := os.Stat(tempDir1); !os.IsNotExist(err) {
+		t.Error("First temp directory still exists after cleanup")
+	}
+
+	// Clean up second directory
+	err = os.RemoveAll(tempDir2)
+	if err != nil {
+		t.Errorf("Failed to remove second temp dir: %v", err)
+	}
+
+	// Verify it's gone
+	if _, err := os.Stat(tempDir2); !os.IsNotExist(err) {
+		t.Error("Second temp directory still exists after cleanup")
+	}
+
+	t.Logf("✅ Temp directory cleanup test passed")
+}
+
+func TestWriteAssetsToDir(t *testing.T) {
+	// Create a temp directory for testing
+	testDir, err := os.MkdirTemp("", "test-write-assets-*")
+	if err != nil {
+		t.Fatalf("Failed to create test directory: %v", err)
+	}
+	defer os.RemoveAll(testDir)
+
+	// Write assets to the test directory
+	err = WriteAssetsToDir(testDir)
+	if err != nil {
+		t.Fatalf("Failed to write assets to directory: %v", err)
+	}
+
+	t.Logf("Assets written to: %s", testDir)
+
+	// Verify expected files exist
+	expectedFiles := []string{
+		"Tool.pkl",
+		"Resource.pkl",
+		"Workflow.pkl",
+		"LLM.pkl",
+	}
+
+	for _, filename := range expectedFiles {
+		filePath := filepath.Join(testDir, filename)
+		if _, err := os.Stat(filePath); os.IsNotExist(err) {
+			t.Errorf("Expected file %s does not exist", filename)
+		} else {
+			t.Logf("✅ Found file: %s", filename)
+		}
+	}
+
+	// Verify external directory exists
+	externalDir := filepath.Join(testDir, "external")
+	if _, err := os.Stat(externalDir); os.IsNotExist(err) {
+		t.Error("External directory does not exist")
+	} else {
+		t.Logf("✅ External directory exists")
+	}
+
+	t.Logf("✅ Successfully wrote assets to directory")
+}
+
+func TestWriteAssetsToDirWithConversion(t *testing.T) {
+	// Create a temp directory for testing
+	testDir, err := os.MkdirTemp("", "test-write-assets-conversion-*")
+	if err != nil {
+		t.Fatalf("Failed to create test directory: %v", err)
+	}
+	defer os.RemoveAll(testDir)
+
+	// Write assets with conversion
+	err = WriteAssetsToDirWithConversion(testDir)
+	if err != nil {
+		t.Fatalf("Failed to write assets with conversion: %v", err)
+	}
+
+	t.Logf("Assets written with conversion to: %s", testDir)
+
+	// Verify some PKL files don't contain package URLs
+	testFiles := []string{"Tool.pkl", "Resource.pkl", "Workflow.pkl"}
+
+	for _, filename := range testFiles {
+		filePath := filepath.Join(testDir, filename)
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			t.Errorf("Failed to read %s: %v", filename, err)
+			continue
+		}
+
+		content := string(data)
+		isValid, remaining := ValidateLocalPaths(content)
+		if !isValid {
+			t.Errorf("File %s still contains package URLs after conversion: %v", filename, remaining)
+		} else {
+			t.Logf("✅ File %s has no package URLs", filename)
+		}
+	}
+
+	t.Logf("✅ Successfully wrote and validated converted assets")
+}
+
+func TestWriteAssetsToDirNonExistent(t *testing.T) {
+	// Test writing to a non-existent directory (should be created)
+	testDir := filepath.Join(os.TempDir(), "test-nested", "dir", "path")
+	defer os.RemoveAll(filepath.Join(os.TempDir(), "test-nested"))
+
+	err := WriteAssetsToDir(testDir)
+	if err != nil {
+		t.Fatalf("Failed to write assets to non-existent directory: %v", err)
+	}
+
+	// Verify the directory was created
+	if _, err := os.Stat(testDir); os.IsNotExist(err) {
+		t.Error("Directory was not created")
+	} else {
+		t.Logf("✅ Non-existent directory was created: %s", testDir)
+	}
+
+	// Verify files exist
+	toolPath := filepath.Join(testDir, "Tool.pkl")
+	if _, err := os.Stat(toolPath); os.IsNotExist(err) {
+		t.Error("Tool.pkl was not written to the directory")
+	} else {
+		t.Logf("✅ Files written to created directory")
+	}
+}
+
+func TestGetPKLFileFromTempDir(t *testing.T) {
+	// Test the integrated helper function
+	content, tempDir, cleanup, err := GetPKLFileFromTempDir("Tool.pkl")
+	if err != nil {
+		t.Fatalf("Failed to get PKL file from temp dir: %v", err)
+	}
+	defer cleanup()
+
+	t.Logf("Got PKL file from temp dir: %s", tempDir)
+
+	// Verify content is not empty
+	if len(content) == 0 {
+		t.Error("Content is empty")
+	}
+
+	// Verify content is valid PKL
+	if !strings.Contains(content, "module") {
+		t.Error("Content doesn't contain expected PKL syntax")
+	}
+
+	// Verify temp directory exists
+	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
+		t.Error("Temp directory doesn't exist")
+	}
+
+	t.Logf("✅ GetPKLFileFromTempDir works correctly")
+
+	// Test cleanup
+	cleanup()
+	if _, err := os.Stat(tempDir); !os.IsNotExist(err) {
+		t.Error("Temp directory was not cleaned up")
+	} else {
+		t.Logf("✅ Cleanup function works correctly")
+	}
+}
+
+func TestGetPKLFileFromTempDirWithConversion(t *testing.T) {
+	// Test the integrated helper function with conversion
+	content, tempDir, cleanup, err := GetPKLFileFromTempDirWithConversion("Workflow.pkl")
+	if err != nil {
+		t.Fatalf("Failed to get PKL file from temp dir with conversion: %v", err)
+	}
+	defer cleanup()
+
+	t.Logf("Got PKL file with conversion from temp dir: %s", tempDir)
+
+	// Verify content is not empty
+	if len(content) == 0 {
+		t.Error("Content is empty")
+	}
+
+	// Verify no package URLs remain
+	isValid, remaining := ValidateLocalPaths(content)
+	if !isValid {
+		t.Errorf("Content still contains package URLs: %v", remaining)
+	} else {
+		t.Logf("✅ No package URLs in content")
+	}
+
+	t.Logf("✅ GetPKLFileFromTempDirWithConversion works correctly")
+}
+
+func TestGetPKLFileFromTempDirNonExistent(t *testing.T) {
+	// Test with a non-existent file
+	_, _, cleanup, err := GetPKLFileFromTempDir("NonExistent.pkl")
+	if err == nil {
+		defer cleanup()
+		t.Error("Expected error for non-existent file, got nil")
+	} else {
+		t.Logf("✅ Correctly returns error for non-existent file: %v", err)
+	}
+}
+
+func TestIntegrationScenario(t *testing.T) {
+	// Test a realistic integration scenario
+	t.Run("scenario_1_write_and_process", func(t *testing.T) {
+		// Create a working directory
+		workDir, err := os.MkdirTemp("", "integration-test-*")
+		if err != nil {
+			t.Fatalf("Failed to create work directory: %v", err)
+		}
+		defer os.RemoveAll(workDir)
+
+		// Write assets to the directory
+		err = WriteAssetsToDirWithConversion(workDir)
+		if err != nil {
+			t.Fatalf("Failed to write assets: %v", err)
+		}
+
+		// Process multiple files
+		files := []string{"Tool.pkl", "Resource.pkl", "Workflow.pkl"}
+		for _, filename := range files {
+			filePath := filepath.Join(workDir, filename)
+			data, err := os.ReadFile(filePath)
+			if err != nil {
+				t.Errorf("Failed to read %s: %v", filename, err)
+				continue
+			}
+
+			// Verify each file
+			content := string(data)
+			if len(content) == 0 {
+				t.Errorf("File %s is empty", filename)
+			}
+
+			isValid, _ := ValidateLocalPaths(content)
+			if !isValid {
+				t.Errorf("File %s contains package URLs", filename)
+			}
+		}
+
+		t.Logf("✅ Integration scenario 1 passed")
+	})
+
+	t.Run("scenario_2_helper_function", func(t *testing.T) {
+		// Use the helper function for quick access
+		content, tempDir, cleanup, err := GetPKLFileFromTempDirWithConversion("LLM.pkl")
+		if err != nil {
+			t.Fatalf("Failed to get LLM.pkl: %v", err)
+		}
+		defer cleanup()
+
+		// Verify we can also access other files in the same temp dir
+		toolPath := filepath.Join(tempDir, "Tool.pkl")
+		toolData, err := os.ReadFile(toolPath)
+		if err != nil {
+			t.Errorf("Failed to read Tool.pkl from same temp dir: %v", err)
+		}
+
+		if len(content) == 0 || len(toolData) == 0 {
+			t.Error("Contents are empty")
+		}
+
+		t.Logf("✅ Integration scenario 2 passed")
+	})
+
+	t.Run("scenario_3_multiple_temp_dirs", func(t *testing.T) {
+		// Test using multiple temp directories concurrently
+		tempDir1, err := CopyAssetsToTempDir()
+		if err != nil {
+			t.Fatalf("Failed to create first temp dir: %v", err)
+		}
+		defer os.RemoveAll(tempDir1)
+
+		tempDir2, err := CopyAssetsToTempDirWithConversion()
+		if err != nil {
+			t.Fatalf("Failed to create second temp dir: %v", err)
+		}
+		defer os.RemoveAll(tempDir2)
+
+		// Verify both are different and both exist
+		if tempDir1 == tempDir2 {
+			t.Error("Temp directories should be different")
+		}
+
+		// Read from both
+		file1 := filepath.Join(tempDir1, "Tool.pkl")
+		file2 := filepath.Join(tempDir2, "Tool.pkl")
+
+		data1, _ := os.ReadFile(file1)
+		data2, _ := os.ReadFile(file2)
+
+		if len(data1) == 0 || len(data2) == 0 {
+			t.Error("Files are empty")
+		}
+
+		t.Logf("✅ Integration scenario 3 passed")
+	})
 }
 
 func TestRedundantConversionBehavior(t *testing.T) {
