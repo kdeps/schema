@@ -1,7 +1,7 @@
 /// Skip condition functions used across all resources.
 ///
 /// Tools for creating skip logic validations
-@ModuleInfo { minPklVersion = "0.29.0" }
+@ModuleInfo { minPklVersion = "0.29.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/skip" }
 

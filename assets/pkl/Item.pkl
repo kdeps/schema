@@ -2,7 +2,7 @@
 ///
 /// This module provides functions to interact with records representing iterations or elements in a for loop.
 /// The module supports retrieving, navigating, and listing records without requiring a specific identifier.
-@ModuleInfo { minPklVersion = "0.29.0" }
+@ModuleInfo { minPklVersion = "0.29.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/item" }
 

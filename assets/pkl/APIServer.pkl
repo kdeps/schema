@@ -4,7 +4,7 @@
 /// server settings such as host IP and port number, as well as route definitions. The API server
 /// is designed to handle incoming requests and route them to the appropriate handlers, ensuring
 /// proper management of HTTP methods and deferred processing.
-@ModuleInfo { minPklVersion = "0.29.0" }
+@ModuleInfo { minPklVersion = "0.29.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/api_server" }
 
