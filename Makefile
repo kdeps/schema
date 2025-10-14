@@ -9,6 +9,19 @@ CURRENT_DIR := $(shell pwd)
 # Collect all .pkl files in PKL_DIR
 PKL_FILES := $(wildcard $(PKL_DIR)/*.pkl)
 
+# Default target when running 'make' without arguments
+.DEFAULT_GOAL := generate
+
+# Check and install pkl-gen-go if not available
+check-pkl-gen-go:
+	@if ! command -v pkl-gen-go >/dev/null 2>&1; then \
+		echo "📦 pkl-gen-go not found. Installing..."; \
+		go install github.com/apple/pkl-go/cmd/pkl-gen-go@latest; \
+		echo "✅ pkl-gen-go installed successfully!"; \
+	else \
+		echo "✅ pkl-gen-go is already installed"; \
+	fi
+
 # Update versions and dependencies
 update-deps:
 	@echo "🚀 Updating versions and dependencies..."
@@ -29,7 +42,7 @@ setup-offline:
 	@echo "✅ Offline dependencies setup complete!"
 
 # Generate output files in OUTPUT_DIR
-generate: setup-offline
+generate: check-pkl-gen-go setup-offline
 	@echo "📦 Starting PKL code generation..."
 	@pkl project resolve --root-dir $(CURRENT_DIR) --module-path $(PKL_DIR) $(PKL_DIR)
 
@@ -89,4 +102,4 @@ help:
 	@echo "  make clean-all       - Clean all files including dependencies"
 	@echo "  make help            - Show this help"
 
-.PHONY: generate generate-latest setup-offline update-deps clean clean-all help
+.PHONY: check-pkl-gen-go generate generate-latest setup-offline update-deps clean clean-all help

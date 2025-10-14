@@ -867,7 +867,7 @@ func TestRedundantConversionBehavior(t *testing.T) {
 			{
 				name: "missed_pkl_go_import",
 				input: `/// Tool module with missed conversion
-@ModuleInfo { minPklVersion = "0.29.0" }
+@ModuleInfo { minPklVersion = "0.29.1" }
 module Tool
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl"
@@ -879,7 +879,7 @@ function test() = "example"`,
 			{
 				name: "missed_pkl_pantry_import",
 				input: `/// Resource module with missed conversion
-@ModuleInfo { minPklVersion = "0.29.0" }
+@ModuleInfo { minPklVersion = "0.29.1" }
 module Resource
 
 import "external/pkl-go/codegen/src/go.pkl"
@@ -891,7 +891,7 @@ class ResourceAction {}`,
 			{
 				name: "multiple_missed_imports",
 				input: `/// Module with multiple missed conversions
-@ModuleInfo { minPklVersion = "0.29.0" }
+@ModuleInfo { minPklVersion = "0.29.1" }
 module Test
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl"
@@ -916,7 +916,7 @@ package {
 			{
 				name: "mixed_converted_and_missed",
 				input: `/// Mixed scenario - some converted, some missed
-@ModuleInfo { minPklVersion = "0.29.0" }
+@ModuleInfo { minPklVersion = "0.29.1" }
 module Mixed
 
 // These were already converted correctly
