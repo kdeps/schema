@@ -4,7 +4,7 @@
 /// server binding details (host and port) and route configurations. The server
 /// handles HTTP requests, routing them to appropriate handlers based on defined
 /// paths and server types.
-@ModuleInfo { minPklVersion = "0.29.0" }
+@ModuleInfo { minPklVersion = "0.29.1" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/web_server" }
 
