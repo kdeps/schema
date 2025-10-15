@@ -76,11 +76,25 @@ generate: check-pkl-gen-go setup-offline
 # Full update and generate (recommended for CI/CD)
 generate-latest: update-deps generate
 
+# Generate documentation (requires VERSION env var or uses latest tag)
+docs:
+	@echo "📚 Generating PKL documentation..."
+	@if [ -z "$$VERSION" ]; then \
+		VERSION=$$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.1"); \
+		VERSION=$$(echo "$$VERSION" | sed 's/^v//'); \
+		echo "Using version from git tag: $$VERSION"; \
+	fi; \
+	VERSION="$$VERSION" ./gradlew pkldoc --stacktrace
+	@./scripts/fix_pkldoc_index.sh
+	@echo "✅ Documentation generated in build/pkldoc/pkldoc/"
+	@echo "📖 Open build/pkldoc/pkldoc/index.html in your browser to view"
+
 # Clean generated files and cached dependencies
 clean:
 	@echo "🧹 Cleaning generated files..."
 	@rm -rf gen/
 	@rm -rf assets/pkl/
+	@rm -rf build/
 	@echo "✅ Clean completed!"
 
 # Clean everything including downloaded dependencies
@@ -96,10 +110,11 @@ help:
 	@echo "Available commands:"
 	@echo "  make generate        - Generate PKL code with offline dependencies (default)"
 	@echo "  make generate-latest - Update to latest versions and generate"
+	@echo "  make docs            - Generate PKL documentation"
 	@echo "  make setup-offline   - Setup offline dependencies only"
 	@echo "  make update-deps     - Update versions and dependencies"
 	@echo "  make clean           - Clean generated files"
 	@echo "  make clean-all       - Clean all files including dependencies"
 	@echo "  make help            - Show this help"
 
-.PHONY: check-pkl-gen-go generate generate-latest setup-offline update-deps clean clean-all help
+.PHONY: check-pkl-gen-go generate generate-latest docs setup-offline update-deps clean clean-all help

@@ -74,18 +74,72 @@ jobs:
       env:
         VERSION_NUM: ${{ github.ref_name }}
       run: |
-        # Retry mechanism
-        set +e
         # Extract version number without the leading 'v'
         export VERSION=$(echo "${VERSION_NUM}" | sed -E 's/^v(.*)$/\1/')
-        ./gradlew pkldoc
-        EXIT_CODE=$?
-        if [ $EXIT_CODE -ne 0 ]; then
-          echo "First attempt failed, retrying..."
-          sleep 30s
-          ./gradlew pkldoc
-        fi
-        set -e
+
+        # Package URL from GitHub Releases
+        PACKAGE_URL="https://github.com/kdeps/schema/releases/download/${VERSION_NUM}/core@${VERSION}.zip"
+
+        echo "Waiting for package to be available at:"
+        echo "  $PACKAGE_URL"
+        echo ""
+
+        # First, wait for the package to be downloadable
+        MAX_WAIT_RETRIES=10
+        WAIT_COUNT=0
+        WAIT_INTERVAL=30
+
+        while [ $WAIT_COUNT -lt $MAX_WAIT_RETRIES ]; do
+          echo "Checking if package is available (attempt $((WAIT_COUNT + 1))/$MAX_WAIT_RETRIES)..."
+
+          if curl --head --fail --silent "$PACKAGE_URL" > /dev/null 2>&1; then
+            echo "✅ Package is available!"
+            break
+          fi
+
+          WAIT_COUNT=$((WAIT_COUNT + 1))
+          if [ $WAIT_COUNT -lt $MAX_WAIT_RETRIES ]; then
+            echo "Package not yet available. Waiting ${WAIT_INTERVAL}s..."
+            sleep $WAIT_INTERVAL
+          else
+            echo "❌ Package not available after $MAX_WAIT_RETRIES attempts"
+            exit 1
+          fi
+        done
+
+        echo ""
+        echo "Generating documentation..."
+
+        # Retry pkldoc generation with backoff
+        MAX_RETRIES=3
+        RETRY_COUNT=0
+        WAIT_TIME=30
+
+        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+          echo "Generating docs (attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)..."
+
+          if ./gradlew pkldoc --stacktrace 2>&1 | tee /tmp/pkldoc.log; then
+            echo "✅ Documentation generated successfully!"
+
+            # Fix pkldoc index and create current symlink
+            ./scripts/fix_pkldoc_index.sh
+
+            exit 0
+          fi
+
+          RETRY_COUNT=$((RETRY_COUNT + 1))
+
+          if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+            echo "❌ Failed. Waiting ${WAIT_TIME}s before retry..."
+            sleep $WAIT_TIME
+            WAIT_TIME=$((WAIT_TIME * 2))
+          fi
+        done
+
+        echo "❌ Failed to generate docs after $MAX_RETRIES attempts"
+        echo "Last error log:"
+        cat /tmp/pkldoc.log
+        exit 1
     - name: setup pages
       uses: actions/configure-pages@v4
     - name: upload artifact
