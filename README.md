@@ -9,14 +9,32 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.3.0
-  - Pkl gen go upgrade (#40)
+### Latest Release: v0.4.1-dev
+  - Update pkl min (#42)
+    * added retract directive on previous tags used for kdeps-next experiments pushed as main tags
+    
+    * changed minPklVersion to "0.29.1"
+
+### Previous Highlights
+- **v0.4.0-dev**:   - Tempdir+assets (#41)
+    * added retract directive on previous tags used for kdeps-next experiments pushed as main tags
+    
+    * copy assets to tempdir
+    
+    * update to pkkl version 0.29.1
+
+- **v0.3.1-dev**:   - 
+
+- **v0.3.0-dev**:   - added retract directive on previous tags used for kdeps-next experiments pushed as main tags
+    
+    updated relnote/readme
+
+- **v0.3.0**:   - Pkl gen go upgrade (#40)
     * additional assets offline-ready redundancy
     
     * upgrade to pkl-go 0.11.1 and pkl-gen-go 0.11.1
     updated README.md
 
-### Previous Highlights
 - **v0.2.50**:   - Offline phase 3 (#39)
     * upgraded gradle and fix pkldoc GHA step
     
