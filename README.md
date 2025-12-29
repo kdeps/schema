@@ -1,5 +1,7 @@
 # Kdeps Schema
 
+[![Auto-update Dependencies](https://github.com/kdeps/schema/actions/workflows/auto-update-dependencies.yml/badge.svg)](https://github.com/kdeps/schema/actions/workflows/auto-update-dependencies.yml)
+
 This is the schema definitions used by [kdeps](https://kdeps.com).
 See the [schema documentation](https://kdeps.github.io/schema).
 
