@@ -1,7 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Script to download external PKL dependencies for offline use
 set -e
+
+# Require bash 4.0+ for associative arrays
+if ((BASH_VERSINFO[0] < 4)); then
+    echo "Warning: Bash 4.0+ required for advanced conflict resolution"
+    echo "Using simple conflict detection mode"
+    SIMPLE_MODE=true
+else
+    SIMPLE_MODE=false
+fi
 
 DEPS_DIR="assets/pkl/external"
 VERSIONS_FILE="versions.json"
@@ -11,6 +20,121 @@ if [ ! -f "$VERSIONS_FILE" ]; then
     echo "Error: $VERSIONS_FILE not found"
     exit 1
 fi
+
+# Generic case-insensitive conflict resolution
+# This will automatically detect and rename conflicting files
+# Format: "relative_path:new_name"
+if [ "$SIMPLE_MODE" = false ]; then
+    declare -A RENAME_MAP
+fi
+
+# Function to detect case-insensitive conflicts
+detect_conflicts() {
+    local dir="$1"
+    local seen_file="/tmp/seen_files.txt"
+
+    rm -f "$seen_file"
+    touch "$seen_file"
+
+    find "$dir" -name "*.pkl" -type f | sort | while read -r file; do
+        filename=$(basename "$file")
+        filename_lower=$(echo "$filename" | tr '[:upper:]' '[:lower:]')
+        rel_path="${file#$dir/}"
+
+        # Check if lowercase version already seen
+        existing=$(grep "^${filename_lower}:" "$seen_file" 2>/dev/null | head -1 | cut -d: -f2-)
+
+        if [ -n "$existing" ]; then
+            # Conflict detected!
+            echo "⚠️  Case conflict detected:"
+            echo "   Existing: $existing"
+            echo "   Conflict: $rel_path"
+
+            # Generate new name by prefixing with parent directory name
+            parent_dir=$(dirname "$rel_path")
+            parent_name=$(basename "$parent_dir")
+            new_name="${parent_name}_${filename}"
+
+            # Store rename mapping
+            echo "$rel_path:$new_name" >> /tmp/rename_map.txt
+        else
+            # Record this file (lowercase:fullpath)
+            echo "${filename_lower}:${rel_path}" >> "$seen_file"
+        fi
+    done
+
+    rm -f "$seen_file"
+}
+
+# Function to apply renames
+apply_renames() {
+    local base_dir="$1"
+
+    if [ ! -f /tmp/rename_map.txt ]; then
+        return 0
+    fi
+
+    while IFS=: read -r old_path new_name; do
+        old_file="$base_dir/$old_path"
+        new_file="$(dirname "$old_file")/$new_name"
+
+        if [ -f "$old_file" ]; then
+            echo "   Renaming: $(basename "$old_path") → $new_name"
+            mv "$old_file" "$new_file"
+
+            # Store mapping for reference fixing (to a file for bash 3 compat)
+            echo "$old_path|$(dirname "$old_path")/$new_name" >> /tmp/rename_mappings.txt
+        fi
+    done < /tmp/rename_map.txt
+
+    rm -f /tmp/rename_map.txt
+}
+
+# Function to fix references in PKL files
+fix_references() {
+    local base_dir="$1"
+
+    if [ ! -f /tmp/rename_mappings.txt ]; then
+        echo "No files were renamed, skipping reference updates"
+        return 0
+    fi
+
+    echo ""
+    echo "Fixing references to renamed files..."
+
+    # Find all PKL files and update import statements
+    find "$base_dir" -name "*.pkl" -type f | while read -r pkl_file; do
+        local file_changed=false
+
+        # Read each rename mapping
+        while IFS='|' read -r old_path new_path; do
+            old_name=$(basename "$old_path")
+            new_name=$(basename "$new_path")
+
+            # Check if this file references the renamed file
+            if grep -q "$old_name" "$pkl_file" 2>/dev/null; then
+                # Update import statements (cross-platform sed)
+                if [[ "$OSTYPE" == "darwin"* ]]; then
+                    # macOS
+                    sed -i '' "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
+                    sed -i '' "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+                else
+                    # Linux
+                    sed -i "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
+                    sed -i "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+                fi
+
+                if [ "$file_changed" = false ]; then
+                    echo "   Updated references in: $(basename "$pkl_file")"
+                    file_changed=true
+                fi
+            fi
+        done < /tmp/rename_mappings.txt
+    done
+
+    rm -f /tmp/rename_mappings.txt
+    echo "✓ Reference fixing complete"
+}
 
 # Read versions from JSON file  
 PKL_GO_VERSION=$(jq -r '.dependencies."pkl-go".version' "$VERSIONS_FILE")
@@ -58,8 +182,10 @@ for package in $PKL_PANTRY_PACKAGES; do
     
     # Copy only PKL files (GitHub replaces @ with - in directory name)
     PKL_PANTRY_DIR_NAME="pkl-pantry-$(echo "${PKL_PANTRY_TAG}" | tr '@' '-')"
+
+    # Copy all PKL files
     find "/tmp/${PKL_PANTRY_DIR_NAME}" -name "*.pkl" -type f -exec cp {} "$PACKAGE_DIR/" \;
-    
+
     # Cleanup temporary files for this package
     rm -rf "/tmp/${PKL_PANTRY_DIR_NAME}"
 done
@@ -67,9 +193,28 @@ done
 # Cleanup temporary files
 rm -rf "/tmp/pkl-go-${PKL_GO_VERSION}"
 
+echo ""
 echo "Dependencies downloaded successfully!"
 echo "pkl-go repository in: $DEPS_DIR/pkl-go/"
 echo "pkl-pantry repository in: $DEPS_DIR/pkl-pantry/"
+
+# Step 1: Detect case-insensitive conflicts
+echo ""
+echo "Checking for case-insensitive filename conflicts..."
+rm -f /tmp/rename_map.txt
+detect_conflicts "$DEPS_DIR"
+
+# Step 2: Apply renames if conflicts were found
+if [ -f /tmp/rename_map.txt ]; then
+    echo ""
+    echo "Applying renames to resolve conflicts..."
+    apply_renames "$DEPS_DIR"
+
+    # Step 3: Fix all references to renamed files
+    fix_references "$DEPS_DIR"
+else
+    echo "✓ No case-insensitive conflicts detected"
+fi
 
 # List downloaded pkl files
 echo ""
