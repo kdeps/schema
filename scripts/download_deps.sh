@@ -12,6 +12,11 @@ if [ ! -f "$VERSIONS_FILE" ]; then
     exit 1
 fi
 
+# Files to exclude due to case-insensitive filesystem conflicts
+EXCLUDE_FILES=(
+    "com.circleci.v2/configuration.pkl"  # Conflicts with Config.pkl on case-insensitive FS
+)
+
 # Read versions from JSON file  
 PKL_GO_VERSION=$(jq -r '.dependencies."pkl-go".version' "$VERSIONS_FILE")
 
@@ -58,8 +63,28 @@ for package in $PKL_PANTRY_PACKAGES; do
     
     # Copy only PKL files (GitHub replaces @ with - in directory name)
     PKL_PANTRY_DIR_NAME="pkl-pantry-$(echo "${PKL_PANTRY_TAG}" | tr '@' '-')"
-    find "/tmp/${PKL_PANTRY_DIR_NAME}" -name "*.pkl" -type f -exec cp {} "$PACKAGE_DIR/" \;
-    
+
+    # Copy PKL files, excluding case-conflict files
+    find "/tmp/${PKL_PANTRY_DIR_NAME}" -name "*.pkl" -type f | while read -r file; do
+        # Get relative path
+        rel_path="${file#/tmp/${PKL_PANTRY_DIR_NAME}/}"
+
+        # Check if this file should be excluded
+        should_exclude=false
+        for exclude_pattern in "${EXCLUDE_FILES[@]}"; do
+            if [[ "$rel_path" == *"$exclude_pattern"* ]]; then
+                echo "⚠ Excluding $rel_path (case-insensitive conflict)"
+                should_exclude=true
+                break
+            fi
+        done
+
+        # Copy if not excluded
+        if [ "$should_exclude" = false ]; then
+            cp "$file" "$PACKAGE_DIR/"
+        fi
+    done
+
     # Cleanup temporary files for this package
     rm -rf "/tmp/${PKL_PANTRY_DIR_NAME}"
 done
