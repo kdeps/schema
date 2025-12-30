@@ -90,6 +90,16 @@ detect_and_resolve_conflicts() {
             parent_dir=$(dirname "$rel_path")
             parent_name=$(basename "$parent_dir")
             new_name="${parent_name}_${filename}"
+            new_name_lower=$(echo "$new_name" | tr '[:upper:]' '[:lower:]')
+
+            # Check if the new name will also conflict
+            suffix=1
+            while grep -q "^${new_name_lower}:" "$seen_file" 2>/dev/null; do
+                # New name conflicts, add numeric suffix
+                suffix=$((suffix + 1))
+                new_name="${parent_name}_${filename%.pkl}_${suffix}.pkl"
+                new_name_lower=$(echo "$new_name" | tr '[:upper:]' '[:lower:]')
+            done
 
             old_file="$file"
             new_file="$(dirname "$file")/$new_name"
@@ -105,8 +115,8 @@ detect_and_resolve_conflicts() {
             # Fix references immediately
             fix_references_for_file "$dir" "$filename" "$new_rel_path"
 
-            # Record the new file (lowercase:fullpath) so it's not detected as conflict
-            echo "${filename_lower}:${new_rel_path}" >> "$seen_file"
+            # Record the NEW file's lowercase version (not the old one!)
+            echo "${new_name_lower}:${new_rel_path}" >> "$seen_file"
 
             # Signal that conflicts were found
             echo "1" > /tmp/conflicts_found.flag
