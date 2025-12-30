@@ -62,10 +62,12 @@ fix_references_for_file() {
 detect_and_resolve_conflicts() {
     local dir="$1"
     local seen_file="/tmp/seen_files.txt"
-    local conflicts_found=false
+    local renames_file="/tmp/all_renames.txt"
 
-    rm -f "$seen_file"
+    rm -f "$seen_file" "$renames_file"
     touch "$seen_file"
+
+    local conflicts_found=0
 
     find "$dir" -name "*.pkl" -type f | sort | while read -r file; do
         filename=$(basename "$file")
@@ -94,12 +96,17 @@ detect_and_resolve_conflicts() {
             echo "   Renaming: $filename → $new_name"
             mv "$old_file" "$new_file"
 
+            # Track this rename for global check
+            echo "${filename}|${new_rel_path}" >> "$renames_file"
+
             # Fix references immediately
             fix_references_for_file "$dir" "$filename" "$new_rel_path"
 
             # Record the new file (lowercase:fullpath) so it's not detected as conflict
             echo "${filename_lower}:${new_rel_path}" >> "$seen_file"
-            conflicts_found=true
+
+            # Signal that conflicts were found
+            echo "1" > /tmp/conflicts_found.flag
         else
             # Record this file (lowercase:fullpath)
             echo "${filename_lower}:${rel_path}" >> "$seen_file"
@@ -108,10 +115,14 @@ detect_and_resolve_conflicts() {
 
     rm -f "$seen_file"
 
-    if [ "$conflicts_found" = false ]; then
-        return 1
+    # Check if any conflicts were found
+    if [ -f /tmp/conflicts_found.flag ]; then
+        rm -f /tmp/conflicts_found.flag
+        return 0
     fi
-    return 0
+
+    rm -f "$renames_file"
+    return 1
 }
 
 # Read versions from JSON file  
@@ -179,11 +190,42 @@ echo "pkl-pantry repository in: $DEPS_DIR/pkl-pantry/"
 # Detect and resolve case-insensitive conflicts
 echo ""
 echo "Checking for case-insensitive filename conflicts..."
+CONFLICTS_RESOLVED=false
 if detect_and_resolve_conflicts "$DEPS_DIR"; then
+    CONFLICTS_RESOLVED=true
     echo ""
     echo "✓ All conflicts resolved"
 else
     echo "✓ No case-insensitive conflicts detected"
+fi
+
+# Final global reference check if any conflicts were resolved
+if [ "$CONFLICTS_RESOLVED" = true ] && [ -f /tmp/all_renames.txt ]; then
+    echo ""
+    echo "Running final global reference check..."
+
+    while IFS='|' read -r old_name new_path; do
+        # Find any remaining references to old filename
+        remaining_refs=$(find "$DEPS_DIR" -name "*.pkl" -type f -print0 | \
+            xargs -0 grep -l "$old_name" 2>/dev/null) || true
+
+        if [ -n "$remaining_refs" ]; then
+            echo "   Fixing remaining references to: $old_name"
+            echo "$remaining_refs" | while IFS= read -r pkl_file; do
+                if [[ "$OSTYPE" == "darwin"* ]]; then
+                    sed -i '' "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
+                    sed -i '' "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+                else
+                    sed -i "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
+                    sed -i "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+                fi
+                echo "     Updated: $(basename "$pkl_file")"
+            done
+        fi
+    done < /tmp/all_renames.txt
+
+    rm -f /tmp/all_renames.txt
+    echo "✓ Global reference check complete"
 fi
 
 # List downloaded pkl files
