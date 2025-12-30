@@ -104,33 +104,25 @@ fix_references() {
 
     # Build sed script once for all replacements
     local sed_script="/tmp/sed_replacements.txt"
-    rm -f "$sed_script"
-
-    # Build list of old filenames for grep pattern
     local grep_pattern="/tmp/grep_pattern.txt"
-    rm -f "$grep_pattern"
+    local files_to_update="/tmp/files_to_update.txt"
 
+    rm -f "$sed_script" "$grep_pattern" "$files_to_update"
+
+    # Build sed script and grep pattern
     while IFS='|' read -r old_path new_path; do
         old_name=$(basename "$old_path")
-        new_name=$(basename "$new_path")
-
-        # Add to grep pattern (for filtering files that need updates)
         echo "$old_name" >> "$grep_pattern"
-
-        # Add sed replacement rules
         echo "s|import \".*/${old_name}\"|import \"${new_path}\"|g" >> "$sed_script"
         echo "s|\".*/${old_name}\"|\"${new_path}\"|g" >> "$sed_script"
     done < /tmp/rename_mappings.txt
 
-    # Build combined grep pattern (match any old filename)
+    # Build combined grep pattern and find files to update
     local pattern=$(paste -sd '|' "$grep_pattern")
-
-    # Find files that actually contain references to renamed files
-    # This pre-filters to avoid processing files that don't need updates
-    local files_to_update="/tmp/files_to_update.txt"
     find "$base_dir" -name "*.pkl" -type f -print0 | \
         xargs -0 grep -l -E "$pattern" 2>/dev/null > "$files_to_update" || true
 
+    # Check if any files need updates
     if [ ! -s "$files_to_update" ]; then
         echo "   No files need reference updates"
         rm -f /tmp/rename_mappings.txt "$sed_script" "$grep_pattern" "$files_to_update"
@@ -138,25 +130,26 @@ fix_references() {
         return 0
     fi
 
-    # Apply all replacements to filtered files in one pass
-    local count=0
-    while read -r pkl_file; do
-        # Apply sed script (cross-platform)
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-            # macOS
+    # Apply sed script to all files
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
+        while IFS= read -r pkl_file; do
             sed -i '' -f "$sed_script" "$pkl_file"
-        else
-            # Linux
-            sed -i -f "$sed_script" "$pkl_file"
-        fi
-        echo "   Updated references in: $(basename "$pkl_file")"
-        ((count++))
-    done < "$files_to_update"
+            echo "   Updated references in: $(basename "$pkl_file")"
+        done < "$files_to_update"
+    else
+        # Linux - use xargs for better performance
+        xargs -I {} sed -i -f "$sed_script" {} < "$files_to_update"
+        while IFS= read -r pkl_file; do
+            echo "   Updated references in: $(basename "$pkl_file")"
+        done < "$files_to_update"
+    fi
 
     # Cleanup
     rm -f /tmp/rename_mappings.txt "$sed_script" "$grep_pattern" "$files_to_update"
 
-    echo "✓ Reference fixing complete ($count files updated)"
+    echo "✓ Reference fixing complete"
+    return 0
 }
 
 # Read versions from JSON file  
