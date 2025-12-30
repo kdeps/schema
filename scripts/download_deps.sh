@@ -28,13 +28,46 @@ if [ "$SIMPLE_MODE" = false ]; then
     declare -A RENAME_MAP
 fi
 
-# Function to detect case-insensitive conflicts
-detect_conflicts() {
+# Function to fix references to a renamed file
+fix_references_for_file() {
+    local base_dir="$1"
+    local old_name="$2"
+    local new_path="$3"
+
+    # Find files that reference the old filename
+    local files_with_refs
+    files_with_refs=$(find "$base_dir" -name "*.pkl" -type f -print0 | \
+        xargs -0 grep -l "$old_name" 2>/dev/null) || true
+
+    if [ -z "$files_with_refs" ]; then
+        return 0
+    fi
+
+    # Update references in each file
+    echo "$files_with_refs" | while IFS= read -r pkl_file; do
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
+            sed -i '' "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+        else
+            # Linux
+            sed -i "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
+            sed -i "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+        fi
+        echo "   Updated references in: $(basename "$pkl_file")"
+    done
+}
+
+# Function to detect and resolve case-insensitive conflicts
+detect_and_resolve_conflicts() {
     local dir="$1"
     local seen_file="/tmp/seen_files.txt"
+    local renames_file="/tmp/all_renames.txt"
 
-    rm -f "$seen_file"
+    rm -f "$seen_file" "$renames_file"
     touch "$seen_file"
+
+    local conflicts_found=0
 
     find "$dir" -name "*.pkl" -type f | sort | while read -r file; do
         filename=$(basename "$file")
@@ -45,7 +78,7 @@ detect_conflicts() {
         existing=$(grep "^${filename_lower}:" "$seen_file" 2>/dev/null | head -1 | cut -d: -f2-)
 
         if [ -n "$existing" ]; then
-            # Conflict detected!
+            # Conflict detected! Resolve immediately
             echo "⚠️  Case conflict detected:"
             echo "   Existing: $existing"
             echo "   Conflict: $rel_path"
@@ -55,8 +88,25 @@ detect_conflicts() {
             parent_name=$(basename "$parent_dir")
             new_name="${parent_name}_${filename}"
 
-            # Store rename mapping
-            echo "$rel_path:$new_name" >> /tmp/rename_map.txt
+            old_file="$file"
+            new_file="$(dirname "$file")/$new_name"
+            new_rel_path="$(dirname "$rel_path")/$new_name"
+
+            # Rename the file immediately
+            echo "   Renaming: $filename → $new_name"
+            mv "$old_file" "$new_file"
+
+            # Track this rename for global check
+            echo "${filename}|${new_rel_path}" >> "$renames_file"
+
+            # Fix references immediately
+            fix_references_for_file "$dir" "$filename" "$new_rel_path"
+
+            # Record the new file (lowercase:fullpath) so it's not detected as conflict
+            echo "${filename_lower}:${new_rel_path}" >> "$seen_file"
+
+            # Signal that conflicts were found
+            echo "1" > /tmp/conflicts_found.flag
         else
             # Record this file (lowercase:fullpath)
             echo "${filename_lower}:${rel_path}" >> "$seen_file"
@@ -64,99 +114,15 @@ detect_conflicts() {
     done
 
     rm -f "$seen_file"
-}
 
-# Function to apply renames
-apply_renames() {
-    local base_dir="$1"
-
-    if [ ! -f /tmp/rename_map.txt ]; then
+    # Check if any conflicts were found
+    if [ -f /tmp/conflicts_found.flag ]; then
+        rm -f /tmp/conflicts_found.flag
         return 0
     fi
 
-    while IFS=: read -r old_path new_name; do
-        old_file="$base_dir/$old_path"
-        new_file="$(dirname "$old_file")/$new_name"
-
-        if [ -f "$old_file" ]; then
-            echo "   Renaming: $(basename "$old_path") → $new_name"
-            mv "$old_file" "$new_file"
-
-            # Store mapping for reference fixing (to a file for bash 3 compat)
-            echo "$old_path|$(dirname "$old_path")/$new_name" >> /tmp/rename_mappings.txt
-        fi
-    done < /tmp/rename_map.txt
-
-    rm -f /tmp/rename_map.txt
-}
-
-# Function to fix references in PKL files
-fix_references() {
-    local base_dir="$1"
-
-    if [ ! -f /tmp/rename_mappings.txt ]; then
-        echo "No files were renamed, skipping reference updates"
-        return 0
-    fi
-
-    echo ""
-    echo "Fixing references to renamed files..."
-
-    # Build sed script once for all replacements
-    local sed_script="/tmp/sed_replacements.txt"
-    rm -f "$sed_script"
-
-    # Build list of old filenames for grep pattern
-    local grep_pattern="/tmp/grep_pattern.txt"
-    rm -f "$grep_pattern"
-
-    while IFS='|' read -r old_path new_path; do
-        old_name=$(basename "$old_path")
-        new_name=$(basename "$new_path")
-
-        # Add to grep pattern (for filtering files that need updates)
-        echo "$old_name" >> "$grep_pattern"
-
-        # Add sed replacement rules
-        echo "s|import \".*/${old_name}\"|import \"${new_path}\"|g" >> "$sed_script"
-        echo "s|\".*/${old_name}\"|\"${new_path}\"|g" >> "$sed_script"
-    done < /tmp/rename_mappings.txt
-
-    # Build combined grep pattern (match any old filename)
-    local pattern=$(paste -sd '|' "$grep_pattern")
-
-    # Find files that actually contain references to renamed files
-    # This pre-filters to avoid processing files that don't need updates
-    local files_to_update="/tmp/files_to_update.txt"
-    find "$base_dir" -name "*.pkl" -type f -print0 | \
-        xargs -0 grep -l -E "$pattern" 2>/dev/null > "$files_to_update" || true
-
-    if [ ! -s "$files_to_update" ]; then
-        echo "   No files need reference updates"
-        rm -f /tmp/rename_mappings.txt "$sed_script" "$grep_pattern" "$files_to_update"
-        echo "✓ Reference fixing complete"
-        return 0
-    fi
-
-    # Apply all replacements to filtered files in one pass
-    local count=0
-    while read -r pkl_file; do
-        # Apply sed script (cross-platform)
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-            # macOS
-            sed -i '' -f "$sed_script" "$pkl_file"
-        else
-            # Linux
-            sed -i -f "$sed_script" "$pkl_file"
-        fi
-        echo "   Updated references in: $(basename "$pkl_file")"
-        ((count++))
-    done < "$files_to_update"
-
-    # Cleanup
-    rm -f /tmp/rename_mappings.txt "$sed_script" "$grep_pattern" "$files_to_update"
-
-    echo "✓ Reference fixing complete ($count files updated)"
+    rm -f "$renames_file"
+    return 1
 }
 
 # Read versions from JSON file  
@@ -221,22 +187,45 @@ echo "Dependencies downloaded successfully!"
 echo "pkl-go repository in: $DEPS_DIR/pkl-go/"
 echo "pkl-pantry repository in: $DEPS_DIR/pkl-pantry/"
 
-# Step 1: Detect case-insensitive conflicts
+# Detect and resolve case-insensitive conflicts
 echo ""
 echo "Checking for case-insensitive filename conflicts..."
-rm -f /tmp/rename_map.txt
-detect_conflicts "$DEPS_DIR"
-
-# Step 2: Apply renames if conflicts were found
-if [ -f /tmp/rename_map.txt ]; then
+CONFLICTS_RESOLVED=false
+if detect_and_resolve_conflicts "$DEPS_DIR"; then
+    CONFLICTS_RESOLVED=true
     echo ""
-    echo "Applying renames to resolve conflicts..."
-    apply_renames "$DEPS_DIR"
-
-    # Step 3: Fix all references to renamed files
-    fix_references "$DEPS_DIR"
+    echo "✓ All conflicts resolved"
 else
     echo "✓ No case-insensitive conflicts detected"
+fi
+
+# Final global reference check if any conflicts were resolved
+if [ "$CONFLICTS_RESOLVED" = true ] && [ -f /tmp/all_renames.txt ]; then
+    echo ""
+    echo "Running final global reference check..."
+
+    while IFS='|' read -r old_name new_path; do
+        # Find any remaining references to old filename
+        remaining_refs=$(find "$DEPS_DIR" -name "*.pkl" -type f -print0 | \
+            xargs -0 grep -l "$old_name" 2>/dev/null) || true
+
+        if [ -n "$remaining_refs" ]; then
+            echo "   Fixing remaining references to: $old_name"
+            echo "$remaining_refs" | while IFS= read -r pkl_file; do
+                if [[ "$OSTYPE" == "darwin"* ]]; then
+                    sed -i '' "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
+                    sed -i '' "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+                else
+                    sed -i "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
+                    sed -i "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+                fi
+                echo "     Updated: $(basename "$pkl_file")"
+            done
+        fi
+    done < /tmp/all_renames.txt
+
+    rm -f /tmp/all_renames.txt
+    echo "✓ Global reference check complete"
 fi
 
 # List downloaded pkl files
