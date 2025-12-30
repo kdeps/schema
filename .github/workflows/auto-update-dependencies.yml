@@ -168,7 +168,14 @@ jobs:
         run: |
           echo "Running dependency download and update scripts"
           chmod +x scripts/*.sh
+
+          # Ensure deps/pkl directory exists
+          mkdir -p deps/pkl
+
+          # Download dependencies
           ./scripts/download_deps.sh
+
+          # Fix imports
           ./scripts/fix_deps_imports.sh
 
       - name: Update embedded assets
@@ -176,8 +183,22 @@ jobs:
         run: |
           echo "Updating embedded assets"
           mkdir -p assets/pkl
-          cp deps/pkl/*.pkl assets/pkl/
-          cp -r deps/pkl/external assets/pkl/
+
+          # Copy PKL files from deps/pkl to assets/pkl
+          if ls deps/pkl/*.pkl 1> /dev/null 2>&1; then
+            cp deps/pkl/*.pkl assets/pkl/
+            echo "✓ Copied PKL files from deps/pkl to assets/pkl"
+          else
+            echo "⚠ No PKL files found in deps/pkl/"
+          fi
+
+          # Note: external dependencies are already in assets/pkl/external/
+          # created by download_deps.sh script
+          if [ -d "assets/pkl/external" ]; then
+            echo "✓ External dependencies exist at assets/pkl/external"
+          else
+            echo "⚠ No external dependencies found (download_deps.sh may have failed)"
+          fi
 
       - name: Run tests
         if: steps.check_updates.outputs.needs_update == 'true'
