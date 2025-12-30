@@ -28,10 +28,41 @@ if [ "$SIMPLE_MODE" = false ]; then
     declare -A RENAME_MAP
 fi
 
-# Function to detect case-insensitive conflicts
-detect_conflicts() {
+# Function to fix references to a renamed file
+fix_references_for_file() {
+    local base_dir="$1"
+    local old_name="$2"
+    local new_path="$3"
+
+    # Find files that reference the old filename
+    local files_with_refs
+    files_with_refs=$(find "$base_dir" -name "*.pkl" -type f -print0 | \
+        xargs -0 grep -l "$old_name" 2>/dev/null) || true
+
+    if [ -z "$files_with_refs" ]; then
+        return 0
+    fi
+
+    # Update references in each file
+    echo "$files_with_refs" | while IFS= read -r pkl_file; do
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
+            sed -i '' "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+        else
+            # Linux
+            sed -i "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
+            sed -i "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+        fi
+        echo "   Updated references in: $(basename "$pkl_file")"
+    done
+}
+
+# Function to detect and resolve case-insensitive conflicts
+detect_and_resolve_conflicts() {
     local dir="$1"
     local seen_file="/tmp/seen_files.txt"
+    local conflicts_found=false
 
     rm -f "$seen_file"
     touch "$seen_file"
@@ -45,7 +76,7 @@ detect_conflicts() {
         existing=$(grep "^${filename_lower}:" "$seen_file" 2>/dev/null | head -1 | cut -d: -f2-)
 
         if [ -n "$existing" ]; then
-            # Conflict detected!
+            # Conflict detected! Resolve immediately
             echo "⚠️  Case conflict detected:"
             echo "   Existing: $existing"
             echo "   Conflict: $rel_path"
@@ -55,8 +86,20 @@ detect_conflicts() {
             parent_name=$(basename "$parent_dir")
             new_name="${parent_name}_${filename}"
 
-            # Store rename mapping
-            echo "$rel_path:$new_name" >> /tmp/rename_map.txt
+            old_file="$file"
+            new_file="$(dirname "$file")/$new_name"
+            new_rel_path="$(dirname "$rel_path")/$new_name"
+
+            # Rename the file immediately
+            echo "   Renaming: $filename → $new_name"
+            mv "$old_file" "$new_file"
+
+            # Fix references immediately
+            fix_references_for_file "$dir" "$filename" "$new_rel_path"
+
+            # Record the new file (lowercase:fullpath) so it's not detected as conflict
+            echo "${filename_lower}:${new_rel_path}" >> "$seen_file"
+            conflicts_found=true
         else
             # Record this file (lowercase:fullpath)
             echo "${filename_lower}:${rel_path}" >> "$seen_file"
@@ -64,91 +107,10 @@ detect_conflicts() {
     done
 
     rm -f "$seen_file"
-}
 
-# Function to apply renames
-apply_renames() {
-    local base_dir="$1"
-
-    if [ ! -f /tmp/rename_map.txt ]; then
-        return 0
+    if [ "$conflicts_found" = false ]; then
+        return 1
     fi
-
-    while IFS=: read -r old_path new_name; do
-        old_file="$base_dir/$old_path"
-        new_file="$(dirname "$old_file")/$new_name"
-
-        if [ -f "$old_file" ]; then
-            echo "   Renaming: $(basename "$old_path") → $new_name"
-            mv "$old_file" "$new_file"
-
-            # Store mapping for reference fixing (to a file for bash 3 compat)
-            echo "$old_path|$(dirname "$old_path")/$new_name" >> /tmp/rename_mappings.txt
-        fi
-    done < /tmp/rename_map.txt
-
-    rm -f /tmp/rename_map.txt
-}
-
-# Function to fix references in PKL files
-fix_references() {
-    local base_dir="$1"
-
-    if [ ! -f /tmp/rename_mappings.txt ]; then
-        echo "No files were renamed, skipping reference updates"
-        return 0
-    fi
-
-    echo ""
-    echo "Fixing references to renamed files..."
-
-    # Build sed script once for all replacements
-    local sed_script="/tmp/sed_replacements.txt"
-    local grep_pattern="/tmp/grep_pattern.txt"
-    local files_to_update="/tmp/files_to_update.txt"
-
-    rm -f "$sed_script" "$grep_pattern" "$files_to_update"
-
-    # Build sed script and grep pattern
-    while IFS='|' read -r old_path new_path; do
-        old_name=$(basename "$old_path")
-        echo "$old_name" >> "$grep_pattern"
-        echo "s|import \".*/${old_name}\"|import \"${new_path}\"|g" >> "$sed_script"
-        echo "s|\".*/${old_name}\"|\"${new_path}\"|g" >> "$sed_script"
-    done < /tmp/rename_mappings.txt
-
-    # Build combined grep pattern and find files to update
-    local pattern=$(paste -sd '|' "$grep_pattern")
-    find "$base_dir" -name "*.pkl" -type f -print0 | \
-        xargs -0 grep -l -E "$pattern" 2>/dev/null > "$files_to_update" || true
-
-    # Check if any files need updates
-    if [ ! -s "$files_to_update" ]; then
-        echo "   No files need reference updates"
-        rm -f /tmp/rename_mappings.txt "$sed_script" "$grep_pattern" "$files_to_update"
-        echo "✓ Reference fixing complete"
-        return 0
-    fi
-
-    # Apply sed script to all files
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS
-        while IFS= read -r pkl_file; do
-            sed -i '' -f "$sed_script" "$pkl_file"
-            echo "   Updated references in: $(basename "$pkl_file")"
-        done < "$files_to_update"
-    else
-        # Linux - use xargs for better performance
-        xargs -I {} sed -i -f "$sed_script" {} < "$files_to_update"
-        while IFS= read -r pkl_file; do
-            echo "   Updated references in: $(basename "$pkl_file")"
-        done < "$files_to_update"
-    fi
-
-    # Cleanup
-    rm -f /tmp/rename_mappings.txt "$sed_script" "$grep_pattern" "$files_to_update"
-
-    echo "✓ Reference fixing complete"
     return 0
 }
 
@@ -214,20 +176,12 @@ echo "Dependencies downloaded successfully!"
 echo "pkl-go repository in: $DEPS_DIR/pkl-go/"
 echo "pkl-pantry repository in: $DEPS_DIR/pkl-pantry/"
 
-# Step 1: Detect case-insensitive conflicts
+# Detect and resolve case-insensitive conflicts
 echo ""
 echo "Checking for case-insensitive filename conflicts..."
-rm -f /tmp/rename_map.txt
-detect_conflicts "$DEPS_DIR"
-
-# Step 2: Apply renames if conflicts were found
-if [ -f /tmp/rename_map.txt ]; then
+if detect_and_resolve_conflicts "$DEPS_DIR"; then
     echo ""
-    echo "Applying renames to resolve conflicts..."
-    apply_renames "$DEPS_DIR"
-
-    # Step 3: Fix all references to renamed files
-    fix_references "$DEPS_DIR"
+    echo "✓ All conflicts resolved"
 else
     echo "✓ No case-insensitive conflicts detected"
 fi
