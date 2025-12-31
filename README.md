@@ -1,5 +1,7 @@
 # Kdeps Schema
 
+[![Auto-update Dependencies](https://github.com/kdeps/schema/actions/workflows/auto-update-dependencies.yml/badge.svg)](https://github.com/kdeps/schema/actions/workflows/auto-update-dependencies.yml)
+
 This is the schema definitions used by [kdeps](https://kdeps.com).
 See the [schema documentation](https://kdeps.github.io/schema).
 
@@ -9,7 +11,7 @@ Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by
 
 ## Release Notes
 
-### Latest Release: v0.4.1-dev
+### Latest Release: v0.4.1-pkldocs
   - Update pkl min (#42)
     * added retract directive on previous tags used for kdeps-next experiments pushed as main tags
     

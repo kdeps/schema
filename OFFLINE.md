@@ -204,9 +204,26 @@ import "github.com/kdeps/schema/assets"
 content, err := assets.GetPKLFileAsString("Project.pkl")
 ```
 
-## Version Updates
+## Automated Dependency Updates
 
-To update dependency versions:
+This repository includes a GitHub Actions workflow that automatically checks for and updates PKL and pkl-go dependencies:
+
+- **Schedule**: Runs daily at 00:00 UTC
+- **Manual Trigger**: Can be triggered via workflow_dispatch
+- **Auto-PR Creation**: Automatically creates PRs with detailed changelogs when updates are available
+- **Validation**: Runs tests before creating the PR to ensure compatibility
+
+The workflow is located at `.github/workflows/auto-update-dependencies.yml` and handles:
+- Checking for new PKL and pkl-go releases
+- Updating `versions.json`, `build.gradle.kts`, and `go.mod`
+- Downloading updated dependencies
+- Fixing import paths
+- Running tests to validate the changes
+- Creating a PR with comprehensive release notes
+
+## Manual Version Updates
+
+To manually update dependency versions:
 1. Update `versions.json`
 2. Run `./scripts/download_deps.sh`
 3. Run `./scripts/update_imports.sh` if import paths change
