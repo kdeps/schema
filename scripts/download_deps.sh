@@ -219,7 +219,7 @@ if [ "$CONFLICTS_RESOLVED" = true ] && [ -f /tmp/all_renames.txt ]; then
 
     while IFS='|' read -r old_name new_path; do
         # Extract just the new basename
-        local new_basename=$(basename "$new_path")
+        new_basename=$(basename "$new_path")
 
         # Find any remaining references to old filename
         remaining_refs=$(find "$DEPS_DIR" -name "*.pkl" -type f -print0 | \
