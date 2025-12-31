@@ -16,7 +16,7 @@
 
 module pkl.golang.go
 
-import "internal/tests_utils.pkl"
+import "internal/utils.pkl"
 
 local const isValidPackageName = (it: String) ->
   let (packageNameShort = it.substring(it.lastIndexOf("/") + 1, it.length))

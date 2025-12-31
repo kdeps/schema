@@ -28,8 +28,8 @@ import "@syntax/TypeNode.pkl"
 import "@syntax/ExpressionNode.pkl"
 import "@syntax/operators.pkl"
 import "@uri/URI.pkl"
-import "tests_utils.pkl"
-import "internal_Type.pkl"
+import "utils.pkl"
+import "Type.pkl"
 
 /// The base URI, used to resolve `$ref` values.
 baseUri: URI

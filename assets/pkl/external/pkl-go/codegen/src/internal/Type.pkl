@@ -18,7 +18,7 @@
 @Unlisted
 abstract module pkl.golang.internal.Type
 
-import "internal_Type.pkl"
+import "Type.pkl"
 
 /// The imports required by this type.
 imports: List<String>

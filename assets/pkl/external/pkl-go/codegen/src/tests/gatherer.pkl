@@ -20,7 +20,7 @@ import "pkl:reflect"
 import "fixtures/types.pkl"
 import "fixtures/types2.pkl"
 import "fixtures/types4.pkl"
-import "../internal/tests_gatherer.pkl"
+import "../internal/gatherer.pkl"
 
 // it's important that these classes are defined in another module because they gather the type
 // declarations of their enclosing module.

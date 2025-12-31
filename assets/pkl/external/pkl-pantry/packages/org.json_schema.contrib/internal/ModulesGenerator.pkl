@@ -18,7 +18,7 @@ module org.json_schema.contrib.internal.ModulesGenerator
 import "@jsonschema/JsonSchema.pkl"
 import "@jsonschema/Parser.pkl"
 import "@uri/URI.pkl"
-import "tests_utils.pkl"
+import "utils.pkl"
 import "ModuleGenerator.pkl"
 
 /// The root schema, used to resolve [JsonSchema.$ref] values.

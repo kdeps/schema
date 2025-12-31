@@ -21,9 +21,9 @@ extends "Gen.pkl"
 
 import "pkl:reflect"
 import "GoMapping.pkl"
-import "tests_utils.pkl"
-import "internal_Type.pkl"
-import "tests_typegen.pkl"
+import "utils.pkl"
+import "Type.pkl"
+import "typegen.pkl"
 
 clazz: reflect.Class = mapping.source as reflect.Class
 

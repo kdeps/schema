@@ -26,10 +26,10 @@ import "@syntax/ModuleNode.pkl"
 import "@syntax/DocCommentNode.pkl"
 import "@jsonschema/JsonSchema.pkl"
 import "@uri/URI.pkl"
-import "tests_utils.pkl"
+import "utils.pkl"
 import "TypesGenerator.pkl"
 import "../ref.pkl"
-import "internal_Type.pkl"
+import "Type.pkl"
 
 local pcfRenderer = new PcfRenderer { useCustomStringDelimiters = true }
 local jsonRenderer = new JsonRenderer {}

@@ -18,7 +18,7 @@
 module pkl.golang.internal.gatherer
 
 import "pkl:reflect"
-import "tests_typegen.pkl"
+import "typegen.pkl"
 
 /// Given a [reflect.TypeDeclaration], collect all referenced classes or typealiases.
 ///

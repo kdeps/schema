@@ -21,7 +21,7 @@ extends "Gen.pkl"
 
 import "pkl:reflect"
 import "GoMapping.pkl"
-import "tests_utils.pkl"
+import "utils.pkl"
 
 alias: reflect.TypeAlias = mapping.source as reflect.TypeAlias
 

@@ -16,7 +16,7 @@
 abstract module org.apache.spark.PropertiesBase
 
 import "pkl:semver"
-import "tests_utils.pkl"
+import "utils.pkl"
 
 /// The Spark version to use these properties with.
 hidden targetSparkVersion: String?

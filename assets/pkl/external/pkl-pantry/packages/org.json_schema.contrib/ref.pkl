@@ -19,7 +19,7 @@ module org.json_schema.contrib.ref
 
 import "@jsonschema/JsonSchema.pkl"
 import "@jsonschema/Parser.pkl"
-import "internal/tests_utils.pkl"
+import "internal/utils.pkl"
 import "@uri/URI.pkl"
 
 /// Parse a json pointer into its constitutents.

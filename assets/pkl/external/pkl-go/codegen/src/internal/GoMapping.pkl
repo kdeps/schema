@@ -18,9 +18,9 @@
 abstract module pkl.golang.internal.GoMapping
 
 import "GoMapping.pkl"
-import "internal_Type.pkl"
+import "Type.pkl"
 import "pkl:reflect"
-import "tests_utils.pkl"
+import "utils.pkl"
 
 /// The go package path, e.g. `github.com/myorg/myproj/appconfig`
 goPackage: String

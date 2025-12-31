@@ -19,11 +19,11 @@
 module pkl.golang.Generator
 
 import "pkl:reflect"
-import "internal/tests_gatherer.pkl"
+import "internal/gatherer.pkl"
 import "internal/GoMapping.pkl"
 import "internal/Package.pkl"
 import "GeneratorSettings.pkl"
-import "internal/tests_utils.pkl"
+import "internal/utils.pkl"
 
 /// Settings to control code generation.
 codegenSettings: GeneratorSettings

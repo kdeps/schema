@@ -39,7 +39,7 @@
 /// Setting up replacement of Kube native types with types from the k8s standard library can be done with amending:
 ///
 /// ```pkl
-/// amends "package://pkg.pkl-lang.org/pkl-pantry/k8s.contrib.crd@<version>#/org.json_schema.contrib_generate.pkl"
+/// amends "package://pkg.pkl-lang.org/pkl-pantry/k8s.contrib.crd@<version>#/generate.pkl"
 ///
 /// import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/core/v1/ResourceRequirements.pkl"
 ///
