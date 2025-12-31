@@ -18,9 +18,9 @@
 module pkl.golang.internal.Package
 
 import "pkl:reflect"
-import "ClassGen.pkl"
+import "fixtures_ClassGen.pkl"
 import "EnumGen.pkl"
-import "utils.pkl"
+import "tests_utils.pkl"
 import "GoMapping.pkl"
 import "Gen.pkl"
 

@@ -13,35 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //===----------------------------------------------------------------------===//
-module pkl.experimental.syntax.TypeAliasNode
+module org.json_schema.contrib.internal.Type
 
-extends "Node.pkl"
+import "@jsonschema/JsonSchema.pkl"
+import "internal_Type.pkl"
 
-import "IdentifierNode.pkl"
-import "TypeNode.pkl"
-import "DocCommentNode.pkl"
-import "AnnotationNode.pkl"
+moduleName: String
 
-docComment: DocCommentNode?
+name: String
 
-name: IdentifierNode
-
-type: TypeNode
-
-annotations: Listing<AnnotationNode>?
-
-modifiers: Listing<"external"|"local">(isDistinct)?
-
-local function renderAlias(currentIndent: String) = new Listing {
-  ...?modifiers
-  "typealias"
-  name.render(currentIndent)
-  "="
-  type.render(currentIndent)
-}.join(" ")
-
-function render(currentIndent: String) = List(
-  docComment?.render(currentIndent),
-  annotations?.toList()?.map((an) -> an.render(currentIndent))?.join("\n"),
-  currentIndent + renderAlias(currentIndent)
-).filterNonNull().join("\n")
+typealias TypeNames = Map<JsonSchema, Type>

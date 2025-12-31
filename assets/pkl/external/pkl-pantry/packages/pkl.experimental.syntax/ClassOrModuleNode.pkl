@@ -13,72 +13,108 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //===----------------------------------------------------------------------===//
-module pkl.experimental.syntax.tests.ClassOrModuleNode
+abstract module pkl.experimental.syntax.ClassOrModuleNode
 
-amends "pkl:test"
+extends "Node.pkl"
 
-import "../ClassOrModuleNode.pkl"
-import "../TypeNode.pkl"
+import "Node.pkl"
+import "DocCommentNode.pkl"
+import "AnnotationNode.pkl"
+import "ExpressionNode.pkl"
+import "TypeAnnotationNode.pkl"
+import "IdentifierNode.pkl"
+import "ObjectBodyNode.pkl"
+import "ParameterNode.pkl"
 
-facts {
-  ["property definitions"] {
-    new ClassOrModuleNode.PropertyDefinitionNode {
-      name {
-        value = "myProperty"
-      }
-      typeAnnotation {
-        type = new TypeNode.StringLiteralTypeNode {
-          value = "my string"
-        }
-      }
-    }.render("") == """
-      myProperty: "my string"
-      """
-  }
-  ["property definitions - annotations"] {
-    local prop = new ClassOrModuleNode.PropertyDefinitionNode {
-      name {
-        value = "myProperty"
-      }
-      typeAnnotation {
-        type = new TypeNode.DeclaredTypeNode {
-          name {
-            parts {
-              new { value = "MyType" }
-            }
-          }
-        }
-      }
-      docComment {
-        value = """
-          This has been deprecated
+/// The properties as defined in the class or module.
+properties: Listing<PropertyDefinitionNode>?
 
-          because of stuff.
-          """
-      }
-      annotations {
-        new {
-          identifier {
-            parts {
-              new { value = "Deprecated" }
-            }
-          }
-        }
-      }
-    }
-    prop.render("") == """
-      /// This has been deprecated
-      ///
-      /// because of stuff.
-      @Deprecated
-      myProperty: MyType
-      """
-    prop.render("  ") == """
-        /// This has been deprecated
-        ///
-        /// because of stuff.
-        @Deprecated
-        myProperty: MyType
-      """
-  }
+/// The methods as defined in the class or module.
+methods: Listing<MethodNode>?
+
+/// A node representing the definition of a new property.
+class PropertyDefinitionNode extends Node {
+  docComment: DocCommentNode?
+  annotations: Listing<AnnotationNode>?
+  modifiers: Listing<"abstract"|"const"|"external"|"fixed"|"hidden"|"local">(isDistinct)?
+  name: IdentifierNode
+  typeAnnotation: TypeAnnotationNode?
+
+  defaultValue: ExpressionNode?
+
+  /// The object body for a property definition.
+  ///
+  /// * `foo: Bar { ... }` is invalid syntax.
+  /// * `foo = myBar { ... }` is technically valid syntax but should be acheived using an amends expression node.
+  objectBody: ObjectBodyNode(typeAnnotation == null && defaultValue == null)?
+
+  local function renderPropertyLine(currentIndent: String) = currentIndent + List(
+    if (modifiers != null) modifiers.join(" ") + " " else null,
+    name.render(currentIndent),
+    typeAnnotation?.render(currentIndent),
+    if (defaultValue != null) " = " + defaultValue.render(currentIndent) else null,
+    if (objectBody != null) " " + objectBody.render(currentIndent) else null
+  ).filterNonNull().join("")
+
+  function render(currentIndent: String) = List(
+    docComment?.render(currentIndent),
+    annotations?.toList()?.map((a) -> a.render(currentIndent))?.join("\n"),
+    renderPropertyLine(currentIndent)
+  )
+    .filter((it) -> it != null && !it.isEmpty)
+    .join("\n")
 }
+
+class MethodNode extends Node {
+  docComment: DocCommentNode?
+  annotations: Listing<AnnotationNode>?
+  modifiers: Listing<"abstract"|"const"|"external"|"local">(isDistinct)?
+  name: IdentifierNode
+  // TODO typeParameters?
+  parameters: Listing<ParameterNode>
+  returnTypeAnnotation: TypeAnnotationNode?
+  body: ExpressionNode
+
+  local function renderMethodHeader(currentIndent: String) = List(
+    currentIndent,
+    if (modifiers != null) modifiers.join(" ") + " " else null,
+    "function ",
+    name.render(currentIndent),
+    "(",
+    parameters?.toList()?.map((p) -> p.render(currentIndent)).join(", "),
+    ")",
+    returnTypeAnnotation?.render(currentIndent),
+    " ="
+  ).filterNonNull().join("")
+
+  function renderMethodBody(currentIndent: String) =
+    let (header = renderMethodHeader(currentIndent))
+      let (inlineBody = body.render(currentIndent))
+        let (firstInlineBodyLine = inlineBody.takeWhile((it) -> !it.endsWith("\n")))
+          if ("\(header) \(firstInlineBodyLine)".length <= maxColumnWidth)
+            "\(header) \(inlineBody)"
+          else
+            "\(header)\n\(currentIndent + indent)\(body.render(currentIndent + indent))"
+
+  function render(currentIndent: String) = List(
+    docComment?.render(currentIndent),
+    annotations?.toList()?.map((a) -> a.render(currentIndent))?.join("\n"),
+    renderMethodBody(currentIndent)
+  )
+    .filter((it) -> it != null && !it.isEmpty)
+    .join("\n")
+}
+
+function renderProperties(currentIndent: String) = properties
+  ?.toList()
+  ?.map((p) -> p.render(currentIndent))
+  ?.join("\n\n")
+
+function renderMethods(currentIndent: String) = methods
+  ?.toList()
+  ?.map((m) -> m.render(currentIndent))
+  ?.join("\n\n")
+
+function render(currentIndent: String) = List(renderProperties(currentIndent), renderMethods(currentIndent))
+  .filterNonNull()
+  .join("\n\n")

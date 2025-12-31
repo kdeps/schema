@@ -19,7 +19,7 @@
 module pkl.golang.internal.typegen
 
 import "pkl:reflect"
-import "Type.pkl"
+import "internal_Type.pkl"
 import "GoMapping.pkl"
 
 function generateType(
