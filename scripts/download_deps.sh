@@ -12,8 +12,9 @@ if [ ! -f "$VERSIONS_FILE" ]; then
     exit 1
 fi
 
-# Read versions from JSON file  
+# Read versions from JSON file
 PKL_GO_VERSION=$(jq -r '.dependencies."pkl-go".version' "$VERSIONS_FILE")
+PKL_GO_FILES=$(jq -r '.dependencies."pkl-go".files[]' "$VERSIONS_FILE")
 
 echo "Downloading PKL dependencies for offline use..."
 echo "pkl-go version: $PKL_GO_VERSION"
@@ -22,15 +23,34 @@ echo "pkl-go version: $PKL_GO_VERSION"
 rm -rf "$DEPS_DIR"
 mkdir -p "$DEPS_DIR"
 
-# Download pkl-go entire repository
-echo "Downloading pkl-go complete repository..."
+# Download pkl-go repository
+echo "Downloading pkl-go repository..."
 PKL_GO_URL="https://github.com/apple/pkl-go/archive/v${PKL_GO_VERSION}.tar.gz"
 curl -L "$PKL_GO_URL" | tar -xz -C /tmp/
 
-# Copy only PKL files from pkl-go repository
-echo "Copying pkl-go PKL files..."
+# Copy only specified PKL files from pkl-go repository
+echo "Copying specified pkl-go PKL files..."
 mkdir -p "$DEPS_DIR/pkl-go"
-find "/tmp/pkl-go-${PKL_GO_VERSION}" -name "*.pkl" -type f -exec sh -c 'rel_path="${1#/tmp/pkl-go-'"${PKL_GO_VERSION}"'/}" && mkdir -p "$2/$(dirname "$rel_path")" && cp "$1" "$2/$rel_path"' _ {} "$DEPS_DIR/pkl-go" \;
+
+for file in $PKL_GO_FILES; do
+    # Find the file in the downloaded repository
+    SOURCE_FILE=$(find "/tmp/pkl-go-${PKL_GO_VERSION}" -type f -name "$(basename "$file")" -path "*/$file" | head -1)
+
+    if [ -z "$SOURCE_FILE" ]; then
+        echo "  Warning: File $file not found in pkl-go repository"
+        continue
+    fi
+
+    # Determine relative path from pkl-go root
+    rel_path="${SOURCE_FILE#/tmp/pkl-go-${PKL_GO_VERSION}/}"
+
+    # Create target directory structure
+    TARGET_FILE="$DEPS_DIR/pkl-go/$rel_path"
+    mkdir -p "$(dirname "$TARGET_FILE")"
+
+    cp "$SOURCE_FILE" "$TARGET_FILE"
+    echo "  Copied: $rel_path"
+done
 
 # Download all pkl-pantry packages
 echo "Downloading pkl-pantry packages..."
@@ -41,25 +61,51 @@ PKL_PANTRY_PACKAGES=$(jq -r '.dependencies."pkl-pantry".packages | keys[]' "$VER
 
 for package in $PKL_PANTRY_PACKAGES; do
     echo "Processing package: $package"
-    
+
     # Get version for this package
     VERSION=$(jq -r ".dependencies.\"pkl-pantry\".packages.\"$package\".version" "$VERSIONS_FILE")
-    
+
+    # Get files list for this package
+    FILES=$(jq -r ".dependencies.\"pkl-pantry\".packages.\"$package\".files[]" "$VERSIONS_FILE")
+
     # Create package directory
     PACKAGE_DIR="$DEPS_DIR/pkl-pantry/packages/$package"
     mkdir -p "$PACKAGE_DIR"
-    
+
     # Download package
     PKL_PANTRY_TAG="${package}@${VERSION}"
     PKL_PANTRY_URL="https://github.com/apple/pkl-pantry/archive/${PKL_PANTRY_TAG}.tar.gz"
-    
+
     echo "  Downloading $package@$VERSION..."
     curl -L "$PKL_PANTRY_URL" | tar -xz -C /tmp/
-    
-    # Copy only PKL files (GitHub replaces @ with - in directory name)
+
+    # Copy only specified PKL files (GitHub replaces @ with - in directory name)
     PKL_PANTRY_DIR_NAME="pkl-pantry-$(echo "${PKL_PANTRY_TAG}" | tr '@' '-')"
-    find "/tmp/${PKL_PANTRY_DIR_NAME}" -name "*.pkl" -type f -exec cp {} "$PACKAGE_DIR/" \;
-    
+
+    # Copy each specified file, preserving directory structure for subdirectories
+    for file in $FILES; do
+        # Find the file in the downloaded package
+        SOURCE_FILE=$(find "/tmp/${PKL_PANTRY_DIR_NAME}" -type f -name "$(basename "$file")" -path "*/$file" | head -1)
+
+        if [ -z "$SOURCE_FILE" ]; then
+            echo "  Warning: File $file not found in package"
+            continue
+        fi
+
+        # Determine target path
+        if [[ "$file" == */* ]]; then
+            # File is in a subdirectory, preserve structure
+            TARGET_FILE="$PACKAGE_DIR/$file"
+            mkdir -p "$(dirname "$TARGET_FILE")"
+        else
+            # File is in root of package
+            TARGET_FILE="$PACKAGE_DIR/$file"
+        fi
+
+        cp "$SOURCE_FILE" "$TARGET_FILE"
+        echo "    Copied: $file"
+    done
+
     # Cleanup temporary files for this package
     rm -rf "/tmp/${PKL_PANTRY_DIR_NAME}"
 done

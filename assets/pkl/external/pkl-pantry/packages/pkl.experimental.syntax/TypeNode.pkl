@@ -13,82 +13,130 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //===----------------------------------------------------------------------===//
-abstract module pkl.experimental.syntax.TypeNode
+module pkl.experimental.syntax.tests.TypeNode
 
-extends "Node.pkl"
+amends "pkl:test"
 
-import "QualifiedIdentifierNode.pkl"
-import "ExpressionNode.pkl"
-import "TypeNode.pkl"
-import "Node.pkl"
+import "../TypeNode.pkl"
+import "../ExpressionNode.pkl"
 
-class NullableTypeNode extends TypeNode {
-  typeNode: TypeNode
-  function render(currentIndent: String) =
-    let (underlyingRendered = if (typeNode is UnionTypeNode) parenthesize(typeNode.render(currentIndent)) else typeNode.render(currentIndent))
-      underlyingRendered + "?"
-}
+facts {
+  ["declared type"] {
+    new TypeNode.DeclaredTypeNode {
+      name {
+        parts {
+          new { value = "String" }
+        }
+      }
+    }.render("") == "String"
+    new TypeNode.DeclaredTypeNode {
+      name {
+        parts {
+          new { value = "myModule" }
+          new { value = "Bar" }
+        }
+      }
+    }.render("") == "myModule.Bar"
+  }
+  ["declared type - type arguments"] {
+    new TypeNode.DeclaredTypeNode {
+      name {
+        parts {
+          new { value = "Listing" }
+        }
+      }
+      typeArguments {
+        new TypeNode.DeclaredTypeNode {
+          name {
+            parts {
+              new { value = "Bar" }
+            }
+          }
+        }
+        new TypeNode.DeclaredTypeNode {
+          name {
+            parts {
+              new { value = "Baz" }
+            }
+          }
+        }
+      }
+    }.render("") == "Listing<Bar, Baz>"
+  }
+  ["constrained"] {
+    new TypeNode.ConstrainedTypeNode {
+      typeNode = new TypeNode.DeclaredTypeNode {
+        name {
+          parts {
+            new { value = "Bar" }
+          }
+        }
+      }
+      constraints {
+        new ExpressionNode.MemberAccessExpressionNode {
+          identifier {
+            value = "isLessThan"
+          }
+          arguments {
+            new ExpressionNode.LiteralValueExpressionNode {
+              value = 5
+            }
+          }
+        }
+      }
+    }.render("") == "Bar(isLessThan(5))"
+  }
+  ["string literal"] {
+    new TypeNode.StringLiteralTypeNode {
+      value = "my string type"
+    }.render("") == """
+      "my string type"
+      """
+  }
+  ["union"] {
+    new TypeNode.UnionTypeNode {
+      members {
+        new TypeNode.StringLiteralTypeNode {
+          value = "one"
+        }
+        new TypeNode.StringLiteralTypeNode {
+          value = "two"
+        }
+      }
+    }.render("") == """
+      "one"|"two"
+      """
 
-class BuiltInTypeNode extends TypeNode {
-  type: "unknown"|"nothing"|"module"
-  function render(_) = type
-}
+    new TypeNode.UnionTypeNode {
+      members {
+        new TypeNode.UnionDefaultType {
+          typeNode = new TypeNode.StringLiteralTypeNode {
+            value = "one"
+          }
+        }
+        new TypeNode.StringLiteralTypeNode {
+          value = "two"
+        }
+      }
+    }.render("") == """
+      *"one"|"two"
+      """
 
-class StringLiteralTypeNode extends TypeNode {
-  value: String
-
-  function render(_) = pcfRenderer.renderValue(value)
-}
-
-class DeclaredTypeNode extends TypeNode {
-  name: QualifiedIdentifierNode
-
-  typeArguments: Listing<TypeNode>
-
-  local function renderTypeArguments(currentIndent: String) =
-    if (typeArguments.isEmpty) ""
-    else "<" + typeArguments.toList().map((t) -> t.render(currentIndent)).join(", ") + ">"
-
-  function render(currentIndent: String) = name.render(currentIndent) + renderTypeArguments(currentIndent)
-}
-
-class ConstrainedTypeNode extends TypeNode {
-  /// The underlying type
-  typeNode: TypeNode
-
-  constraints: Listing<ExpressionNode>
-
-  local function renderConstraints(currentIndent: String) =
-    "(" + constraints.toList().map((c) -> c.render(currentIndent)).join(", ") + ")"
-
-  function render(currentIndent: String) =
-    let (renderedUnderlyingType = if (typeNode is UnionTypeNode) parenthesize(typeNode.render(currentIndent)) else typeNode.render(currentIndent))
-      renderedUnderlyingType + renderConstraints(currentIndent)
-}
-
-class UnionDefaultType extends Node {
-  typeNode: TypeNode
-
-  function render(currentIndent: String) = "*\(typeNode.render(currentIndent))"
-}
-
-class UnionTypeNode extends TypeNode {
-  members: Listing<TypeNode|UnionDefaultType>(atMostOneUnionDefaultType)
-
-  const local atMostOneUnionDefaultType = (members: Listing<TypeNode|UnionDefaultType>) ->
-      members.fold(0, (acc, member) -> acc + if (member is UnionDefaultType) 1 else 0) <= 1
-
-  function render(currentIndent: String) =
-    let (childrenRendered = members.toList().map((t) -> t.render(currentIndent)))
-      // Multiline if length exceeds `maxColumnWidth` chars.
-      // If multiline, indent one level deeper.
-      if (childrenRendered.fold(0, (acc, elem) -> acc + elem.length) > maxColumnWidth)
-        "\n\(currentIndent + indent)" + childrenRendered.join("\n\(currentIndent + indent)|")
-      else
-        childrenRendered.join("|")
-}
-
-// TODO fill me in
-class FunctionTypeNode extends TypeNode {
-
+    module.catch(() ->
+      new TypeNode.UnionTypeNode {
+        members {
+          new TypeNode.UnionDefaultType {
+            typeNode = new TypeNode.StringLiteralTypeNode {
+              value = "one"
+            }
+          }
+          new TypeNode.UnionDefaultType {
+            typeNode = new TypeNode.StringLiteralTypeNode {
+              value = "two"
+            }
+          }
+        }
+      }.render("")
+    ).startsWith("Type constraint `atMostOneUnionDefaultType` violated.")
+  }
 }

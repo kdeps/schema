@@ -13,36 +13,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //===----------------------------------------------------------------------===//
-module pkl.experimental.syntax.tests.ClassNode
+module pkl.experimental.syntax.ClassNode
 
-amends "pkl:test"
+extends "ClassOrModuleNode.pkl"
 
-import "../ClassNode.pkl"
+import "Node.pkl"
+import "IdentifierNode.pkl"
+import "AnnotationNode.pkl"
+import "DocCommentNode.pkl"
+import "TypeNode.pkl"
 
-facts {
-  ["extending"] {
-    new ClassNode {
-      classHeader {
-        name {
-          value = "MyClass"
-        }
-        extendsClause {
-          type {
-            name {
-              parts {
-                new {
-                  value = "Base"
-                }
-              }
-            }
-          }
-        }
-      }
+docComment: DocCommentNode?
 
-    }.render("") == """
-    class MyClass extends Base {
+annotations: Listing<AnnotationNode>?
 
-    }
-    """
-  }
+classHeader: ClassHeader
+
+class ClassHeader extends Node {
+  modifiers: Listing<"abstract"|"external"|"local"|"open">(isDistinct)?
+  name: IdentifierNode
+  extendsClause: ClassExtendsClause?
+
+  function render(currentIndent: String) = currentIndent + new Listing {
+    modifiers?.join(" ")
+    "class \(name.render(currentIndent))"
+    extendsClause?.render(currentIndent)
+    "{"
+  }.toList().filterNonNull().join(" ")
 }
+
+class ClassExtendsClause extends Node {
+  type: TypeNode.DeclaredTypeNode
+
+  function render(currentIndent: String) = "extends " + type.render(currentIndent)
+}
+
+function render(currentIndent: String) = List(
+  docComment?.render(currentIndent),
+  annotations?.toList()?.map((a) -> a.render(currentIndent))?.join("\n"),
+  classHeader.render(currentIndent),
+  super.render(currentIndent + indent),
+  "\(currentIndent)}"
+)
+  .filterNonNull()
+  .join("\n")
