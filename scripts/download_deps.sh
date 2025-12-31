@@ -32,7 +32,10 @@ fi
 fix_references_for_file() {
     local base_dir="$1"
     local old_name="$2"
-    local new_path="$3"
+    local new_name="$3"
+
+    # Extract just the new basename (not the full path)
+    local new_basename=$(basename "$new_name")
 
     # Find files that reference the old filename
     local files_with_refs
@@ -43,16 +46,16 @@ fix_references_for_file() {
         return 0
     fi
 
-    # Update references in each file
+    # Update references in each file - only replace the basename, preserve directory structure
     echo "$files_with_refs" | while IFS= read -r pkl_file; do
         if [[ "$OSTYPE" == "darwin"* ]]; then
-            # macOS
-            sed -i '' "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
-            sed -i '' "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+            # macOS - replace just the filename part, preserving the path
+            sed -i '' "s|/${old_name}\"|/${new_basename}\"|g" "$pkl_file"
+            sed -i '' "s|\"${old_name}\"|\"${new_basename}\"|g" "$pkl_file"
         else
-            # Linux
-            sed -i "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
-            sed -i "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+            # Linux - replace just the filename part, preserving the path
+            sed -i "s|/${old_name}\"|/${new_basename}\"|g" "$pkl_file"
+            sed -i "s|\"${old_name}\"|\"${new_basename}\"|g" "$pkl_file"
         fi
         echo "   Updated references in: $(basename "$pkl_file")"
     done
@@ -87,6 +90,16 @@ detect_and_resolve_conflicts() {
             parent_dir=$(dirname "$rel_path")
             parent_name=$(basename "$parent_dir")
             new_name="${parent_name}_${filename}"
+            new_name_lower=$(echo "$new_name" | tr '[:upper:]' '[:lower:]')
+
+            # Check if the new name will also conflict
+            suffix=1
+            while grep -q "^${new_name_lower}:" "$seen_file" 2>/dev/null; do
+                # New name conflicts, add numeric suffix
+                suffix=$((suffix + 1))
+                new_name="${parent_name}_${filename%.pkl}_${suffix}.pkl"
+                new_name_lower=$(echo "$new_name" | tr '[:upper:]' '[:lower:]')
+            done
 
             old_file="$file"
             new_file="$(dirname "$file")/$new_name"
@@ -102,8 +115,8 @@ detect_and_resolve_conflicts() {
             # Fix references immediately
             fix_references_for_file "$dir" "$filename" "$new_rel_path"
 
-            # Record the new file (lowercase:fullpath) so it's not detected as conflict
-            echo "${filename_lower}:${new_rel_path}" >> "$seen_file"
+            # Record the NEW file's lowercase version (not the old one!)
+            echo "${new_name_lower}:${new_rel_path}" >> "$seen_file"
 
             # Signal that conflicts were found
             echo "1" > /tmp/conflicts_found.flag
@@ -205,6 +218,9 @@ if [ "$CONFLICTS_RESOLVED" = true ] && [ -f /tmp/all_renames.txt ]; then
     echo "Running final global reference check..."
 
     while IFS='|' read -r old_name new_path; do
+        # Extract just the new basename
+        local new_basename=$(basename "$new_path")
+
         # Find any remaining references to old filename
         remaining_refs=$(find "$DEPS_DIR" -name "*.pkl" -type f -print0 | \
             xargs -0 grep -l "$old_name" 2>/dev/null) || true
@@ -213,11 +229,13 @@ if [ "$CONFLICTS_RESOLVED" = true ] && [ -f /tmp/all_renames.txt ]; then
             echo "   Fixing remaining references to: $old_name"
             echo "$remaining_refs" | while IFS= read -r pkl_file; do
                 if [[ "$OSTYPE" == "darwin"* ]]; then
-                    sed -i '' "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
-                    sed -i '' "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+                    # Replace just the filename part, preserving the path
+                    sed -i '' "s|/${old_name}\"|/${new_basename}\"|g" "$pkl_file"
+                    sed -i '' "s|\"${old_name}\"|\"${new_basename}\"|g" "$pkl_file"
                 else
-                    sed -i "s|import \".*/${old_name}\"|import \"${new_path}\"|g" "$pkl_file"
-                    sed -i "s|\".*/${old_name}\"|\"${new_path}\"|g" "$pkl_file"
+                    # Replace just the filename part, preserving the path
+                    sed -i "s|/${old_name}\"|/${new_basename}\"|g" "$pkl_file"
+                    sed -i "s|\"${old_name}\"|\"${new_basename}\"|g" "$pkl_file"
                 fi
                 echo "     Updated: $(basename "$pkl_file")"
             done
