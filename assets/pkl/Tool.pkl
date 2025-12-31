@@ -6,7 +6,7 @@
 open module org.kdeps.pkl.Tool
 
 import "external/pkl-go/codegen/src/go.pkl"
-import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
+import "external/pkl-pantry/packages/pkl.experimental.uri/URI.pkl"
 
 /// Retrieves the output of a previously run script by its [id]
 ///
