@@ -13,7 +13,7 @@
 /// - [success]: A flag indicating the success or failure of the API request.
 /// - [file]: A URI pointing to any file returned by the server in the response.
 /// - [errors]: The error block containing details of the error if the request was unsuccessful.
-@ModuleInfo { minPklVersion = "0.29.1" }
+@ModuleInfo { minPklVersion = "0.30.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/api_server_response" }
 

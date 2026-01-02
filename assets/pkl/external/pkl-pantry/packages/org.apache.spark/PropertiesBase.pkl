@@ -13,35 +13,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //===----------------------------------------------------------------------===//
-module org.apache.spark.tests.PropertiesBase
+abstract module org.apache.spark.PropertiesBase
 
-amends "pkl:test"
+import "pkl:semver"
+import "utils.pkl"
 
-import "../PropertiesBase.pkl"
+/// The Spark version to use these properties with.
+hidden targetSparkVersion: String?
 
-local class SampleSparkProperties extends PropertiesBase {
-  `spark.core.numbers`: Int?
-  `spark.{driver|executor}.something`: Mapping<String, String>?
-  `spark.shards.[0-9].setting.[node].memory`: Mapping<String, Mapping<String, DataSize>>?
-  `spark.kubernetes.some.type.of.memory`: DataSize?
-  `spark.some.type.of.duration`: Duration?
-}
+function since(sparkVersion: String): Boolean =
+  if (targetSparkVersion == null) true
+  else
+    let (parsedVersion = semver.Version(sparkVersion))
+      if (!parsedVersion.isGreaterThan(semver.Version(targetSparkVersion)))
+        throw("This property exists since Spark version \(parsedVersion), but target Spark version is \(targetSparkVersion).")
+      else
+        true
 
-examples {
-  ["rendering properties"] {
-    new SampleSparkProperties {
-      `spark.{driver|executor}.something` {
-        ["driver"] = "some driver setting"
-        ["executor"] = "some executor setting"
-      }
-      `spark.core.numbers` = 5
-      `spark.shards.[0-9].setting.[node].memory` {
-        ["1"] {
-          ["this-node"] = 5.gib
-        }
-      }
-      `spark.kubernetes.some.type.of.memory` = 10.gib
-      `spark.some.type.of.duration` = 5.min
-    }.output.text
-  }
+hidden effectiveProperties: Map =
+  module.toMap().flatMap((key, value) -> utils.convertProperty(key, value))
+
+/// Indicates that the annotated property cannot be set by the user.
+class Reserved extends Annotation
+
+output {
+  value = effectiveProperties
+  renderer = new PropertiesRenderer {}
 }

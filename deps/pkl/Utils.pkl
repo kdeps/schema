@@ -1,7 +1,7 @@
 /// Tools for Kdeps Resources
 ///
 /// This module includes tools for interacting with Kdeps
-@ModuleInfo { minPklVersion = "0.29.1" }
+@ModuleInfo { minPklVersion = "0.30.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/utils" }
 
