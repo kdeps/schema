@@ -2,13 +2,13 @@
 ///
 /// This module provides functions to interact with records representing iterations or elements in a for loop.
 /// The module supports retrieving, navigating, and listing records without requiring a specific identifier.
-@ModuleInfo { minPklVersion = "0.29.1" }
+@ModuleInfo { minPklVersion = "0.30.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/item" }
 
 open module org.kdeps.pkl.Item
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.12.1#/go.pkl"
 import "package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl"
 import "pkl:test"
 import "pkl:json"

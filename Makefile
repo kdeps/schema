@@ -76,6 +76,14 @@ generate: check-pkl-gen-go setup-offline
 # Full update and generate (recommended for CI/CD)
 generate-latest: update-deps generate
 
+# Test PKL package generation (same as GitHub Actions)
+test:
+	@echo "🧪 Testing PKL package generation..."
+	@VERSION="0.0.0-$$(git rev-parse --short HEAD)"; \
+	echo "Testing with version: $$VERSION"; \
+	VERSION="$$VERSION" ./gradlew makePackages
+	@echo "✅ Test completed successfully!"
+
 # Generate documentation (requires VERSION env var or uses latest tag)
 docs:
 	@echo "📚 Generating PKL documentation..."
@@ -101,8 +109,9 @@ clean:
 clean-all:
 	@echo "🧹 Cleaning all generated files and dependencies..."
 	@rm -rf gen/
-	@rm -rf assets/pkl/
-	@rm -rf assets/pkl/external/
+	@if [ -d "assets/pkl" ]; then \
+		find assets/pkl -mindepth 1 ! -name 'PklProject' -delete; \
+	fi
 	@echo "✅ Full clean completed!"
 
 # Show help
@@ -110,6 +119,7 @@ help:
 	@echo "Available commands:"
 	@echo "  make generate        - Generate PKL code with offline dependencies (default)"
 	@echo "  make generate-latest - Update to latest versions and generate"
+	@echo "  make test            - Test PKL package generation (same as GHA)"
 	@echo "  make docs            - Generate PKL documentation"
 	@echo "  make setup-offline   - Setup offline dependencies only"
 	@echo "  make update-deps     - Update versions and dependencies"
@@ -117,4 +127,4 @@ help:
 	@echo "  make clean-all       - Clean all files including dependencies"
 	@echo "  make help            - Show this help"
 
-.PHONY: check-pkl-gen-go generate generate-latest docs setup-offline update-deps clean clean-all help
+.PHONY: check-pkl-gen-go generate generate-latest test docs setup-offline update-deps clean clean-all help

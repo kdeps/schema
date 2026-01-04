@@ -4,13 +4,13 @@
 /// server binding details (host and port) and route configurations. The server
 /// handles HTTP requests, routing them to appropriate handlers based on defined
 /// paths and server types.
-@ModuleInfo { minPklVersion = "0.29.1" }
+@ModuleInfo { minPklVersion = "0.30.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/web_server" }
 
 open module org.kdeps.pkl.WebServer
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.12.1#/go.pkl"
 
 /// Type of web server
 typealias WebServerType = "static" | "app"

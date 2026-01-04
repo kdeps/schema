@@ -2,13 +2,13 @@
 /// resources within the KDEPS framework. It allows for the specification
 /// of package management, including additional package repositories (PPAs)
 /// and models to be used within Docker containers.
-@ModuleInfo { minPklVersion = "0.29.1" }
+@ModuleInfo { minPklVersion = "0.30.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/docker" }
 
 module org.kdeps.pkl.Docker
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.12.1#/go.pkl"
 
 /// Class representing the settings for Docker configurations.
 /// It includes options for specifying packages, PPAs, and models.

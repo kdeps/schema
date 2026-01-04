@@ -7,13 +7,13 @@
 ///
 /// This module also ensures the proper structure of workflows using validation checks for names,
 /// workflow references, action formats, and versioning patterns.
-@ModuleInfo { minPklVersion = "0.29.1" }
+@ModuleInfo { minPklVersion = "0.30.2" }
 
 @go.Package { name = "github.com/kdeps/schema/gen/workflow" }
 
 open module org.kdeps.pkl.Workflow
 
-import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl"
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.12.1#/go.pkl"
 
 import "Project.pkl"
 
