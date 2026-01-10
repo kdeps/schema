@@ -3,19 +3,152 @@
 This is the schema definitions used by [kdeps](https://kdeps.com).
 See the [schema documentation](https://kdeps.github.io/schema).
 
+## DEPRECATION NOTICE
+
+**This PKL-based schema is now legacy and being deprecated.** This version (v0.5.0) will be the last release using PKL for schema definitions. Future versions of Kdeps will migrate to YAML for schema definitions.
+
 ## What is Kdeps?
 
 Kdeps is an AI Agent framework for building self-hosted RAG AI Agents powered by open-source LLMs.
 
 ## Release Notes
 
-### Latest Release: v0.4.1-dev
-  - Update pkl min (#42)
+### Latest Release: v0.5.0
+  - chore: auto-update pkl to 0.30.2 and pkl-go to 0.12.1 (#52)
+    
+    Change authentication token in workflow
+    Updated the workflow to use RELEASE_TOKEN instead of GITHUB_TOKEN for authentication.
+    fix: automate PKL import conversion to local paths
+    Rewrote fix_deps_imports.sh to automatically convert package URLs to local
+    paths for offline compatibility. This script now:
+    
+    1. Converts remote package URLs to local paths programmatically
+   - package://pkg.pkl-lang.org/pkl-go/pkl.golang@{version}#/go.pkl
+  -      → external/pkl-go/codegen/src/go.pkl
+   - package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@{version}#/URI.pkl
+  -      → external/pkl-pantry/packages/pkl.experimental.uri/URI.pkl
+    
+    2. Handles any version dynamically using regex patterns
+    
+    3. Cross-platform compatible (macOS and Linux)
+   - Uses temporary file approach instead of sed -i for portability
+  - 
+    4. Validates conversion success
+   - Verifies no package URLs remain
+   - Exits with error if conversion incomplete
+  - 
+    Benefits:
+- ✅ Fully automated in workflow (runs after download_deps.sh)
+- ✅ No manual intervention needed
+- ✅ Version-agnostic (works with any PKL version updates)
+- ✅ Ensures offline compatibility for all PKL files
+- ✅ TestEnsureOfflineCompatibility passing
+  - 
+    This replaces the previous manual approach and ensures the auto-update
+    workflow will always produce offline-compatible PKL files.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+    
+    fix: convert PKL files to use local paths for offline compatibility
+    Replaced all remote package URLs with local paths to ensure offline compatibility:
+- package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.11.1#/go.pkl
+  -   → external/pkl-go/codegen/src/go.pkl
+- package://pkg.pkl-lang.org/pkl-pantry/pkl.experimental.uri@1.0.3#/URI.pkl
+  -   → external/pkl-pantry/packages/pkl.experimental.uri/URI.pkl
+    
+    Files updated:
+- All 21 PKL files in deps/pkl/ directory
+  - 
+    Tests:
+- ✅ TestEnsureOfflineCompatibility passing
+- ✅ All 27 asset tests passing
+- ✅ No remote package URLs remaining
+  - 
+    This fixes the offline compatibility test failures and ensures all PKL files
+    work without internet access using only local dependencies.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+    
+    fix: eliminate case-insensitive file name collisions
+    Fixed case-insensitive file name collision issues on macOS/Windows by:
+    
+    1. Updated download_deps.sh to only download files specified in versions.json
+   - Changed from copying all .pkl files to copying only specified files
+   - Preserves directory structure for nested files
+   - Prevents downloading unnecessary files that cause collisions
+  - 
+    2. Corrected file names in versions.json to match actual files in packages:
+   - com.circleci.v2: CircleCI.pkl → Config.pkl
+   - io.prometheus: Prometheus.pkl → Configuration.pkl, Rule.pkl, PrometheusObject.pkl
+   - org.apache.spark: Spark.pkl → Properties.pkl, PropertiesBase.pkl
+   - pkl.table: TableRenderer.pkl → table.pkl
+   - pkl.lua: Lua.pkl → lua.pkl
+   - pkl.experimental.net: Network.pkl → net.pkl, u128.pkl
+   - pkl.csv: CSV.pkl → csv.pkl
+  - 
+    3. Benefits:
+   - ✅ No case-insensitive collisions (verified with detection script)
+   - ✅ Faster downloads (only fetches needed files)
+   - ✅ Smaller repository size (71 files vs 2475+ files)
+   - ✅ All Go tests passing
+   - ✅ Works on case-insensitive filesystems (macOS, Windows)
+  - 
+    Test results:
+- Downloaded 71 pkl files across 22 directories
+- Zero case-insensitive duplicates detected
+- All asset tests passing (27/27)
+  - 
+    Resolves case-insensitive file name collision errors.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+    
+    feat: revert to v0.4.1-pkldocs with auto-update workflow
+- Revert repository to v0.4.1-pkldocs state
+- Add auto-update GitHub Actions workflow for PKL dependencies
+- Add workflow documentation (README, QUICKSTART, TESTING)
+- Fix fix_deps_imports.sh for Linux compatibility (sed syntax)
+- Update OFFLINE.md with automation section
+- Add workflow badge to README.md
+- Update latest release version to v0.4.1-pkldocs
+  - 
+    The auto-update workflow:
+- Runs daily at 00:00 UTC
+- Checks for new PKL and pkl-go releases
+- Automatically creates PRs with detailed changelogs
+- Validates changes with tests before PR creation
+- Can be triggered manually via workflow_dispatch
+  - 
+    All tests passing:
+- 27 Go tests passed
+- Build successful
+- Workflow dependencies verified (jq, versions.json)
+  - 
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+
+### Previous Highlights
+- **v0.4.1-pkldocs**:   - update relnotes
+    
+    pkldoc generation fix
+    
+    Merge branch 'main' of https://github.com/kdeps/schema
+    
+    Merge branch 'main' of https://github.com/kdeps/schema
+    
+    added retract directive on previous tags used for kdeps-next experiments pushed as main tags
+
+- **v0.4.1-dev**:   - Update pkl min (#42)
     * added retract directive on previous tags used for kdeps-next experiments pushed as main tags
     
     * changed minPklVersion to "0.29.1"
 
-### Previous Highlights
 - **v0.4.0-dev**:   - Tempdir+assets (#41)
     * added retract directive on previous tags used for kdeps-next experiments pushed as main tags
     
