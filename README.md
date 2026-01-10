@@ -1,11 +1,11 @@
 # Kdeps Schema
 
-This is the schema definitions used by [kdeps](https://kdeps.com).
-See the [schema documentation](https://kdeps.github.io/schema).
-
 ## DEPRECATION NOTICE
 
 **This PKL-based schema is now legacy and being deprecated.** This version (v0.5.0) will be the last release using PKL for schema definitions. Future versions of Kdeps will migrate to YAML for schema definitions.
+
+This is the schema definitions used by [kdeps](https://kdeps.com).
+See the [schema documentation](https://kdeps.github.io/schema).
 
 ## What is Kdeps?
 
